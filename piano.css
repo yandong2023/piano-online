@@ -1,0 +1,125 @@
+/* 钢琴容器 */
+.piano-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    perspective: 1000px;
+}
+
+/* 钢琴键盘 */
+.piano {
+    position: relative;
+    width: 100%;
+    height: 220px;
+    background: linear-gradient(to bottom, #1a1a1a, #000);
+    border-radius: 8px 8px 5px 5px;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+    transform-style: preserve-3d;
+    transform: rotateX(2deg);
+}
+
+/* 钢琴白键 */
+.piano-key.white {
+    position: relative;
+    float: left;
+    width: calc(100% / 21);
+    height: 200px;
+    background: linear-gradient(to bottom, #fff 0%, #f9f9f9 100%);
+    border: 1px solid #ccc;
+    border-radius: 0 0 5px 5px;
+    box-shadow: 
+        inset 0 -1px 2px rgba(0,0,0,0.2),
+        inset 0 -5px 2px rgba(0,0,0,0.1),
+        0 2px 3px rgba(0,0,0,0.2);
+    z-index: 1;
+    transition: all 0.1s ease;
+}
+
+.piano-key.white:active,
+.piano-key.white.active {
+    background: linear-gradient(to bottom, #f9f9f9 0%, #e9e9e9 100%);
+    box-shadow: 
+        inset 0 -1px 1px rgba(0,0,0,0.3),
+        inset 0 -3px 2px rgba(0,0,0,0.2);
+    transform: translateY(2px);
+}
+
+/* 钢琴黑键 */
+.piano-key.black {
+    position: absolute;
+    width: calc((100% / 21) * 0.65);
+    height: 120px;
+    background: linear-gradient(to bottom, #000 0%, #222 100%);
+    border: 1px solid #000;
+    border-radius: 0 0 3px 3px;
+    box-shadow: 
+        inset 0 -1px 2px rgba(255,255,255,0.2),
+        0 0 5px rgba(0,0,0,0.5);
+    z-index: 2;
+    transition: all 0.1s ease;
+}
+
+.piano-key.black:active,
+.piano-key.black.active {
+    background: linear-gradient(to bottom, #222 0%, #000 100%);
+    box-shadow: 
+        inset 0 -1px 1px rgba(255,255,255,0.1),
+        0 0 3px rgba(0,0,0,0.3);
+    transform: translateY(2px);
+}
+
+/* 钢琴键位置 */
+.piano-key.black:nth-child(2),
+.piano-key.black:nth-child(7),
+.piano-key.black:nth-child(9),
+.piano-key.black:nth-child(14),
+.piano-key.black:nth-child(16),
+.piano-key.black:nth-child(21) {
+    margin-left: calc((100% / 21) * -0.325);
+}
+
+/* 钢琴外壳 */
+.piano-case {
+    position: relative;
+    width: 100%;
+    height: 50px;
+    background: linear-gradient(to bottom, #4a4a4a, #000);
+    border-radius: 8px 8px 0 0;
+    box-shadow: 
+        inset 0 1px 0px rgba(255,255,255,0.1),
+        0 -1px 0px rgba(0,0,0,0.3);
+}
+
+/* 钢琴品牌标志 */
+.piano-brand {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: rgba(255,255,255,0.8);
+    font-family: "Times New Roman", serif;
+    font-size: 24px;
+    letter-spacing: 2px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+/* 键盘提示 */
+.key-hint {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #666;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* 钢琴底座 */
+.piano-stand {
+    width: 100%;
+    height: 20px;
+    background: linear-gradient(to bottom, #333, #000);
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}

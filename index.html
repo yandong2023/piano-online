@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>钢琴在线 - 在线钢琴学习平台</title>
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .nav-link {
+            position: relative;
+            color: #1a202c;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: #4299e1;
+        }
+
+        .nav-link.active {
+            color: #4299e1;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #4299e1;
+        }
+
+        .piano-container {
+            background: #1a1a1a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 2rem;
+            position: relative;
+            height: 300px;
+            overflow: hidden;
+        }
+
+        .octave {
+            position: relative;
+            height: 100%;
+            display: inline-block;
+            width: 33.33%; /* 3个八度 */
+        }
+
+        .piano-key {
+            position: relative;
+            transition: all 0.1s;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+        
+        .white {
+            background: white;
+            height: 100%;
+            width: 14.28%; /* 7个白键 */
+            display: inline-block;
+            border-radius: 0 0 4px 4px;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            vertical-align: top;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .black {
+            background: #333;
+            height: 60%;
+            width: 8%;
+            position: absolute;
+            top: 0;
+            z-index: 2;
+            border-radius: 0 0 3px 3px;
+            border: 1px solid #000;
+        }
+        
+        .key-label {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: #666;
+            pointer-events: none;
+            font-weight: 500;
+            text-align: center;
+            width: 100%;
+        }
+        
+        .black .key-label {
+            color: #fff;
+            bottom: 20px;
+        }
+
+        .piano-key.key-pressed {
+            background: #e2e8f0;
+        }
+
+        .black.key-pressed {
+            background: #4a5568;
+        }
+
+        /* 添加键盘按下效果 */
+        .piano-key:active {
+            transform: translateY(2px);
+        }
+
+        .white:active {
+            background: #f0f0f0;
+        }
+
+        .black:active {
+            background: #222;
+        }
+
+        .button {
+            background-color: #4299e1;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.3s;
+        }
+
+        .button:hover {
+            background-color: #3182ce;
+        }
+
+        #piano {
+            position: relative;
+            height: 200px;
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 -2px 2px rgba(0, 0, 0, 0.1) inset;
+            border: 1px solid #e2e8f0;
+            margin: 0 auto;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto px-4 py-8">
+        <!-- 顶部导航 -->
+        <nav class="flex justify-between items-center mb-8 bg-white rounded-lg shadow-lg p-4">
+            <a href="index.html" class="flex items-center space-x-2">
+                <img src="images/logo.svg" alt="钢琴在线" class="h-8">
+            </a>
+            <div class="flex space-x-4">
+                <a href="index.html" class="nav-link active">钢琴</a>
+                <a href="piano.html" class="nav-link">练习</a>
+                <a href="#" class="nav-link">设置</a>
+            </div>
+        </nav>
+
+        <!-- 钢琴区域 -->
+        <div class="piano-wrapper bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">虚拟钢琴</h2>
+            <div id="piano" class="piano-container"></div>
+        </div>
+
+        <!-- 练习模式区域 -->
+        <div id="practice-area" class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <div class="flex justify-between items-center mb-4">
+                <select id="songSelect" class="border rounded px-4 py-2">
+                    <option value="twinkle">小星星</option>
+                    <option value="canon">卡农</option>
+                </select>
+                <button id="startPractice" class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600">
+                    开始练习
+                </button>
+            </div>
+            <div id="noteDisplay" class="text-center text-2xl font-bold text-gray-700 mt-4">
+                选择一首歌开始练习
+            </div>
+        </div>
+
+        <!-- 键盘提示区域 -->
+        <div class="keyboard-container bg-white rounded-lg shadow-lg p-6">
+            <h3 class="text-xl font-semibold mb-4">键盘映射</h3>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <h4 class="font-medium mb-2">低音区 (Z-M)</h4>
+                    <p class="text-gray-600">Z=C3, X=D3, C=E3, V=F3, B=G3, N=A3, M=B3</p>
+                </div>
+                <div>
+                    <h4 class="font-medium mb-2">中音区 (A-L)</h4>
+                    <p class="text-gray-600">A=C4, S=D4, D=E4, F=F4, G=G4, H=A4, J=B4, K=C5</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 脚本加载 -->
+    <script src="piano.js" defer></script>
+</body>
+</html>
