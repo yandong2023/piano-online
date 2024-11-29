@@ -387,96 +387,20 @@ const songs = {
         name: '小星星',
         difficulty: '入门',
         notes: [
-            { midi: 60, key: '(按A键)', duration: 1 }, // 1
-            { midi: 60, key: '(按A键)', duration: 1 }, // 1
-            { midi: 67, key: '(按G键)', duration: 1 }, // 5
-            { midi: 67, key: '(按G键)', duration: 1 }, // 5
-            { midi: 69, key: '(按H键)', duration: 1 }, // 6
-            { midi: 69, key: '(按H键)', duration: 1 }, // 6
-            { midi: 67, key: '(按G键)', duration: 1 }, // 5
-            { midi: 65, key: '(按F键)', duration: 1 }, // 4
-            { midi: 65, key: '(按F键)', duration: 1 }, // 4
-            { midi: 64, key: '(按D键)', duration: 1 }, // 3
-            { midi: 64, key: '(按D键)', duration: 1 }, // 3
-            { midi: 62, key: '(按S键)', duration: 1 }, // 2
-            { midi: 62, key: '(按S键)', duration: 1 }, // 2
-            { midi: 60, key: '(按A键)', duration: 1 }, // 1
-        ]
-    },
-    'tiger': {
-        name: '两只老虎',
-        difficulty: '入门',
-        notes: [
-            { midi: 60, key: '(按A键)', duration: 1 }, // 1
-            { midi: 62, key: '(按S键)', duration: 1 }, // 2
-            { midi: 64, key: '(按D键)', duration: 1 }, // 3
-            { midi: 60, key: '(按A键)', duration: 1 }, // 1
-            { midi: 60, key: '(按A键)', duration: 1 }, // 1
-            { midi: 62, key: '(按S键)', duration: 1 }, // 2
-            { midi: 64, key: '(按D键)', duration: 1 }, // 3
-            { midi: 60, key: '(按A键)', duration: 1 }, // 1
-            { midi: 64, key: '(按D键)', duration: 1 }, // 3
-            { midi: 65, key: '(按F键)', duration: 1 }, // 4
-            { midi: 67, key: '(按G键)', duration: 1 }, // 5
-            { midi: 64, key: '(按D键)', duration: 1 }, // 3
-            { midi: 65, key: '(按F键)', duration: 1 }, // 4
-            { midi: 67, key: '(按G键)', duration: 1 }, // 5
-            { midi: 67, key: '(按G键)', duration: 1 }, // 5
-            { midi: 69, key: '(按H键)', duration: 1 }, // 6
-            { midi: 67, key: '(按G键)', duration: 1 }, // 5
-            { midi: 67, key: '(按G键)', duration: 1 }, // 5
-            { midi: 69, key: '(按H键)', duration: 1 }, // 6
-            { midi: 67, key: '(按G键)', duration: 1 }, // 5
-            { midi: 64, key: '(按D键)', duration: 1 }, // 3
-            { midi: 60, key: '(按A键)', duration: 1 }, // 1
-            { midi: 64, key: '(按D键)', duration: 1 }, // 3
-            { midi: 60, key: '(按A键)', duration: 1 } // 1
-        ]
-    },
-    'happy-birthday': {
-        name: '生日快乐',
-        difficulty: '入门',
-        notes: [
-            { midi: 60, key: '(按A键)', duration: 1 }, // 1
-            { midi: 60, key: '(按A键)', duration: 1 }, // 1
-            { midi: 62, key: '(按S键)', duration: 1 }, // 2
-            { midi: 60, key: '(按A键)', duration: 1 }, // 1
-            { midi: 65, key: '(按F键)', duration: 1 }, // 4
-            { midi: 64, key: '(按D键)', duration: 1 }, // 3
-            { midi: 60, key: '(按A键)', duration: 1 }, // 1
-            { midi: 60, key: '(按A键)', duration: 1 }, // 1
-            { midi: 62, key: '(按S键)', duration: 1 }, // 2
-            { midi: 60, key: '(按A键)', duration: 1 }, // 1
-            { midi: 67, key: '(按G键)', duration: 1 }, // 5
-            { midi: 65, key: '(按F键)', duration: 1 }, // 4
-            { midi: 60, key: '(按A键)', duration: 1 }, // 1
-            { midi: 60, key: '(按A键)', duration: 1 }, // 1
-            { midi: 71, key: '(按J键)', duration: 1 }, // 高音1
-            { midi: 69, key: '(按H键)', duration: 1 }, // 6
-            { midi: 65, key: '(按F键)', duration: 1 }, // 4
-            { midi: 64, key: '(按D键)', duration: 1 }, // 3
-            { midi: 62, key: '(按S键)', duration: 1 }, // 2
-        ]
-    },
-    'ode-to-joy': {
-        name: '欢乐颂',
-        difficulty: '初级',
-        notes: [
-            { midi: 64, key: '(按D键)', duration: 1 }, // 3
-            { midi: 64, key: '(按D键)', duration: 1 }, // 3
-            { midi: 65, key: '(按F键)', duration: 1 }, // 4
-            { midi: 67, key: '(按G键)', duration: 1 }, // 5
-            { midi: 67, key: '(按G键)', duration: 1 }, // 5
-            { midi: 65, key: '(按F键)', duration: 1 }, // 4
-            { midi: 64, key: '(按D键)', duration: 1 }, // 3
-            { midi: 62, key: '(按S键)', duration: 1 }, // 2
-            { midi: 60, key: '(按A键)', duration: 1 }, // 1
-            { midi: 60, key: '(按A键)', duration: 1 }, // 1
-            { midi: 62, key: '(按S键)', duration: 1 }, // 2
-            { midi: 64, key: '(按D键)', duration: 1 }, // 3
-            { midi: 64, key: '(按D键)', duration: 2 }, // 3-
-            { midi: 62, key: '(按S键)', duration: 1 }, // 2
-            { midi: 62, key: '(按S键)', duration: 1 }, // 2
+            { midi: 60, key: '(按Z键)', duration: 1 }, // C4
+            { midi: 60, key: '(按Z键)', duration: 1 },
+            { midi: 67, key: '(按K键)', duration: 1 }, // G4
+            { midi: 67, key: '(按K键)', duration: 1 },
+            { midi: 69, key: '(按L键)', duration: 1 }, // A4
+            { midi: 69, key: '(按L键)', duration: 1 },
+            { midi: 67, key: '(按K键)', duration: 2 }, // G4
+            { midi: 65, key: '(按J键)', duration: 1 }, // F4
+            { midi: 65, key: '(按J键)', duration: 1 },
+            { midi: 64, key: '(按H键)', duration: 1 }, // E4
+            { midi: 64, key: '(按H键)', duration: 1 },
+            { midi: 62, key: '(按G键)', duration: 1 }, // D4
+            { midi: 62, key: '(按G键)', duration: 1 },
+            { midi: 60, key: '(按Z键)', duration: 2 }  // C4
         ]
     },
     'canon': {
@@ -486,26 +410,53 @@ const songs = {
             { midi: 71, key: '(按J键)', duration: 1 }, // 高音1
             { midi: 69, key: '(按H键)', duration: 1 }, // 6
             { midi: 67, key: '(按G键)', duration: 1 }, // 5
-            { midi: 66, key: '(按T键)', duration: 1 }, // #4
-            { midi: 65, key: '(按F键)', duration: 1 }, // 4
+            { midi: 66, key: '(按F键)', duration: 1 }, // #4
             { midi: 64, key: '(按D键)', duration: 1 }, // 3
             { midi: 62, key: '(按S键)', duration: 1 }, // 2
-            { midi: 60, key: '(按A键)', duration: 1 }, // 1
-            // ... 更多音符
+            { midi: 61, key: '(按A键)', duration: 1 }, // #1
+            { midi: 59, key: '(按Z键)', duration: 1 }  // 低音7
         ]
     },
-    'moon': {
-        name: '月亮代表我的心',
-        difficulty: '中级',
+    'twoTigers': {
+        name: '两只老虎',
+        difficulty: '入门',
         notes: [
-            { midi: 60, key: '(按A键)', duration: 1 }, // 1
-            { midi: 64, key: '(按D键)', duration: 1 }, // 3
-            { midi: 67, key: '(按G键)', duration: 1 }, // 5
-            { midi: 64, key: '(按D键)', duration: 1 }, // 3
-            { midi: 60, key: '(按A键)', duration: 1 }, // 1
-            { midi: 62, key: '(按S键)', duration: 1 }, // 2
-            { midi: 64, key: '(按D键)', duration: 2 }, // 3-
-            // ... 更多音符
+            // 两只老虎
+            { midi: 60, key: '(按Z键)', duration: 1 }, // C4 两
+            { midi: 62, key: '(按X键)', duration: 1 }, // D4 只
+            { midi: 64, key: '(按C键)', duration: 1 }, // E4 老
+            { midi: 60, key: '(按Z键)', duration: 1 }, // C4 虎
+            // 两只老虎
+            { midi: 60, key: '(按Z键)', duration: 1 }, // C4 两
+            { midi: 62, key: '(按X键)', duration: 1 }, // D4 只
+            { midi: 64, key: '(按C键)', duration: 1 }, // E4 老
+            { midi: 60, key: '(按Z键)', duration: 1 }, // C4 虎
+            // 跑得快
+            { midi: 64, key: '(按C键)', duration: 1 }, // E4 跑
+            { midi: 65, key: '(按V键)', duration: 1 }, // F4 得
+            { midi: 67, key: '(按B键)', duration: 2 }, // G4 快
+            // 跑得快
+            { midi: 64, key: '(按C键)', duration: 1 }, // E4 跑
+            { midi: 65, key: '(按V键)', duration: 1 }, // F4 得
+            { midi: 67, key: '(按B键)', duration: 2 }, // G4 快
+            // 一只没有眼睛
+            { midi: 67, key: '(按B键)', duration: 0.5 }, // G4 一
+            { midi: 69, key: '(按N键)', duration: 0.5 }, // A4 只
+            { midi: 67, key: '(按B键)', duration: 0.5 }, // G4 没
+            { midi: 65, key: '(按V键)', duration: 0.5 }, // F4 有
+            { midi: 64, key: '(按C键)', duration: 1 }, // E4 眼
+            { midi: 60, key: '(按Z键)', duration: 1 }, // C4 睛
+            // 一只没有尾巴
+            { midi: 67, key: '(按B键)', duration: 0.5 }, // G4 一
+            { midi: 69, key: '(按N键)', duration: 0.5 }, // A4 只
+            { midi: 67, key: '(按B键)', duration: 0.5 }, // G4 没
+            { midi: 65, key: '(按V键)', duration: 0.5 }, // F4 有
+            { midi: 64, key: '(按C键)', duration: 1 }, // E4 尾
+            { midi: 60, key: '(按Z键)', duration: 1 }, // C4 巴
+            // 真奇怪
+            { midi: 60, key: '(按Z键)', duration: 1 }, // C4 真
+            { midi: 55, key: '(按Q键)', duration: 1 }, // G3 奇
+            { midi: 60, key: '(按Z键)', duration: 2 }  // C4 怪
         ]
     }
 };
@@ -631,32 +582,101 @@ class SimpleAudioPlayer {
                 await this.init();
             }
 
-            console.log('Playing note with frequency:', frequency);
+            // 创建音频节点和效果器
+            const masterGain = this.context.createGain();
+            const compressor = this.context.createDynamicsCompressor();
+            const highPassFilter = this.context.createBiquadFilter();
+            const highShelf = this.context.createBiquadFilter();
+            
+            // 设置高通滤波器，去除低频噪音
+            highPassFilter.type = 'highpass';
+            highPassFilter.frequency.setValueAtTime(100, this.context.currentTime);
+            highPassFilter.Q.setValueAtTime(0.7, this.context.currentTime);
 
-            // 创建音频节点
-            this.oscillator = this.context.createOscillator();
-            this.gainNode = this.context.createGain();
+            // 设置高频增强，使声音更明亮
+            highShelf.type = 'highshelf';
+            highShelf.frequency.setValueAtTime(2000, this.context.currentTime);
+            highShelf.gain.setValueAtTime(6, this.context.currentTime);
+            
+            // 设置压缩器参数，增加瞬态响应
+            compressor.threshold.setValueAtTime(-24, this.context.currentTime);
+            compressor.knee.setValueAtTime(10, this.context.currentTime);
+            compressor.ratio.setValueAtTime(8, this.context.currentTime);
+            compressor.attack.setValueAtTime(0.002, this.context.currentTime);
+            compressor.release.setValueAtTime(0.15, this.context.currentTime);
+            
+            // 使用更丰富的泛音组合来创建明亮的钢琴音色
+            const harmonics = [
+                { frequency: frequency, gain: 0.6, type: 'triangle' },     // 基频，降低一点以减少浑浊感
+                { frequency: frequency * 2, gain: 0.4, type: 'triangle' }, // 第一泛音，增加三角波增加明亮度
+                { frequency: frequency * 3, gain: 0.2, type: 'sine' },     // 第二泛音
+                { frequency: frequency * 4, gain: 0.15, type: 'sine' },    // 第三泛音
+                { frequency: frequency * 5, gain: 0.1, type: 'sine' },     // 第四泛音
+                { frequency: frequency * 6, gain: 0.05, type: 'sine' },    // 第五泛音
+                { frequency: frequency * 8, gain: 0.025, type: 'sine' }    // 第七泛音，增加高频泛音
+            ];
 
-            // 设置音色
-            this.oscillator.type = 'sine';
-            this.oscillator.frequency.setValueAtTime(frequency, this.context.currentTime);
+            const oscillators = harmonics.map(harmonic => {
+                const osc = this.context.createOscillator();
+                const gain = this.context.createGain();
+                
+                // 设置振荡器
+                osc.type = harmonic.type;
+                osc.frequency.setValueAtTime(harmonic.frequency, this.context.currentTime);
+                
+                // 创建更快的音量包络，增加瞬态响应
+                gain.gain.setValueAtTime(0, this.context.currentTime);
+                gain.gain.linearRampToValueAtTime(harmonic.gain, this.context.currentTime + 0.001); // 更快的起音
+                gain.gain.exponentialRampToValueAtTime(harmonic.gain * 0.8, this.context.currentTime + 0.003);
+                gain.gain.exponentialRampToValueAtTime(harmonic.gain * 0.4, this.context.currentTime + 0.015);
+                gain.gain.exponentialRampToValueAtTime(0.001, this.context.currentTime + duration);
+                
+                // 连接音频节点
+                osc.connect(gain);
+                gain.connect(highPassFilter);
+                
+                return { oscillator: osc, gain: gain };
+            });
 
-            // 设置音量包络
-            this.gainNode.gain.setValueAtTime(0, this.context.currentTime);
-            this.gainNode.gain.linearRampToValueAtTime(0.5, this.context.currentTime + 0.01);
-            this.gainNode.gain.exponentialRampToValueAtTime(0.01, this.context.currentTime + duration);
+            // 连接音频处理链
+            highPassFilter.connect(highShelf);
+            highShelf.connect(compressor);
+            compressor.connect(masterGain);
+            masterGain.connect(this.context.destination);
+            
+            // 设置主音量
+            masterGain.gain.setValueAtTime(0.9, this.context.currentTime);
 
-            // 连接节点
-            this.oscillator.connect(this.gainNode);
-            this.gainNode.connect(this.context.destination);
+            // 启动所有振荡器
+            oscillators.forEach(osc => {
+                osc.oscillator.start();
+                osc.oscillator.stop(this.context.currentTime + duration);
+            });
 
-            // 播放声音
-            this.oscillator.start();
-            this.oscillator.stop(this.context.currentTime + duration);
+            // 清理
+            setTimeout(() => {
+                oscillators.forEach(osc => {
+                    osc.gain.disconnect();
+                    osc.oscillator.disconnect();
+                });
+                masterGain.disconnect();
+                compressor.disconnect();
+                highPassFilter.disconnect();
+                highShelf.disconnect();
+            }, duration * 1000);
 
-            console.log('Note played successfully');
         } catch (error) {
             console.error('Error playing note:', error);
+        }
+    }
+
+    stop() {
+        if (this.oscillator) {
+            this.oscillator.stop();
+            this.oscillator.disconnect();
+        }
+        if (this.gainNode) {
+            this.gainNode.disconnect();
         }
     }
 }
