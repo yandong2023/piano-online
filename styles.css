@@ -1,0 +1,105 @@
+body {
+    margin: 0;
+    padding: 0;
+    background: #f0f0f0;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+}
+
+.controls {
+    margin-bottom: 30px;
+    display: flex;
+    gap: 15px;
+}
+
+.controls button,
+.controls select {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#piano {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    height: 220px;
+    background: linear-gradient(to bottom, #424242 0%, #232323 100%);
+    padding: 30px 40px 20px;
+    border-radius: 8px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+}
+
+.keys {
+    display: flex;
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+/* 白键样式 */
+.key.white {
+    width: calc(100% / 52); /* 52个白键 */
+    height: 100%;
+    background: linear-gradient(to bottom, #fff 0%, #eee 100%);
+    border: 1px solid #ccc;
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+    z-index: 1;
+    position: relative;
+}
+
+.key.white:hover {
+    background: linear-gradient(to bottom, #fff 0%, #f2f2f2 100%);
+}
+
+.key.white:active,
+.key.white.active {
+    background: linear-gradient(to bottom, #f2f2f2 0%, #e6e6e6 100%);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+    transform: translateY(1px);
+}
+
+/* 黑键样式 */
+.key.black {
+    position: absolute;
+    width: calc((100% / 52) * 0.65);
+    height: 65%;
+    background: linear-gradient(to bottom, #000 0%, #222 100%);
+    border-radius: 0 0 3px 3px;
+    z-index: 2;
+    box-shadow: inset 0px -1px 2px rgba(255,255,255,0.2),
+                0 2px 3px rgba(0,0,0,0.6);
+}
+
+.key.black:hover {
+    background: linear-gradient(to bottom, #222 0%, #333 100%);
+}
+
+.key.black:active,
+.key.black.active {
+    background: linear-gradient(to bottom, #333 0%, #444 100%);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.8);
+    transform: translateY(1px);
+}
+
+/* 黑键位置计算 */
+.key.black[data-note*
+
+#hint {
+    margin-top: 20px;
+    font-size: 18px;
+    color: #666;
+} 

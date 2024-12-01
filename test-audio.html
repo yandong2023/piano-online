@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Piano Audio Test</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+</head>
+<body>
+    <h1>Piano Audio Test</h1>
+    <button onclick="playA4()">Play A4</button>
+    <button onclick="playF4()">Play F4</button>
+    <button onclick="playC4()">Play C4</button>
+
+    <script>
+        let sampler = null;
+
+        async function initAudio() {
+            await Tone.start();
+            console.log("Audio context started");
+            
+            sampler = new Tone.Sampler({
+                urls: {
+                    "A4": "/samples/piano-A4.mp3",
+                    "F4": "/samples/piano-F4.mp3",
+                    "C4": "/samples/piano-C4.mp3"
+                },
+                onload: () => {
+                    console.log("Samples loaded successfully");
+                }
+            }).toDestination();
+        }
+
+        async function playA4() {
+            if (!sampler) await initAudio();
+            sampler.triggerAttackRelease("A4", 1);
+        }
+
+        async function playF4() {
+            if (!sampler) await initAudio();
+            sampler.triggerAttackRelease("F4", 1);
+        }
+
+        async function playC4() {
+            if (!sampler) await initAudio();
+            sampler.triggerAttackRelease("C4", 1);
+        }
+    </script>
+</body>
+</html>

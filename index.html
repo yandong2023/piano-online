@@ -3,215 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>钢琴在线 - 在线钢琴学习平台</title>
+    <title>Piano Online - 专业的在线钢琴学习平台</title>
     <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .nav-link {
-            position: relative;
-            color: #1a202c;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            transition: color 0.3s;
-        }
-
-        .nav-link:hover {
-            color: #4299e1;
-        }
-
-        .nav-link.active {
-            color: #4299e1;
-        }
-
-        .nav-link.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background-color: #4299e1;
-        }
-
-        .piano-container {
-            background: #1a1a1a;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 2rem;
-            position: relative;
-            height: 300px;
-            overflow: hidden;
-        }
-
-        .octave {
-            position: relative;
-            height: 100%;
-            display: inline-block;
-            width: 33.33%; /* 3个八度 */
-        }
-
-        .piano-key {
-            position: relative;
-            transition: all 0.1s;
-            cursor: pointer;
-            box-sizing: border-box;
-        }
-        
-        .white {
-            background: white;
-            height: 100%;
-            width: 14.28%; /* 7个白键 */
-            display: inline-block;
-            border-radius: 0 0 4px 4px;
-            border: 1px solid #ccc;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            vertical-align: top;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .black {
-            background: #333;
-            height: 60%;
-            width: 8%;
-            position: absolute;
-            top: 0;
-            z-index: 2;
-            border-radius: 0 0 3px 3px;
-            border: 1px solid #000;
-        }
-        
-        .key-label {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 12px;
-            color: #666;
-            pointer-events: none;
-            font-weight: 500;
-            text-align: center;
-            width: 100%;
-        }
-        
-        .black .key-label {
-            color: #fff;
-            bottom: 20px;
-        }
-
-        .piano-key.key-pressed {
-            background: #e2e8f0;
-        }
-
-        .black.key-pressed {
-            background: #4a5568;
-        }
-
-        /* 添加键盘按下效果 */
-        .piano-key:active {
-            transform: translateY(2px);
-        }
-
-        .white:active {
-            background: #f0f0f0;
-        }
-
-        .black:active {
-            background: #222;
-        }
-
-        .button {
-            background-color: #4299e1;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            transition: background-color 0.3s;
-        }
-
-        .button:hover {
-            background-color: #3182ce;
-        }
-
-        #piano {
-            position: relative;
-            height: 200px;
-            background: #f8fafc;
-            border-radius: 8px;
-            padding: 10px;
-            box-shadow: 0 -2px 2px rgba(0, 0, 0, 0.1) inset;
-            border: 1px solid #e2e8f0;
-            margin: 0 auto;
-            width: 100%;
-        }
-    </style>
+    <link rel="stylesheet" href="css/piano.css">
+    <script src="https://unpkg.com/tone@14.7.77/build/Tone.js"></script>
+    <script type="module" src="js/practice-songs.js"></script>
+    <script type="module" src="js/piano-audio.js"></script>
+    <script type="module" src="js/practice-mode.js"></script>
+    <script type="module" src="js/piano.js"></script>
 </head>
 <body>
-    <div class="container mx-auto px-4 py-8">
-        <!-- 顶部导航 -->
-        <nav class="flex justify-between items-center mb-8 bg-white rounded-lg shadow-lg p-4">
-            <a href="index.html" class="flex items-center space-x-2">
-                <img src="images/logo.svg" alt="钢琴在线" class="h-8">
+    <!-- 导航栏 -->
+    <nav class="nav-bar">
+        <div class="nav-container">
+            <a href="#" class="nav-logo">
+                <img src="images/logo.svg" alt="Piano Online Logo" class="logo-img">
             </a>
-            <div class="flex space-x-4">
-                <a href="index.html" class="nav-link active">钢琴</a>
-                <a href="piano.html" class="nav-link">练习</a>
-                <a href="#" class="nav-link">设置</a>
+            <div class="nav-links">
+                <a href="#features">功能</a>
+                <a href="#how-it-works">教程</a>
+                <a href="#testimonials">评价</a>
+                <a href="#faq">常见问题</a>
             </div>
-        </nav>
-
-        <!-- 钢琴区域 -->
-        <div class="piano-wrapper bg-white rounded-lg shadow-lg p-6 mb-8">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4">虚拟钢琴</h2>
-            <div id="piano" class="piano-container"></div>
+            <button class="nav-cta">开始练习</button>
         </div>
+    </nav>
 
-        <!-- 练习模式区域 -->
-        <div id="practice-area" class="bg-white rounded-lg shadow-lg p-6 mb-8">
-            <div class="flex justify-between items-center mb-4">
-                <select id="songSelect" class="border rounded px-4 py-2">
-                    <option value="twinkle">小星星</option>
-                    <option value="twoTigers">两只老虎</option>
-                    <option value="canon">卡农</option>
-                </select>
-                <button id="startPractice" class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600">
-                    开始练习
-                </button>
-            </div>
-            <div id="noteDisplay" class="text-center text-2xl font-bold text-gray-700 mt-4">
-                选择一首歌开始练习
+    <!-- Hero 区域 -->
+    <section class="hero">
+        <div class="hero-container">
+            <h1>体验专业的钢琴演奏</h1>
+            <p class="hero-subtitle">在任何地方，随时开始您的钢琴学习之旅</p>
+            <div class="hero-cta">
+                <button class="btn primary">立即开始</button>
+                <button class="btn secondary">了解更多</button>
             </div>
         </div>
+    </section>
 
-        <!-- 键盘提示区域 -->
-        <div class="keyboard-container bg-white rounded-lg shadow-lg p-6">
-            <h3 class="text-xl font-semibold mb-4">键盘映射</h3>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <h4 class="font-medium mb-2">低音区 (Z-M)</h4>
-                    <p class="text-gray-600">Z=C3, X=D3, C=E3, V=F3, B=G3, N=A3, M=B3</p>
+    <!-- 主要练习区域 -->
+    <section class="practice-section">
+        <div class="container">
+            <div class="controls">
+                <div class="sustain-control">
+                    <label class="switch">
+                        <input type="checkbox" id="sustain-toggle">
+                        <span class="slider round"></span>
+                    </label>
+                    <span>延音踏板</span>
                 </div>
-                <div>
-                    <h4 class="font-medium mb-2">中音区 (A-L)</h4>
-                    <p class="text-gray-600">A=C4, S=D4, D=E4, F=F4, G=G4, H=A4, J=B4, K=C5</p>
+
+                <div class="song-select-container">
+                    <select id="song-select" class="song-select">
+                        <option value="">选择曲目...</option>
+                    </select>
+                </div>
+
+                <div class="practice-buttons">
+                    <button id="start-practice" class="btn primary">开始练习</button>
+                    <button id="stop-practice" class="btn danger hidden">停止练习</button>
+                </div>
+
+                <div id="practice-stats" class="stats-panel hidden">
+                    <div class="stat-item">
+                        <span id="correct-notes">正确: 0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span id="wrong-notes">错误: 0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span id="progress">进度: 0%</span>
+                    </div>
+                </div>
+
+                <div id="key-hint" class="key-hint hidden">
+                    <div class="hint-text">下一个键:</div>
+                    <div class="hint-key"></div>
+                    <div class="hint-note"></div>
+                </div>
+
+                <div class="piano-container">
+                    <div class="keys"></div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- 脚本加载 -->
-    <script src="piano.js" defer></script>
+    <!-- Features 区域 -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2>专业功能，助您进步</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🎹</div>
+                    <h3>真实钢琴音色</h3>
+                    <p>采用专业录音的钢琴音源，还原真实演奏体验</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📝</div>
+                    <h3>智能练习系统</h3>
+                    <p>根据您的水平自动调整练习难度</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎼</div>
+                    <h3>丰富曲库</h3>
+                    <p>包含从入门到高级的各类经典曲目</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it Works 区域 -->
+    <section id="how-it-works" class="how-it-works">
+        <div class="container">
+            <h2>如何使用</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>选择曲目</h3>
+                    <p>从我们精心准备的曲库中选择适合您水平的曲目</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>跟随提示</h3>
+                    <p>按照屏幕上的提示，一步步完成练习</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>查看进度</h3>
+                    <p>实时追踪您的练习进度，掌握学习效果</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials 区域 -->
+    <section id="testimonials" class="testimonials">
+        <div class="container">
+            <h2>用户评价</h2>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        "这是我用过最好的在线钢琴学习平台，界面简洁，功能强大。"
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-name">张小明</div>
+                        <div class="author-title">钢琴爱好者</div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        "智能提示系统让我的练习效率提高了很多。"
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-name">李华</div>
+                        <div class="author-title">音乐教师</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ 区域 -->
+    <section id="faq" class="faq">
+        <div class="container">
+            <h2>常见问题</h2>
+            <div class="faq-list">
+                <div class="faq-item">
+                    <div class="faq-question">需要真实的钢琴键盘吗？</div>
+                    <div class="faq-answer">不需要，您可以使用电脑键盘进行练习。当然，如果有MIDI键盘会获得更好的体验。</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">适合零基础学习吗？</div>
+                    <div class="faq-answer">完全适合！我们的课程从最基础的内容开始，循序渐进地引导您学习。</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer 区域 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Piano Online</h3>
+                    <p>让钢琴学习变得简单有趣</p>
+                </div>
+                <div class="footer-section">
+                    <h3>联系我们</h3>
+                    <p>Email: contact@piano-online.com</p>
+                </div>
+                <div class="footer-section">
+                    <h3>关注我们</h3>
+                    <div class="social-links">
+                        <a href="#" class="social-link">微信</a>
+                        <a href="#" class="social-link">微博</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Piano Online. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>

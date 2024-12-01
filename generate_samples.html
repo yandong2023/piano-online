@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate Piano Samples</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+</head>
+<body>
+    <h1>Piano Sample Generator</h1>
+    <button onclick="generateSamples()">Generate All Missing Samples</button>
+    <div id="status"></div>
+    <div id="audio-container"></div>
+
+    <script>
+        // 生成完整的音符列表
+        function generateNoteList() {
+            // 只生成缺失的音符
+            return [
+                'D3', 'D4', 'D5',  // D音符
+                'G3', 'G4', 'G5'   // G音符
+            ];
+        }
+
+        const allNotes = generateNoteList();
+        let synth = null;
+
+        async function initSynth() {
+            await Tone.start();
+            
+            synth = new Tone.Synth({
+                oscillator: {
+                    type: "custom",
+                    partials: [1, 0.5, 0.3, 0.2, 0.1] // 基频和泛音的比例
+                },
+                envelope: {
+                    attack: 0.002,
+                    decay: 0.2,
+                    sustain: 0.2,
+                    release: 1.5
+                }
+            }).toDestination();
+
+            // 添加一些混响效果
+            const reverb = new Tone.Reverb({
+                decay: 1.5,
+                wet: 0.2
+            }).toDestination();
+            
+            synth.connect(reverb);
+        }
+
+        async function generateNote(note) {
+            const status = document.getElementById('status');
+            status.textContent = `Playing ${note}...`;
+            
+            // 创建音频元素
+            const audio = document.createElement('audio');
+            audio.controls = true;
+            document.getElementById('audio-container').appendChild(audio);
+            
+            // 播放音符
+            synth.triggerAttackRelease(note, 2);
+            
+            // 等待音符播放完成
+            await new Promise(resolve => setTimeout(resolve, 2500));
+            
+            status.textContent = `Generated ${note}. Please right-click the audio element and save it as piano-${note}.mp3`;
+        }
+
+        async function generateSamples() {
+            if (!synth) {
+                await initSynth();
+            }
+            
+            for (const note of allNotes) {
+                await generateNote(note);
+            }
+            
+            document.getElementById('status').textContent = 'All notes played! Please save each audio file and move them to the samples directory.';
+        }
+    </script>
+</body>
+</html>
