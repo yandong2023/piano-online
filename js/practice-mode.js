@@ -14,9 +14,16 @@ class PracticeMode {
         this.correctNotes = 0;
         this.wrongNotes = 0;
         
-        // 直接初始化，不等待 DOMContentLoaded
-        this.initializeUI();
-        this.setupEventListeners();
+        // 等待 DOM 加载完成后再初始化
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                this.initializeUI();
+                this.setupEventListeners();
+            });
+        } else {
+            this.initializeUI();
+            this.setupEventListeners();
+        }
     }
 
     initializeUI() {
