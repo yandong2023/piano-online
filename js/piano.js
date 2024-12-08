@@ -1,5 +1,6 @@
 import PianoAudio from './piano-audio.js';
 import { PracticeMode } from './practice-mode.js';
+import { PianoRecorder } from './recorder.js';
 
 console.log('piano.js loaded');
 
@@ -13,47 +14,43 @@ class Piano {
         this.recordedNotes = [];
         this.onNotePlay = null;
         this.keyMap = {
-            // 低音区 (C3-B3)
-            'z': 'C3',
-            'x': 'D3',
-            'c': 'E3',
-            'v': 'F3',
-            'b': 'G3',
-            'n': 'A3',
-            'm': 'B3',
-            // 中音区 (C4-B4)
-            'a': 'C4',
-            's': 'D4',
-            'd': 'E4',
-            'f': 'F4',
-            'g': 'G4',
-            'h': 'A4',
-            'j': 'B4',
-            // 高音区 (C5-C6)
-            'q': 'C5',
-            'w': 'D5',
-            'e': 'E5',
-            'r': 'F5',
-            't': 'G5',
-            'y': 'A5',
-            'u': 'B5',
-            'i': 'C6',
-            // 黑键
-            '1': 'C#3',
-            '2': 'D#3',
-            '3': 'F#3',
-            '4': 'G#3',
-            '5': 'A#3',
-            '6': 'C#4',
-            '7': 'D#4',
-            '8': 'F#4',
-            '9': 'G#4',
-            '0': 'A#4',
-            'k': 'C#5',
-            'l': 'D#5',
-            ';': 'F#5',
-            "'": 'G#5',
-            '[': 'A#5'
+            'a': 'C3',
+            's': 'D3',
+            'd': 'E3',
+            'f': 'F3',
+            'g': 'G3',
+            'h': 'A3',
+            'j': 'B3',
+            'k': 'C4',
+            'l': 'D4',
+            ';': 'E4',
+            'q': 'F4',
+            'w': 'G4',
+            'e': 'A4',
+            'r': 'B4',
+            't': 'C5',
+            'y': 'D5',
+            'u': 'E5',
+            'i': 'F5',
+            'o': 'G5',
+            'p': 'A5',
+            'w1': 'C#3',
+            'w2': 'D#3',
+            'w4': 'F#3',
+            'w5': 'G#3',
+            'w6': 'A#3',
+            'w8': 'C#4',
+            'w9': 'D#4',
+            'w-': 'F#4',
+            'w=': 'G#4',
+            'z': 'A#4',
+            'x': 'C#5',
+            'c': 'D#5',
+            'v': 'F#5',
+            'b': 'G#5',
+            'n': 'A#5',
+            'm': 'B5',
+            ',': 'C6'
         };
         
         // 等待 DOM 加载完成后再初始化
@@ -393,24 +390,37 @@ class Piano {
     handleCorrectKey() {}
 }
 
-// 创建一个全局的 piano 实例和 practiceMode 实例
+// 创建一个全局的 piano 实例、practiceMode 实例和 recorder 实例
 let piano;
 let practiceMode;
+let recorder;
 
 async function initializeApp() {
     try {
         console.log('Initializing app...');
-        piano = new Piano();
-        await piano.audio.init(); // 等待音频初始化完成
         
         // 确保 DOM 已经完全加载
         if (document.readyState !== 'complete') {
+            console.log('Waiting for DOM to load...');
             await new Promise(resolve => {
                 window.addEventListener('load', resolve);
             });
+            console.log('DOM loaded');
         }
+
+        // 等待一小段时间确保所有元素都已渲染
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        console.log('Creating Piano instance');
+        piano = new Piano();
+        console.log('Initializing audio');
+        await piano.audio.init(); // 等待音频初始化完成
         
+        console.log('Creating PracticeMode instance');
         practiceMode = new PracticeMode(piano);
+        
+        console.log('Creating PianoRecorder instance');
+        recorder = new PianoRecorder(piano);
         
         // 添加点击事件来恢复 AudioContext
         const resumeAudio = async () => {
@@ -429,9 +439,19 @@ async function initializeApp() {
             document.addEventListener(event, resumeAudio, { once: true });
         });
 
-        console.log('Piano initialized successfully');
+        // 在页面卸载时释放资源
+        window.addEventListener('beforeunload', () => {
+            if (recorder) {
+                recorder.dispose();
+            }
+            if (piano?.audio?.context) {
+                piano.audio.context.close();
+            }
+        });
+
+        console.log('App initialized successfully');
     } catch (error) {
-        console.error('Failed to initialize piano:', error);
+        console.error('Failed to initialize app:', error);
     }
 }
 
@@ -442,7 +462,7 @@ if (document.readyState === 'loading') {
         initializeApp();
     });
 } else {
-    console.log('DOM already loaded, initializing immediately');
+    console.log('DOM already loaded');
     initializeApp();
 }
 

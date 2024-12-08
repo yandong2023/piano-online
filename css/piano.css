@@ -1373,3 +1373,166 @@ body {
     font-weight: 500;
     color: var(--text-primary);
 }
+
+/* 录音控制 */
+.recording-controls {
+    margin: 15px 0;
+    text-align: center;
+}
+
+.record-icon {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #ff4444;
+    margin-right: 5px;
+}
+
+.record-icon.recording {
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { opacity: 1; }
+}
+
+#recording-status {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #666;
+}
+
+/* 录音控制区域样式 */
+.recording-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin: var(--spacing-md) 0;
+}
+
+.btn.record {
+    background: #FF3B30;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.btn.record:hover {
+    background: #FF453A;
+}
+
+.record-icon {
+    font-size: 12px;
+}
+
+.recording-time {
+    font-family: monospace;
+    font-size: 16px;
+    color: var(--text-secondary);
+}
+
+/* 分享面板 */
+.share-panel {
+    margin: 20px auto;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    max-width: 500px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.share-panel h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+    text-align: center;
+}
+
+.share-preview {
+    margin: 15px 0;
+}
+
+.share-preview audio {
+    width: 100%;
+    border-radius: 8px;
+}
+
+.share-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn.social {
+    padding: 8px 16px;
+    border-radius: 20px;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    min-width: 120px;
+}
+
+.btn.social:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn.social.jike {
+    background-color: #FFE411;
+    color: #000;
+}
+
+.btn.social.twitter {
+    background-color: #1DA1F2;
+}
+
+.btn.social.download {
+    background-color: #28a745;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* 分享面板样式 */
+.share-panel {
+    background: var(--background-white);
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-lg);
+    margin: var(--spacing-md) 0;
+    box-shadow: var(--shadow-md);
+}
+
+.share-options {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.btn.share {
+    background: var(--secondary-color);
+    color: white;
+    flex: 1;
+}
+
+.btn.share:hover {
+    background: #6665DB;
+}
+
+.audio-preview {
+    width: 100%;
+    padding: var(--spacing-md);
+    background: var(--background-light);
+    border-radius: var(--border-radius-sm);
+}
+
+/* 通用工具类 */
+.hidden {
+    display: none !important;
+}

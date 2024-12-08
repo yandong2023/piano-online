@@ -1,5 +1,5 @@
 // 导出的歌曲数据
-export const songs = {
+const songs = {
     'happy-birthday': {
         name: '生日快乐',
         difficulty: 1,
@@ -152,7 +152,7 @@ export const songs = {
 };
 
 // 计算分数的函数
-export function calculateScore(correctNotes, wrongNotes) {
+function calculateScore(correctNotes, wrongNotes) {
     if (correctNotes === 0 && wrongNotes === 0) return 0;
     
     const totalNotes = correctNotes + wrongNotes;
@@ -169,6 +169,9 @@ export function calculateScore(correctNotes, wrongNotes) {
     // 确保分数在0-100之间
     return Math.max(0, Math.min(100, score));
 }
+
+// 导出
+export { songs, calculateScore };
 
 console.log('practice-songs.js loaded, available songs:', Object.keys(songs));
 console.log('Songs object:', songs);

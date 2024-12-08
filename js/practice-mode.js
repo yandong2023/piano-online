@@ -13,17 +13,9 @@ class PracticeMode {
         this.startTime = null;
         this.correctNotes = 0;
         this.wrongNotes = 0;
-        
+
         // 等待 DOM 加载完成后再初始化
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => {
-                this.initializeUI();
-                this.setupEventListeners();
-            });
-        } else {
-            this.initializeUI();
-            this.setupEventListeners();
-        }
+        this.initializeUI();
     }
 
     initializeUI() {
@@ -38,52 +30,67 @@ class PracticeMode {
         this.wrongNotesSpan = document.getElementById('wrong-notes');
         this.progressSpan = document.getElementById('progress');
         this.keyHint = document.getElementById('key-hint');
-        this.keyHintKey = this.keyHint.querySelector('.hint-key');
-        this.keyHintNote = this.keyHint.querySelector('.hint-note');
 
-        console.log('Found song-select element:', this.songSelect);
-        console.log('Available songs:', Object.keys(songs));
-
-        if (!this.songSelect) {
-            console.error('Could not find song-select element');
+        // 检查是否找到所有必需的元素
+        if (!this.songSelect || !this.startButton || !this.stopButton || !this.practiceStats) {
+            console.error('Some required UI elements are missing');
+            console.log('songSelect:', this.songSelect);
+            console.log('startButton:', this.startButton);
+            console.log('stopButton:', this.stopButton);
+            console.log('practiceStats:', this.practiceStats);
             return;
         }
 
-        // 清空现有选项
-        this.songSelect.innerHTML = '';
-        console.log('Cleared existing options');
-
-        // 添加默认选项
-        const defaultOption = document.createElement('option');
-        defaultOption.value = '';
-        defaultOption.textContent = '选择曲目...';
-        this.songSelect.appendChild(defaultOption);
-        console.log('Added default option');
-
-        // 添加歌曲选项
-        try {
-            Object.entries(songs).forEach(([id, song]) => {
-                console.log('Adding song:', id, song.name);
-                const option = document.createElement('option');
-                option.value = id;
-                option.textContent = `${song.name} (难度: ${song.difficulty})`;
-                this.songSelect.appendChild(option);
-            });
-        } catch (error) {
-            console.error('Error adding song options:', error);
-        }
-
-        console.log('Final song-select options:', this.songSelect.innerHTML);
-        console.log('Number of options:', this.songSelect.options.length);
+        // 获取提示元素
+        this.keyHintKey = this.keyHint?.querySelector('.hint-key');
+        this.keyHintNote = this.keyHint?.querySelector('.hint-note');
 
         // 初始状态下禁用开始按钮
-        if (this.startButton) {
-            this.startButton.disabled = true;
-        }
+        this.startButton.disabled = true;
+
+        // 设置事件监听器
+        this.setupEventListeners();
+    }
+
+    setupEventListeners() {
+        // 歌曲选择事件
+        this.songSelect.addEventListener('change', (e) => {
+            const songId = e.target.value;
+            if (songId && songs[songId]) {
+                this.currentSong = {
+                    ...songs[songId],
+                    id: songId
+                };
+                this.startButton.disabled = false;
+                console.log('Selected song:', this.currentSong);
+            } else {
+                this.currentSong = null;
+                this.startButton.disabled = true;
+            }
+        });
+
+        // 开始按钮事件
+        this.startButton.addEventListener('click', () => {
+            console.log('Start button clicked');
+            this.startPractice();
+        });
+        
+        // 停止按钮事件
+        this.stopButton.addEventListener('click', () => {
+            console.log('Stop button clicked');
+            this.stopPractice();
+        });
+
+        // 设置钢琴的音符回调
+        this.piano.onNotePlay = (note) => this.handleNotePlayed(note);
     }
 
     startPractice() {
-        if (!this.currentSong) return;
+        console.log('Starting practice with song:', this.currentSong);
+        if (!this.currentSong) {
+            console.error('No song selected');
+            return;
+        }
 
         this.isPlaying = true;
         this.currentNoteIndex = 0;
@@ -102,6 +109,8 @@ class PracticeMode {
         
         // 显示第一个音符提示
         this.updateKeyHint();
+        
+        console.log('Practice started successfully');
     }
 
     stopPractice() {
@@ -158,14 +167,21 @@ class PracticeMode {
     }
 
     updateKeyHint() {
+        console.log('Updating key hint, isPlaying:', this.isPlaying, 'currentSong:', this.currentSong);
         if (!this.isPlaying || !this.currentSong) return;
 
         const currentNote = this.currentSong.notes[this.currentNoteIndex];
         const keyboardKey = this.getKeyboardKeyForNote(currentNote);
+        console.log('Current note:', currentNote, 'Keyboard key:', keyboardKey);
 
         // 更新提示文本
-        this.keyHintKey.textContent = keyboardKey;
-        this.keyHintNote.textContent = currentNote;
+        if (this.keyHintKey && this.keyHintNote) {
+            this.keyHintKey.textContent = keyboardKey;
+            this.keyHintNote.textContent = currentNote;
+            console.log('Updated hint text successfully');
+        } else {
+            console.error('Key hint elements not found');
+        }
 
         // 高亮当前键
         this.highlightKey(currentNote);
@@ -199,42 +215,6 @@ class PracticeMode {
         keys.forEach(key => {
             key.classList.remove('current');
         });
-    }
-
-    setupEventListeners() {
-        if (this.startButton) {
-            this.startButton.addEventListener('click', () => this.startPractice());
-        }
-
-        if (this.stopButton) {
-            this.stopButton.addEventListener('click', () => this.stopPractice());
-        }
-
-        if (this.songSelect) {
-            this.songSelect.addEventListener('change', () => {
-                const selectedSongId = this.songSelect.value;
-                if (selectedSongId && songs[selectedSongId]) {
-                    this.currentSong = songs[selectedSongId];
-                    if (this.startButton) {
-                        this.startButton.disabled = false;
-                    }
-                } else {
-                    this.currentSong = null;
-                    if (this.startButton) {
-                        this.startButton.disabled = true;
-                    }
-                }
-            });
-        }
-
-        // 设置钢琴按键回调
-        if (this.piano) {
-            this.piano.onNotePlay = (note) => {
-                if (this.isPlaying) {
-                    this.handleNotePlayed(note);
-                }
-            };
-        }
     }
 }
 
