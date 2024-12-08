@@ -25,6 +25,13 @@
     --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
     --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
+    
+    /* Piano specific variables */
+    --piano-width: 100%;
+    --white-key-width: 35px;
+    --black-key-width: 22px;
+    --white-key-height: 160px;
+    --black-key-height: 100px;
 }
 
 /* 全局重置 */
@@ -221,11 +228,11 @@ body {
     --transition: all 0.3s ease;
     
     /* Piano specific variables */
-    --piano-width: 1200px;
-    --white-key-width: 50px;
-    --black-key-width: 30px;
-    --white-key-height: 180px;
-    --black-key-height: 120px;
+    --piano-width: 100%;
+    --white-key-width: 35px;
+    --black-key-width: 22px;
+    --white-key-height: 160px;
+    --black-key-height: 100px;
 }
 
 /* Reset & Base Styles */
@@ -285,14 +292,15 @@ body {
 }
 
 /* Control Panel */
-.control-panel {
+.controls {
+    max-width: 1200px;
+    margin: 0 auto var(--spacing-lg);
+    padding: var(--spacing-lg);
     background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(20px);
-    border-radius: 18px;
-    padding: var(--spacing-lg);
-    margin-bottom: var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
     border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-md);
 }
 
 .control-group {
@@ -538,7 +546,7 @@ body {
 .piano-container {
     background: linear-gradient(to bottom, #1A1A1A, #2A2A2A);
     border-radius: 24px;
-    padding: var(--spacing-lg);
+    padding: var(--spacing-lg) 40px;
     margin-bottom: var(--spacing-xl);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
     overflow: hidden;
@@ -559,6 +567,9 @@ body {
     display: flex;
     position: relative;
     height: var(--white-key-height);
+    justify-content: center;
+    padding: 0 10px;
+    gap: 1px;
 }
 
 .key {
@@ -566,31 +577,34 @@ body {
     cursor: pointer;
     transition: var(--transition);
     will-change: transform;
+    user-select: none;
 }
 
 .key::before {
     content: attr(data-note);
     position: absolute;
-    bottom: 10px;
+    bottom: 6px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 12px;
+    font-size: 10px;
     color: #666;
+    white-space: nowrap;
 }
 
 .key::after {
     content: attr(data-keyboard);
     position: absolute;
-    bottom: 30px;
+    bottom: 22px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 14px;
+    font-size: 11px;
     font-weight: bold;
     color: #333;
     text-transform: uppercase;
-    background: rgba(255, 255, 255, 0.8);
-    padding: 2px 4px;
-    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 1px 3px;
+    border-radius: 2px;
+    white-space: nowrap;
 }
 
 .key.black::after {
@@ -601,9 +615,9 @@ body {
 .key.white {
     width: var(--white-key-width);
     height: var(--white-key-height);
-    background: linear-gradient(to bottom, #fff 0%, #eee 100%);
-    border: 1px solid #ccc;
-    border-radius: 0 0 5px 5px;
+    background: linear-gradient(to bottom, #fff 0%, #f8f8f8 100%);
+    border: 1px solid #ddd;
+    border-radius: 0 0 4px 4px;
     z-index: 1;
 }
 
@@ -620,23 +634,18 @@ body {
 
 .key.white.active,
 .key.white:active {
-    background: linear-gradient(to bottom, #f0f0f0 0%, #e3e3e3 100%);
-    transform: translateY(2px);
+    background: linear-gradient(to bottom, #f0f0f0 0%, #e8e8e8 100%);
+    transform: translateY(1px);
 }
 
 .key.black.active,
 .key.black:active {
     background: linear-gradient(to bottom, #000 0%, #222 100%);
-    transform: translateY(2px);
-}
-
-.key.white[data-note$="C"]::before,
-.key.white[data-note$="F"]::before {
-    content: attr(data-note) " (" attr(data-solfege) ")";
+    transform: translateY(1px);
 }
 
 .key.hint {
-    background-color: rgba(255, 217, 0, 0.2);
+    background-color: rgba(255, 217, 0, 0.15);
 }
 
 /* 键提示样式 */

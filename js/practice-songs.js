@@ -102,6 +102,40 @@ const songs = {
         tempo: 120,
         maxScore: 100
     },
+    'jasmine': {
+        name: '茉莉花',
+        difficulty: 3,
+        notes: [
+            'E4', 'G4', 'A4', 'C5',
+            'B4', 'A4', 'G4', 'E4',
+            'G4', 'A4', 'G4', 'E4',
+            'D4', 'E4',
+            
+            'E4', 'G4', 'A4', 'C5',
+            'B4', 'A4', 'G4', 'E4',
+            'G4', 'E4', 'D4', 'C4',
+            'C4', 'E4'
+        ],
+        tempo: 90,
+        maxScore: 100
+    },
+    'butterfly-lovers': {
+        name: '梁祝',
+        difficulty: 4,
+        notes: [
+            'E4', 'G4', 'A4', 'B4',
+            'C5', 'B4', 'A4', 'G4',
+            'E4', 'G4', 'A4', 'B4',
+            'C5', 'E5',
+            
+            'D5', 'C5', 'B4', 'A4',
+            'G4', 'E4', 'D4', 'E4',
+            'G4', 'A4', 'G4', 'E4',
+            'D4', 'E4'
+        ],
+        tempo: 80,
+        maxScore: 100
+    },
     'fur-elise': {
         name: '致爱丽丝',
         difficulty: 3,

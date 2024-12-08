@@ -22,6 +22,12 @@ class PianoAudio {
 
         try {
             console.log('Initializing PianoAudio');
+            
+            // 检查 Tone 是否已定义
+            if (typeof Tone === 'undefined') {
+                throw new Error('Tone.js not loaded');
+            }
+
             // 创建 AudioContext
             this.context = new (window.AudioContext || window.webkitAudioContext)();
             
@@ -32,47 +38,10 @@ class PianoAudio {
             // 设置音量
             this.setVolume(this.volume);
             
-            console.log('AudioContext created, waiting for user interaction');
+            console.log('AudioContext created');
             
-            // 添加点击事件来恢复 AudioContext
-            const resumeAudioContext = async () => {
-                if (this.context.state === 'suspended') {
-                    await this.context.resume();
-                    console.log('AudioContext resumed successfully');
-                }
-            };
-            
-            // 添加多个事件监听器来恢复 AudioContext
-            const events = ['click', 'keydown', 'touchstart'];
-            events.forEach(event => {
-                document.addEventListener(event, resumeAudioContext, { once: true });
-            });
-            
-            // Start audio context
-            await Tone.start();
-            console.log("Audio context started");
-            
-            // Initialize sampler
-            this.sampler = new Tone.Sampler({
-                urls: {
-                    "C4": "piano-C4.mp3",
-                    "G4": "piano-G4.mp3",
-                    "C5": "piano-C5.mp3"
-                },
-                baseUrl: "samples/",
-                onload: () => {
-                    console.log("Sampler loaded");
-                    this.initialized = true;
-                }
-            }).toDestination();
-
-            // Add reverb
-            this.reverb = new Tone.Reverb({
-                decay: 2,
-                wet: 0.2
-            }).toDestination();
-            this.sampler.connect(this.reverb);
-
+            // 标记为已初始化
+            this.initialized = true;
             return true;
         } catch (error) {
             console.error('Failed to initialize audio:', error);
@@ -104,9 +73,14 @@ class PianoAudio {
         });
     }
 
-    playNote(note) {
+    async playNote(note) {
         console.log('Playing note:', note);
         try {
+            // 如果音频上下文被暂停，等待用户交互时会自动恢复
+            if (this.context && this.context.state === 'suspended') {
+                await this.context.resume();
+            }
+            
             if (this.sampler && this.sampler.loaded) {
                 this.sampler.triggerAttack(note);
             } else {

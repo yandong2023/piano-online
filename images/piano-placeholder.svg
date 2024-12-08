@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="1200" height="200" viewBox="0 0 1200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="200" fill="#F5F5F5"/>
+    <!-- White keys -->
+    <g>
+        <rect x="0" y="0" width="1200" height="200" fill="white" stroke="#E0E0E0"/>
+        <!-- Simplified white keys pattern -->
+        <path d="M0 0 v200 M171.4 0 v200 M342.8 0 v200 M514.2 0 v200 M685.6 0 v200 M857 0 v200 M1028.4 0 v200 M1200 0 v200" stroke="#E0E0E0"/>
+    </g>
+    <!-- Black keys pattern -->
+    <g fill="#333">
+        <rect x="114.3" y="0" width="40" height="120"/>
+        <rect x="285.7" y="0" width="40" height="120"/>
+        <rect x="457.1" y="0" width="40" height="120"/>
+        <rect x="628.5" y="0" width="40" height="120"/>
+        <rect x="800" y="0" width="40" height="120"/>
+        <rect x="971.4" y="0" width="40" height="120"/>
+        <rect x="1142.8" y="0" width="40" height="120"/>
+    </g>
+</svg>

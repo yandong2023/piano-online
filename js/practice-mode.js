@@ -98,11 +98,21 @@ class PracticeMode {
         this.wrongNotes = 0;
         this.startTime = Date.now();
 
-        // 显示停止按钮
-        this.startButton.classList.add('hidden');
-        this.stopButton.classList.remove('hidden');
-        this.practiceStats.classList.remove('hidden');
-        this.keyHint.classList.remove('hidden');
+        // 显示/隐藏相应的按钮
+        if (this.startButton && this.stopButton) {
+            this.startButton.style.display = 'none';
+            this.stopButton.style.display = 'block';
+        }
+
+        // 显示统计面板
+        if (this.practiceStats) {
+            this.practiceStats.style.display = 'block';
+        }
+
+        // 显示提示面板
+        if (this.keyHint) {
+            this.keyHint.style.display = 'block';
+        }
 
         // 更新统计信息
         this.updateStats();
@@ -114,13 +124,24 @@ class PracticeMode {
     }
 
     stopPractice() {
+        console.log('Stopping practice');
         this.isPlaying = false;
         
-        // 显示开始按钮
-        this.startButton.classList.remove('hidden');
-        this.stopButton.classList.add('hidden');
-        this.practiceStats.classList.add('hidden');
-        this.keyHint.classList.add('hidden');
+        // 显示/隐藏相应的按钮
+        if (this.startButton && this.stopButton) {
+            this.startButton.style.display = 'block';
+            this.stopButton.style.display = 'none';
+        }
+
+        // 隐藏统计面板
+        if (this.practiceStats) {
+            this.practiceStats.style.display = 'none';
+        }
+
+        // 隐藏提示面板
+        if (this.keyHint) {
+            this.keyHint.style.display = 'none';
+        }
 
         // 移除所有键的高亮
         this.clearKeyHighlight();
@@ -130,6 +151,8 @@ class PracticeMode {
             const score = calculateScore(this.correctNotes, this.wrongNotes);
             alert(`练习结束!\n正确: ${this.correctNotes}\n错误: ${this.wrongNotes}\n得分: ${score}`);
         }
+        
+        console.log('Practice stopped successfully');
     }
 
     handleNotePlayed(note) {

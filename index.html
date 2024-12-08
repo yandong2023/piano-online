@@ -3,30 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>钢琴在线玩 - 88键全键盘模拟钢琴 - html5网页钢琴</title>
-    <meta name="description" content="免费在线钢琴模拟器，支持88键全键盘演奏，真实钢琴音色，适合钢琴初学者练习。提供经典曲目练习功能，即学即用，无需下载安装。">
-    <meta name="keywords" content="在线钢琴,网页钢琴,钢琴模拟器,在线弹钢琴,钢琴教学,钢琴练习,88键钢琴,html5钢琴">
+    <title>在线钢琴模拟器 - 免费学习钢琴 | 88键全键盘练习 - Piano Online</title>
+    <meta name="description" content="专业在线钢琴模拟器，支持88键全键盘演奏，真实钢琴音色。适合钢琴初学者练习，提供智能提示系统，经典曲目练习，让您轻松学习钢琴。">
+    <meta name="keywords" content="在线钢琴,钢琴模拟器,钢琴练习,在线弹钢琴,钢琴教学,88键钢琴,钢琴学习,网页钢琴">
     <meta name="author" content="Piano Online">
     <meta name="robots" content="index,follow">
     <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
     <link rel="canonical" href="https://piano-online.com" />
     <link rel="stylesheet" href="css/piano.css">
-    <script src="https://unpkg.com/tone@14.7.77/build/Tone.js"></script>
-    <script type="module" src="js/practice-songs.js"></script>
-    <script type="module" src="js/piano-audio.js"></script>
-    <script type="module" src="js/practice-mode.js"></script>
-    <script type="module" src="js/recorder.js"></script>
-    <script type="module" src="js/piano.js"></script>
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-EYGD99YB4Y"></script>
+    <!-- 使用本地的 Tone.js -->
+<script src="js/libs/Tone.js"></script>
+<script type="module" src="js/main.js"></script>
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-EYGD99YB4Y');
+    // 等待用户交互来初始化音频
+    document.addEventListener('DOMContentLoaded', () => {
+        const initAudio = async () => {
+            try {
+                await Tone.start();
+                console.log('Tone.js initialized successfully');
+                document.removeEventListener('click', initAudio);
+                document.removeEventListener('keydown', initAudio);
+            } catch (error) {
+                console.error('Failed to initialize Tone.js:', error);
+            }
+        };
+        
+        // 添加用户交互监听器来初始化音频
+        document.addEventListener('click', initAudio);
+        document.addEventListener('keydown', initAudio);
+    });
 </script>
-<meta name="google-site-verification" content="Fii3zK2l54f0uFP7RPwdn7BEqB4OjC2jc_07JxSs1uI" />
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-EYGD99YB4Y"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-EYGD99YB4Y');
+    </script>
+    <meta name="google-site-verification" content="Fii3zK2l54f0uFP7RPwdn7BEqB4OjC2jc_07JxSs1uI" />
 </head>
 <body>
     <!-- 导航栏 -->
@@ -80,34 +96,55 @@
                         <!-- 难度 2 -->
                         <option value="ode-to-joy">欢乐颂</option>
                         <option value="jingle-bells">铃儿响叮当</option>
+                        <!-- 难度 3 -->
+                        <option value="jasmine">茉莉花</option>
+                        <option value="fur-elise">致爱丽丝</option>
+                        <!-- 难度 4 -->
+                        <option value="butterfly-lovers">梁祝</option>
                     </select>
                 </div>
 
                 <div class="practice-buttons">
                     <button id="start-practice" class="btn primary">开始练习</button>
-                    <button id="stop-practice" class="btn danger hidden">停止练习</button>
+                    <button id="stop-practice" class="btn danger" style="display: none;">停止练习</button>
                 </div>
 
-                <div id="practice-stats" class="stats-panel hidden">
-                    <div class="stat-item">
-                        <span id="correct-notes">正确: 0</span>
+                <div class="practice-info" style="display: flex; gap: 20px; align-items: center;">
+                    <div id="key-hint" class="key-hint" style="display: none; margin: 0;">
+                        <div class="hint-text">下一个键:</div>
+                        <div class="hint-key"></div>
+                        <div class="hint-note"></div>
                     </div>
-                    <div class="stat-item">
-                        <span id="wrong-notes">错误: 0</span>
-                    </div>
-                    <div class="stat-item">
-                        <span id="progress">进度: 0%</span>
+
+                    <div id="practice-stats" class="stats-panel" style="display: none;">
+                        <div class="stat-item">
+                            <span id="correct-notes">正确: 0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span id="wrong-notes">错误: 0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span id="progress">进度: 0%</span>
+                        </div>
                     </div>
                 </div>
 
-                <div id="key-hint" class="key-hint hidden">
-                    <div class="hint-text">下一个键:</div>
-                    <div class="hint-key"></div>
-                    <div class="hint-note"></div>
-                </div>
-
-                <div class="piano-container">
+                <div class="piano-container" style="min-height: 240px; max-width: 1200px; margin: 0 auto;">
                     <div class="keys"></div>
+                    <style>
+                        .piano-container {
+                            background: linear-gradient(to bottom, #1A1A1A, #2A2A2A);
+                            border-radius: 24px;
+                            padding: var(--spacing-lg);
+                            margin-bottom: var(--spacing-xl);
+                            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+                            overflow: hidden;
+                        }
+                        .keys {
+                            min-height: 180px; /* Same as white key height */
+                            background: linear-gradient(to bottom, #1A1A1A, #2A2A2A);
+                        }
+                    </style>
                 </div>
             </div>
         </div>
