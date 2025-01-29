@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /assets/
+Disallow: /css/
+Disallow: /js/
+
+Sitemap: https://pianooline.cc/sitemap.xml
