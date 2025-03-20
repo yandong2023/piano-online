@@ -1,7 +1,7 @@
 /* 基础变量和重置样式 */
 :root {
     /* 颜色系统 */
-    --primary-color: #007AFF;
+    --primary-color: #3a89e6;
     --secondary-color: #5856D6;
     --text-primary: #1D1D1F;
     --text-secondary: #86868B;
@@ -217,7 +217,7 @@ body {
 
 /* 基础样式 */
 :root {
-    --primary-color: #007AFF;
+    --primary-color: #3a89e6;
     --secondary-color: #5856D6;
     --success-color: #34C759;
     --danger-color: #FF3B30;
@@ -968,7 +968,7 @@ body {
 }
 
 .step p {
-    color: var(--text-secondary);
+    color: #a0a0a0;  /* 使用柔和的灰色 */
     font-size: 16px;
     line-height: 1.6;
 }
@@ -1655,17 +1655,11 @@ body {
 
 /* 教程区域样式 */
 .step-detail {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.08);
     border-radius: 12px;
     padding: 20px;
     margin-top: 15px;
-    color: rgba(255, 255, 255, 0.9);
-}
-
-.step-detail ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+    color: #a0a0a0;  /* 使用柔和的灰色 */
 }
 
 .step-detail li {
@@ -1674,191 +1668,111 @@ body {
     position: relative;
     font-size: 1.1em;
     line-height: 1.8;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    color: #a0a0a0;  /* 使用柔和的灰色 */
 }
 
 .step-detail li:before {
     content: "•";
-    color: #4a9eff;
+    color: #3a89e6;
     position: absolute;
     left: 0;
     font-size: 1.2em;
 }
 
-/* FAQ样式优化 */
-.faq-item {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
-    padding: 25px;
-    transition: transform 0.3s ease;
-    color: #ffffff;
+.how-it-works .step p {
+    color: #a0a0a0;  /* 使用柔和的灰色 */
+    font-size: 1.05em;
+    line-height: 1.7;
 }
 
-.faq-item:hover {
-    transform: translateY(-5px);
-    background: rgba(255, 255, 255, 0.15);
-}
-
-.faq-item h3 {
-    color: #4a9eff;
+.how-it-works .step h3 {
+    color: #3a89e6;  /* 保持标题为蓝色 */
     margin-bottom: 15px;
-    font-size: 1.3em;
-    font-weight: 600;
+    font-size: 1.25em;
+    font-weight: 500;
 }
 
-.faq-item p {
-    line-height: 1.8;
-    font-size: 1.1em;
-    color: rgba(255, 255, 255, 0.9);
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-/* 全局标题样式优化 */
-.how-it-works h2,
-.faq h2 {
-    color: #4a9eff;
-    font-size: 2em;
+.how-it-works h2 {
+    color: #3a89e6;  /* 保持主标题为蓝色 */
+    font-size: 1.8em;
     margin-bottom: 1.5em;
     text-align: center;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-/* 背景优化 */
-.how-it-works,
-.faq {
-    background: linear-gradient(to bottom, #121212, #1a1a1a);
-    padding: var(--spacing-xl) 0;
-}
-
-/* 添加浏览器兼容性 */
-.theory-card,
-.faq-item,
-.step-detail {
-    -webkit-background-clip: padding-box;
-    background-clip: padding-box;
+    font-weight: 500;
 }
 
 /* 钢琴简谱知识样式 */
-.music-theory {
-    background: linear-gradient(to bottom, #1A1A1A, #2A2A2A);
-    padding: var(--spacing-xl) 0;
-}
-
-.theory-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-    margin-top: 40px;
-}
-
 .theory-card {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.08);
     border-radius: 16px;
     padding: 25px;
     transition: transform 0.3s ease;
-}
-
-.theory-card:hover {
-    transform: translateY(-5px);
+    color: rgba(255, 255, 255, 0.75);  
 }
 
 .theory-card h3 {
-    color: var(--primary-color);
+    color: #3a89e6;  
     margin-bottom: 20px;
-}
-
-.theory-content p {
-    margin: 10px 0;
-    line-height: 1.6;
-}
-
-/* 钢琴简谱知识样式优化 */
-.theory-card {
-    background: rgba(255, 255, 255, 0.1);  /* 增加背景透明度 */
-    border-radius: 16px;
-    padding: 25px;
-    transition: transform 0.3s ease;
-    color: #ffffff;  /* 确保文字为白色 */
-}
-
-.theory-card h3 {
-    color: #4a9eff;  /* 使用亮蓝色突出标题 */
-    margin-bottom: 20px;
-    font-size: 1.3em;
-    font-weight: 600;
+    font-size: 1.25em;
+    font-weight: 500;  
 }
 
 .theory-content {
-    color: rgba(255, 255, 255, 0.9);  /* 内容文字使用接近白色 */
+    color: rgba(255, 255, 255, 0.75);  
 }
 
 .theory-content p {
     margin: 12px 0;
-    line-height: 1.8;
-    font-size: 1.1em;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);  /* 添加文字阴影提高可读性 */
+    line-height: 1.7;
+    font-size: 1.05em;
+    text-shadow: none;  
 }
 
-/* 鼠标悬停时增加对比度 */
-.theory-card:hover {
-    transform: translateY(-5px);
-    background: rgba(255, 255, 255, 0.15);  /* 悬停时背景更亮 */
-}
-
-/* 确保整个区域背景足够深 */
-.music-theory {
-    background: linear-gradient(to bottom, #121212, #1a1a1a);
-    padding: var(--spacing-xl) 0;
-}
-
-.music-theory h2 {
-    color: #4a9eff;  /* 区域标题也使用亮蓝色 */
-    font-size: 2em;
-    margin-bottom: 1.5em;
-    text-align: center;
-}
-
-/* FAQ样式优化 */
-.faq-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-    margin-top: 40px;
-}
-
+/* FAQ样式 */
 .faq-item {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.08);
     border-radius: 16px;
     padding: 25px;
     transition: transform 0.3s ease;
-}
-
-.faq-item:hover {
-    transform: translateY(-5px);
+    color: rgba(255, 255, 255, 0.75);  
 }
 
 .faq-item h3 {
-    color: var(--primary-color);
+    color: #3a89e6;  
     margin-bottom: 15px;
+    font-size: 1.25em;
+    font-weight: 500;  
 }
 
 .faq-item p {
-    line-height: 1.6;
+    line-height: 1.7;
+    font-size: 1.05em;
+    color: rgba(255, 255, 255, 0.75);  
+    text-shadow: none;  
 }
 
-/* 响应式优化 */
-@media (max-width: 768px) {
-    .theory-grid,
-    .faq-grid {
-        grid-template-columns: 1fr;
-    }
+/* 全局标题样式 */
+.how-it-works h2,
+.faq h2,
+.music-theory h2 {
+    color: #3a89e6;  
+    font-size: 1.8em;
+    margin-bottom: 1.5em;
+    text-align: center;
+    text-shadow: none;  
+    font-weight: 500;  
+}
 
-    .step-detail {
-        padding: 15px;
-    }
+/* 背景 */
+.how-it-works,
+.faq,
+.music-theory {
+    background: linear-gradient(to bottom, #1a1a1a, #222222);  
+    padding: var(--spacing-xl) 0;
+}
 
-    .theory-card,
-    .faq-item {
-        padding: 20px;
-    }
+/* 鼠标悬停效果 */
+.theory-card:hover,
+.faq-item:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.1);  
 }
