@@ -1652,3 +1652,155 @@ body {
     color: var(--text-primary);
     text-decoration: underline;
 }
+
+/* 教程区域样式 */
+.step-detail {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 15px;
+}
+
+.step-detail ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.step-detail li {
+    margin: 10px 0;
+    padding-left: 20px;
+    position: relative;
+}
+
+.step-detail li:before {
+    content: "•";
+    color: var(--primary-color);
+    position: absolute;
+    left: 0;
+}
+
+/* 钢琴简谱知识样式 */
+.music-theory {
+    background: linear-gradient(to bottom, #1A1A1A, #2A2A2A);
+    padding: var(--spacing-xl) 0;
+}
+
+.theory-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.theory-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 25px;
+    transition: transform 0.3s ease;
+}
+
+.theory-card:hover {
+    transform: translateY(-5px);
+}
+
+.theory-card h3 {
+    color: var(--primary-color);
+    margin-bottom: 20px;
+}
+
+.theory-content p {
+    margin: 10px 0;
+    line-height: 1.6;
+}
+
+/* 钢琴简谱知识样式优化 */
+.theory-card {
+    background: rgba(255, 255, 255, 0.1);  /* 增加背景透明度 */
+    border-radius: 16px;
+    padding: 25px;
+    transition: transform 0.3s ease;
+    color: #ffffff;  /* 确保文字为白色 */
+}
+
+.theory-card h3 {
+    color: #4a9eff;  /* 使用亮蓝色突出标题 */
+    margin-bottom: 20px;
+    font-size: 1.3em;
+    font-weight: 600;
+}
+
+.theory-content {
+    color: rgba(255, 255, 255, 0.9);  /* 内容文字使用接近白色 */
+}
+
+.theory-content p {
+    margin: 12px 0;
+    line-height: 1.8;
+    font-size: 1.1em;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);  /* 添加文字阴影提高可读性 */
+}
+
+/* 鼠标悬停时增加对比度 */
+.theory-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.15);  /* 悬停时背景更亮 */
+}
+
+/* 确保整个区域背景足够深 */
+.music-theory {
+    background: linear-gradient(to bottom, #121212, #1a1a1a);
+    padding: var(--spacing-xl) 0;
+}
+
+.music-theory h2 {
+    color: #4a9eff;  /* 区域标题也使用亮蓝色 */
+    font-size: 2em;
+    margin-bottom: 1.5em;
+    text-align: center;
+}
+
+/* FAQ样式优化 */
+.faq-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.faq-item {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 25px;
+    transition: transform 0.3s ease;
+}
+
+.faq-item:hover {
+    transform: translateY(-5px);
+}
+
+.faq-item h3 {
+    color: var(--primary-color);
+    margin-bottom: 15px;
+}
+
+.faq-item p {
+    line-height: 1.6;
+}
+
+/* 响应式优化 */
+@media (max-width: 768px) {
+    .theory-grid,
+    .faq-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .step-detail {
+        padding: 15px;
+    }
+
+    .theory-card,
+    .faq-item {
+        padding: 20px;
+    }
+}
