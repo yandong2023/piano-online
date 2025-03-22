@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>钢琴练习 - Piano Online</title>
+    <meta name="description" content="在线钢琴练习工具，包括节拍器、音阶练习、和弦练习等功能，帮助你提高钢琴演奏水平。">
+    <meta name="keywords" content="钢琴练习,节拍器,音阶练习,和弦练习,钢琴训练">
+    <link rel="stylesheet" href="/css/piano.css">
+    <link rel="stylesheet" href="/css/practice.css">
+    <!-- 添加 VexFlow 库 -->
+    <script src="https://cdn.jsdelivr.net/npm/vexflow@4.2.2/build/cjs/vexflow.js"></script>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="nav-bar">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">
+                <img src="/images/logo.svg" alt="Piano Online Logo" class="logo-img">
+            </a>
+            <div class="nav-links">
+                <a href="/">首页</a>
+                <a href="/tutorials.html">教程</a>
+                <a href="/practice.html" class="active">练习</a>
+                <a href="/about.html">关于</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 练习工具区 -->
+    <section class="practice-tools">
+        <div class="container">
+            <h1>钢琴练习工具</h1>
+            
+            <!-- 节拍器 -->
+            <div class="tool-card">
+                <h2>节拍器</h2>
+                <div class="metronome">
+                    <div class="metronome-display">
+                        <span class="tempo">120</span> BPM
+                    </div>
+                    <div class="metronome-controls">
+                        <button class="tempo-down">-</button>
+                        <button class="start-stop">开始</button>
+                        <button class="tempo-up">+</button>
+                    </div>
+                    <div class="time-signature">
+                        <select>
+                            <option value="2">2/4</option>
+                            <option value="3">3/4</option>
+                            <option value="4" selected>4/4</option>
+                            <option value="6">6/8</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 音阶练习 -->
+            <div class="tool-card">
+                <h2>音阶练习</h2>
+                <div class="scale-practice">
+                    <div class="scale-selector">
+                        <select class="key-select">
+                            <option value="C">C 大调</option>
+                            <option value="G">G 大调</option>
+                            <option value="D">D 大调</option>
+                            <option value="A">A 大调</option>
+                            <option value="E">E 大调</option>
+                            <option value="B">B 大调</option>
+                            <option value="F">F 大调</option>
+                        </select>
+                    </div>
+                    <div class="scale-display">
+                        <div class="keyboard"></div>
+                    </div>
+                    <button class="play-scale">播放音阶</button>
+                </div>
+            </div>
+
+            <!-- 和弦练习 -->
+            <div class="tool-card">
+                <h2>和弦练习</h2>
+                <div class="chord-practice">
+                    <div class="chord-selector">
+                        <select class="chord-type">
+                            <option value="major">大三和弦</option>
+                            <option value="minor">小三和弦</option>
+                            <option value="diminished">减三和弦</option>
+                            <option value="augmented">增三和弦</option>
+                            <option value="dominant7">属七和弦</option>
+                        </select>
+                    </div>
+                    <div class="chord-display">
+                        <div class="keyboard"></div>
+                    </div>
+                    <button class="play-chord">播放和弦</button>
+                </div>
+            </div>
+
+            <!-- 视奏训练 -->
+            <div class="tool-card">
+                <h2>视奏训练</h2>
+                <div class="sight-reading">
+                    <div class="difficulty-selector">
+                        <select>
+                            <option value="beginner">初级</option>
+                            <option value="intermediate">中级</option>
+                            <option value="advanced">高级</option>
+                        </select>
+                    </div>
+                    <div id="staff-container" class="staff-display">
+                        <!-- 五线谱显示区域 -->
+                    </div>
+                    <button class="generate-notes">生成新谱例</button>
+                    <div class="note-info">
+                        <p>点击"生成新谱例"按钮来练习视奏</p>
+                        <p class="current-notes"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 练习建议 -->
+    <section class="practice-tips">
+        <div class="container">
+            <h2>练习建议</h2>
+            <div class="tips-grid">
+                <div class="tip-card">
+                    <h3>制定练习计划</h3>
+                    <ul>
+                        <li>设定明确的练习目标</li>
+                        <li>合理安排练习时间</li>
+                        <li>循序渐进提高难度</li>
+                        <li>保持练习记录</li>
+                    </ul>
+                </div>
+
+                <div class="tip-card">
+                    <h3>正确的练习方法</h3>
+                    <ul>
+                        <li>从慢速开始练习</li>
+                        <li>使用节拍器保持节奏</li>
+                        <li>分手练习困难片段</li>
+                        <li>注意指法规范</li>
+                    </ul>
+                </div>
+
+                <div class="tip-card">
+                    <h3>避免常见错误</h3>
+                    <ul>
+                        <li>不要急于求成</li>
+                        <li>保持正确的坐姿</li>
+                        <li>适时休息放松</li>
+                        <li>注意听音辨音</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2025 Piano Online. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="/js/audio-generator.js"></script>
+    <script src="/js/staff.js"></script>
+    <script src="/js/practice.js"></script>
+</body>
+</html>

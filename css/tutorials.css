@@ -1,0 +1,147 @@
+/* 教程页面特定样式 */
+.tutorials-hero {
+    background-color: #f8f9fa;
+    padding: 60px 0;
+    text-align: center;
+}
+
+.tutorials-hero h1 {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.tutorials-hero .subtitle {
+    font-size: 1.2rem;
+    color: #666;
+}
+
+.tutorial-categories {
+    padding: 60px 0;
+}
+
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.category-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+}
+
+.category-card h2 {
+    color: #333;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
+}
+
+.tutorial-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.tutorial-list li {
+    margin-bottom: 15px;
+}
+
+.tutorial-list a {
+    color: #444;
+    text-decoration: none;
+    display: block;
+    padding: 8px 0;
+    transition: color 0.3s;
+}
+
+.tutorial-list a:hover {
+    color: #007bff;
+}
+
+.latest-tutorials {
+    background-color: #f8f9fa;
+    padding: 60px 0;
+}
+
+.latest-tutorials h2 {
+    text-align: center;
+    margin-bottom: 40px;
+    color: #333;
+    font-size: 2rem;
+}
+
+.tutorials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+}
+
+.tutorial-card {
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+}
+
+.tutorial-card:hover {
+    transform: translateY(-5px);
+}
+
+.tutorial-content {
+    padding: 20px;
+}
+
+.tutorial-content h3 {
+    color: #333;
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+}
+
+.tutorial-content p {
+    color: #666;
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.read-more {
+    display: inline-block;
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.read-more:hover {
+    color: #0056b3;
+}
+
+.site-footer {
+    background-color: #333;
+    color: #fff;
+    padding: 20px 0;
+    text-align: center;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .category-grid,
+    .tutorials-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .tutorials-hero h1 {
+        font-size: 2rem;
+    }
+    
+    .category-card,
+    .tutorial-card {
+        margin-bottom: 20px;
+    }
+}

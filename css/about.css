@@ -1,0 +1,295 @@
+/* 关于页面样式 */
+.about-hero {
+    background-color: #007bff;
+    color: white;
+    padding: 80px 0;
+    text-align: center;
+}
+
+.about-hero h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+}
+
+.mission-statement {
+    font-size: 1.2rem;
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* 我们的优势 */
+.our-advantages {
+    padding: 80px 0;
+    background-color: #f8f9fa;
+}
+
+.our-advantages h2 {
+    text-align: center;
+    color: #333;
+    font-size: 2.5rem;
+    margin-bottom: 50px;
+}
+
+.advantages-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+.advantage-card {
+    background: white;
+    border-radius: 10px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+}
+
+.advantage-card:hover {
+    transform: translateY(-5px);
+}
+
+.advantage-icon {
+    font-size: 3rem;
+    margin-bottom: 20px;
+}
+
+.advantage-card h3 {
+    color: #333;
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+.advantage-card p {
+    color: #666;
+    line-height: 1.6;
+}
+
+/* 发展历程 */
+.our-history {
+    padding: 80px 0;
+    background-color: white;
+}
+
+.our-history h2 {
+    text-align: center;
+    color: #333;
+    font-size: 2.5rem;
+    margin-bottom: 50px;
+}
+
+.timeline {
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 100%;
+    background-color: #007bff;
+}
+
+.timeline-item {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin-bottom: 50px;
+    position: relative;
+}
+
+.year {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-weight: bold;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: -20px;
+}
+
+.event {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 30px;
+    width: calc(50% - 50px);
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    margin-top: 30px;
+}
+
+.timeline-item:nth-child(odd) .event {
+    margin-right: auto;
+}
+
+.timeline-item:nth-child(even) .event {
+    margin-left: auto;
+}
+
+.event h3 {
+    color: #333;
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+}
+
+.event p {
+    color: #666;
+    line-height: 1.6;
+}
+
+/* 联系我们 */
+.contact-us {
+    padding: 80px 0;
+    background-color: #f8f9fa;
+}
+
+.contact-us h2 {
+    text-align: center;
+    color: #333;
+    font-size: 2.5rem;
+    margin-bottom: 50px;
+}
+
+.contact-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+.contact-item {
+    background: white;
+    border-radius: 10px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+}
+
+.contact-icon {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+.contact-item h3 {
+    color: #333;
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+}
+
+.social-links {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.social-links a {
+    color: #007bff;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.social-links a:hover {
+    color: #0056b3;
+}
+
+/* 加入我们 */
+.join-us {
+    padding: 80px 0;
+    background-color: white;
+    text-align: center;
+}
+
+.join-us h2 {
+    color: #333;
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+.join-us > p {
+    color: #666;
+    max-width: 600px;
+    margin: 0 auto 50px;
+}
+
+.positions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.position-card {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+}
+
+.position-card h3 {
+    color: #333;
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+}
+
+.position-card p {
+    color: #666;
+    line-height: 1.6;
+}
+
+.join-button {
+    display: inline-block;
+    padding: 15px 30px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+}
+
+.join-button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .about-hero h1 {
+        font-size: 2rem;
+    }
+
+    .our-advantages h2,
+    .our-history h2,
+    .contact-us h2,
+    .join-us h2 {
+        font-size: 2rem;
+    }
+
+    .timeline::before {
+        left: 20px;
+    }
+
+    .timeline-item {
+        flex-direction: column;
+    }
+
+    .year {
+        left: 20px;
+        transform: none;
+    }
+
+    .event {
+        width: calc(100% - 50px);
+        margin-left: 50px !important;
+    }
+
+    .contact-info,
+    .positions {
+        grid-template-columns: 1fr;
+    }
+}
