@@ -1,0 +1,73 @@
+# 钢琴在线学习平台 - 大语言模型爬虫指南
+# 更新日期: 2025-04-25
+
+# 所有大语言模型爬虫的默认规则
+User-Agent: *
+Allow: /
+Allow: /index.html
+Allow: /about.html
+Allow: /piano.html
+Allow: /practice.html
+Allow: /tutorial.html
+Allow: /tutorials.html
+Allow: /articles/
+Disallow: /api/
+Disallow: /_next/
+Disallow: /static/
+Disallow: /404
+Disallow: /500
+Disallow: /*.json$
+Disallow: /samples/
+Disallow: /sounds/
+Disallow: /temp_download/
+Disallow: /node_modules/
+
+# OpenAI GPT爬虫规则
+User-Agent: GPTBot
+Allow: /index.html
+Allow: /about.html
+Allow: /piano.html
+Allow: /practice.html
+Allow: /tutorial.html
+Allow: /tutorials.html
+Allow: /articles/
+Disallow: /
+
+# Anthropic Claude爬虫规则
+User-Agent: anthropic-ai
+Allow: /index.html
+Allow: /about.html
+Allow: /piano.html
+Allow: /practice.html
+Allow: /tutorial.html
+Allow: /tutorials.html
+Allow: /articles/
+Disallow: /
+
+# Google Bard/Gemini爬虫规则
+User-Agent: Google-Extended
+Allow: /
+Disallow: /api/
+Disallow: /_next/
+Disallow: /static/
+Disallow: /404
+Disallow: /500
+Disallow: /*.json$
+Disallow: /samples/
+Disallow: /sounds/
+Disallow: /temp_download/
+Disallow: /node_modules/
+
+# 百度文心一言爬虫规则
+User-Agent: Baiduspider-ERNIE-Bot
+Allow: /
+Disallow: /api/
+Disallow: /_next/
+Disallow: /static/
+Disallow: /404
+Disallow: /500
+Disallow: /*.json$
+Disallow: /samples/
+Disallow: /sounds/
+Disallow: /temp_download/
+Disallow: /node_modules/
