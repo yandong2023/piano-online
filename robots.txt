@@ -1,7 +1,17 @@
 User-agent: *
 Allow: /
-Disallow: /assets/
-Disallow: /css/
-Disallow: /js/
 
-Sitemap: https://pianooline.cc/sitemap.xml
+# 允许搜索引擎索引所有内容
+Sitemap: https://piano-online.com/sitemap.xml
+
+# 禁止访问敏感目录
+Disallow: /admin/
+Disallow: /private/
+Disallow: /temp/
+Disallow: /*.log$
+
+# 允许访问静态资源
+Allow: /css/
+Allow: /js/
+Allow: /images/
+Allow: /samples/
