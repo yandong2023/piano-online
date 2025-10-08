@@ -2,6 +2,7 @@
 import { Piano } from './piano.js';
 import { PracticeMode } from './practice-mode.js';
 import { PianoRecorder } from './recorder.js';
+import { RhythmGame } from './rhythm-game.js';
 
 // 等待 DOM 完全加载
 document.addEventListener('DOMContentLoaded', async () => {
@@ -23,6 +24,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.log('Initializing Recorder...');
         const recorder = new PianoRecorder(piano);
         console.log('Recorder initialized');
+
+        // 4. 初始化节奏大师游戏
+        console.log('Initializing Rhythm Game...');
+        const rhythmGame = new RhythmGame(piano);
+        console.log('Rhythm Game initialized');
 
         console.log('All components initialized successfully');
     } catch (error) {

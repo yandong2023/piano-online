@@ -2810,3 +2810,297 @@ body {
         display: none;
     }
 }
+
+/* 节奏大师游戏样式 */
+.game-stats-panel {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 10px 20px;
+    border-radius: 8px;
+    color: white;
+}
+
+.game-stat-item {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.game-stat-item span {
+    color: #4CAF50;
+}
+
+/* 音符下落区域 */
+.note-drop-zone {
+    position: relative;
+    height: 500px;
+    background: linear-gradient(to bottom, #000, #333);
+    border-radius: 12px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.drop-lines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: space-around;
+    align-items: stretch;
+}
+
+.drop-line {
+    width: 2px;
+    background: rgba(255, 255, 255, 0.1);
+    position: relative;
+}
+
+.drop-line::after {
+    content: attr(data-note);
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.falling-notes {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+}
+
+.falling-note {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    animation: fall linear;
+    z-index: 10;
+}
+
+.falling-note.hit {
+    animation: hit 0.2s ease-out forwards !important;
+    z-index: 100 !important;
+}
+
+.falling-note.missed {
+    animation: missed 0.5s ease-out forwards;
+}
+
+@keyframes fall {
+    from {
+        top: -50px;
+        opacity: 1;
+    }
+    to {
+        top: 100%;
+        opacity: 0.8;
+    }
+}
+
+@keyframes hit {
+    0% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+        background: #4CAF50;
+        box-shadow: 0 0 10px #4CAF50;
+    }
+    30% {
+        transform: scale(1.5) rotate(180deg);
+        opacity: 1;
+        background: #FFEB3B;
+        box-shadow: 0 0 20px #FFEB3B;
+    }
+    60% {
+        transform: scale(2) rotate(360deg);
+        opacity: 0.5;
+        background: #FF9800;
+        box-shadow: 0 0 30px #FF9800;
+    }
+    100% {
+        transform: scale(0) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+@keyframes missed {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+}
+
+/* 游戏模式下的钢琴键样式 */
+.rhythm-mode .key {
+    transition: all 0.1s ease;
+}
+
+.rhythm-mode .key.active {
+    transform: scale(0.95);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+}
+
+.rhythm-mode .key.white.active {
+    background: linear-gradient(to bottom, #FFD700, #FFA500);
+}
+
+.rhythm-mode .key.black.active {
+    background: linear-gradient(to bottom, #FF6B6B, #FF4500);
+}
+
+/* 游戏结束弹窗 */
+.game-over-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.game-over-content {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+}
+
+.game-over-content h2 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.final-score {
+    font-size: 24px;
+    font-weight: bold;
+    color: #4CAF50;
+    margin-bottom: 20px;
+}
+
+.game-over-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+/* 连击效果 */
+.combo-effect {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #FFD700;
+    font-size: 24px;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    animation: comboPop 0.6s ease-out forwards;
+    pointer-events: none;
+    z-index: 20;
+}
+
+@keyframes comboPop {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
+    }
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.2);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1) translateY(-20px);
+    }
+}
+
+/* 游戏说明样式 */
+.game-instructions {
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+    text-align: center;
+}
+
+.game-instructions h3 {
+    color: #4CAF50;
+    margin-bottom: 15px;
+}
+
+.game-instructions p {
+    margin-bottom: 15px;
+    line-height: 1.6;
+}
+
+.key-mapping {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 15px 0;
+    flex-wrap: wrap;
+}
+
+.key-map-item {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.key-map-item .key {
+    background: #4CAF50;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .key-mapping {
+        gap: 10px;
+    }
+    
+    .key-map-item {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+    
+    .note-drop-zone {
+        height: 400px;
+    }
+    
+    .falling-note {
+        width: 35px;
+        height: 35px;
+        font-size: 12px;
+    }
+}

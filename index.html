@@ -112,6 +112,24 @@
                 <div class="practice-buttons">
                     <button id="start-practice" class="btn primary">开始练习</button>
                     <button id="stop-practice" class="btn danger" style="display: none;">停止练习</button>
+                    <button id="start-rhythm-game" class="btn secondary">节奏大师模式</button>
+                    <button id="stop-rhythm-game" class="btn danger" style="display: none;">结束游戏</button>
+                </div>
+
+                <div id="game-instructions" class="game-instructions" style="display: none;">
+                    <h3>🎮 游戏说明</h3>
+                    <p>音符会从上方下落，当音符到达底部的命中区域时，按下对应的钢琴键来消除音符！</p>
+                    <div class="key-mapping">
+                        <div class="key-map-item"><span class="key">A</span> → C (Do)</div>
+                        <div class="key-map-item"><span class="key">S</span> → D (Re)</div>
+                        <div class="key-map-item"><span class="key">D</span> → E (Mi)</div>
+                        <div class="key-map-item"><span class="key">F</span> → F (Fa)</div>
+                        <div class="key-map-item"><span class="key">G</span> → G (Sol)</div>
+                        <div class="key-map-item"><span class="key">H</span> → A (La)</div>
+                        <div class="key-map-item"><span class="key">J</span> → B (Si)</div>
+                        <div class="key-map-item"><span class="key">K</span> → C (高音Do)</div>
+                    </div>
+                    <p><strong>目标：</strong>尽可能多地命中音符，获得高分！错过太多音符会失去生命值。</p>
                 </div>
 
                 <div class="practice-info" style="display: flex; gap: 20px; align-items: center;">
@@ -132,9 +150,39 @@
                             <span id="progress">进度: 0%</span>
                         </div>
                     </div>
+
+                    <div id="game-stats" class="game-stats-panel" style="display: none;">
+                        <div class="game-stat-item">
+                            <span id="game-score">分数: 0</span>
+                        </div>
+                        <div class="game-stat-item">
+                            <span id="game-combo">连击: 0</span>
+                        </div>
+                        <div class="game-stat-item">
+                            <span id="game-lives">生命: 3</span>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="piano-container" style="min-height: 240px; max-width: 1200px; margin: 0 auto;">
+                    <!-- 音符下落区域 -->
+                    <div id="note-drop-zone" class="note-drop-zone" style="display: none;">
+                        <div class="drop-lines">
+                            <div class="drop-line" data-note="C"></div>
+                            <div class="drop-line" data-note="C#"></div>
+                            <div class="drop-line" data-note="D"></div>
+                            <div class="drop-line" data-note="D#"></div>
+                            <div class="drop-line" data-note="E"></div>
+                            <div class="drop-line" data-note="F"></div>
+                            <div class="drop-line" data-note="F#"></div>
+                            <div class="drop-line" data-note="G"></div>
+                            <div class="drop-line" data-note="G#"></div>
+                            <div class="drop-line" data-note="A"></div>
+                            <div class="drop-line" data-note="A#"></div>
+                            <div class="drop-line" data-note="B"></div>
+                        </div>
+                        <div id="falling-notes" class="falling-notes"></div>
+                    </div>
                     <div class="keys"></div>
                     <style>
                         .piano-container {
