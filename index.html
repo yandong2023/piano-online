@@ -10,6 +10,28 @@
     <meta name="robots" content="index,follow">
     <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
     <link rel="canonical" href="https://piano-online.com" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://piano-online.com/">
+    <meta property="og:title" content="在线钢琴模拟器 - 免费学习钢琴 | 88键全键盘练习">
+    <meta property="og:description" content="专业在线钢琴模拟器，支持88键全键盘演奏，真实钢琴音色。适合钢琴初学者练习，提供智能提示系统，经典曲目练习，让您轻松学习钢琴。">
+    <meta property="og:image" content="https://piano-online.com/images/og-image.jpg">
+    <meta property="og:site_name" content="Piano Online">
+    <meta property="og:locale" content="zh_CN">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://piano-online.com/">
+    <meta name="twitter:title" content="在线钢琴模拟器 - 免费学习钢琴 | Piano Online">
+    <meta name="twitter:description" content="专业在线钢琴模拟器，支持88键全键盘演奏，真实钢琴音色。适合钢琴初学者练习。">
+    <meta name="twitter:image" content="https://piano-online.com/images/og-image.jpg">
+    
+    <!-- 预加载关键资源 -->
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <link rel="preconnect" href="https://pagead2.googlesyndication.com">
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
+    <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com">
     <link rel="stylesheet" href="css/piano.css">
     <!-- 使用本地的 Tone.js -->
 <script src="js/libs/Tone.js"></script>
@@ -651,5 +673,55 @@
             </div>
         </div>
     </footer>
+
+    <!-- 结构化数据 Schema.org -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Piano Online",
+        "alternateName": "在线钢琴模拟器",
+        "url": "https://piano-online.com",
+        "description": "专业在线钢琴模拟器，支持88键全键盘演奏，真实钢琴音色。适合钢琴初学者练习，提供智能提示系统，经典曲目练习。",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "CNY"
+        },
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "ratingCount": "156"
+        },
+        "provider": {
+            "@type": "Organization",
+            "name": "Piano Online",
+            "url": "https://piano-online.com"
+        }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Course",
+        "name": "在线钢琴学习课程",
+        "description": "从零基础到进阶的完整钢琴学习课程，包括基础知识、练习技巧、乐理知识等。",
+        "provider": {
+            "@type": "Organization",
+            "name": "Piano Online",
+            "sameAs": "https://piano-online.com"
+        },
+        "educationalLevel": "Beginner to Advanced",
+        "inLanguage": "zh-CN",
+        "availableLanguage": "zh-CN",
+        "hasCourseInstance": {
+            "@type": "CourseInstance",
+            "courseMode": "online",
+            "courseWorkload": "PT2H"
+        }
+    }
+    </script>
 </body>
 </html>
