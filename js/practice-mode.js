@@ -159,23 +159,53 @@ class PracticeMode {
         if (!this.isPlaying || !this.currentSong) return;
 
         const expectedNote = this.currentSong.notes[this.currentNoteIndex];
+        const keyElement = this.piano.keys[note];
+
         if (note === expectedNote) {
             this.correctNotes++;
             this.currentNoteIndex++;
-            
+
+            // 显示成功视觉反馈
+            if (keyElement) {
+                keyElement.classList.add('success');
+                setTimeout(() => {
+                    keyElement.classList.remove('success');
+                }, 500);
+            }
+
             // 检查是否完成
             if (this.currentNoteIndex >= this.currentSong.notes.length) {
                 this.stopPractice();
-                alert('恭喜！你完成了这首曲子！');
+                this.showCompletionMessage();
                 return;
             }
         } else {
             this.wrongNotes++;
+
+            // 显示错误视觉反馈
+            if (keyElement) {
+                keyElement.classList.add('error');
+                setTimeout(() => {
+                    keyElement.classList.remove('error');
+                }, 400);
+            }
         }
 
         // 更新统计信息和提示
         this.updateStats();
         this.updateKeyHint();
+    }
+
+    showCompletionMessage() {
+        const accuracy = this.correctNotes / (this.correctNotes + this.wrongNotes) * 100;
+        const message = `
+            🎉 恭喜完成！
+
+            正确: ${this.correctNotes}
+            错误: ${this.wrongNotes}
+            准确率: ${accuracy.toFixed(1)}%
+        `;
+        alert(message);
     }
 
     updateStats() {
@@ -212,12 +242,29 @@ class PracticeMode {
 
     getKeyboardKeyForNote(note) {
         // 遍历钢琴的 keyMap 找到对应的键盘按键
+        const candidates = [];
         for (const [key, mappedNote] of Object.entries(this.piano.keyMap)) {
             if (mappedNote === note) {
-                return key;
+                candidates.push(key);
             }
         }
-        return '';
+
+        if (candidates.length === 0) {
+            return '';
+        }
+
+        const priority = (key) => {
+            if (/^[a-z]$/.test(key)) return 0;
+            if (/^[0-9]$/.test(key)) return 1;
+            return 2;
+        };
+
+        candidates.sort((a, b) => priority(a) - priority(b));
+
+        const chosenKey = candidates[0];
+        return chosenKey.length > 1 && chosenKey.startsWith('w')
+            ? chosenKey.substring(1)
+            : chosenKey.toUpperCase();
     }
 
     highlightKey(note) {

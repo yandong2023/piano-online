@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Piano UX Improvements Test Page</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-section h2 {
+            color: #1a73e8;
+            margin-top: 0;
+        }
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+        .checklist li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .checklist li:before {
+            content: '☐ ';
+            color: #999;
+            font-size: 1.2em;
+            margin-right: 10px;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+        .status.pass {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status.fail {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .status.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .actions {
+            margin-top: 15px;
+        }
+        .btn {
+            padding: 10px 20px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: #1a73e8;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #1557b0;
+        }
+        .btn-secondary {
+            background: #5f6368;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #3c4043;
+        }
+        .btn-success {
+            background: #34a853;
+            color: white;
+        }
+        .code {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎹 Piano Online - UX Improvements Test Page</h1>
+    <p><strong>Date:</strong> 2025-11-04</p>
+
+    <div class="test-section">
+        <h2>Quick Actions</h2>
+        <div class="actions">
+            <button class="btn btn-primary" onclick="window.open('index.html', '_blank')">
+                Open Main Site
+            </button>
+            <button class="btn btn-secondary" onclick="clearTutorial()">
+                Reset Tutorial
+            </button>
+            <button class="btn btn-success" onclick="showTestConsole()">
+                Open Console
+            </button>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>1. Layout Changes <span class="status pending">MANUAL TEST</span></h2>
+        <ul class="checklist">
+            <li>Piano keyboard visible on first screen (no scroll needed)</li>
+            <li>Hero section compressed to ~2 lines</li>
+            <li>Clear call-to-action: "按键盘上的字母键开始演奏"</li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Keyboard Labels <span class="status pending">MANUAL TEST</span></h2>
+        <ul class="checklist">
+            <li>White keys show letters: A, S, D, F, G, H, J, K, L</li>
+            <li>Black keys show numbers: 1, 2, 4, 5, 6, 8, 9</li>
+            <li>Labels are clear and readable</li>
+            <li>Labels don't overlap with key design</li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Tutorial Overlay <span class="status pending">MANUAL TEST</span></h2>
+        <ul class="checklist">
+            <li>Tutorial appears on first visit (~1 second delay)</li>
+            <li>Shows clear instruction: "按下键盘上的 A 键试试!"</li>
+            <li>Pressing A key triggers success feedback</li>
+            <li>"跳过" button closes tutorial</li>
+            <li>"开始体验" button closes tutorial</li>
+            <li>Tutorial doesn't appear on subsequent visits</li>
+        </ul>
+        <div class="code">
+            Test Command: localStorage.removeItem('piano-tutorial-completed')
+        </div>
+        <div class="actions">
+            <button class="btn btn-secondary" onclick="resetAndTest()">
+                Reset & Test Tutorial
+            </button>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. Simplified Terminology <span class="status pending">MANUAL TEST</span></h2>
+        <ul class="checklist">
+            <li>"延音踏板" → "声音延长 🎵"</li>
+            <li>"节奏大师模式" → "🎮 游戏模式"</li>
+            <li>"开始练习" → "✨ 跟着提示弹"</li>
+            <li>Tooltips appear on hover</li>
+            <li>Tooltips provide clear explanations</li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h2>5. Visual Feedback <span class="status pending">MANUAL TEST</span></h2>
+        <ul class="checklist">
+            <li>Correct key press: green glow animation</li>
+            <li>Incorrect key press: shake + red border</li>
+            <li>Animations are smooth and clear</li>
+            <li>Feedback is immediate</li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h2>6. Song Selection <span class="status pending">MANUAL TEST</span></h2>
+        <ul class="checklist">
+            <li>Songs labeled with emoji + difficulty</li>
+            <li>Example: "⭐ 小星星 (简单)"</li>
+            <li>Dropdown is easy to understand</li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h2>Browser Console Check</h2>
+        <div class="code">
+            Expected: No errors in console<br>
+            Check for: Piano initialized, Practice Mode initialized, Tutorial initialized
+        </div>
+        <div class="actions">
+            <button class="btn btn-primary" onclick="checkConsole()">
+                Check Status
+            </button>
+        </div>
+        <div id="console-output" style="margin-top: 10px;"></div>
+    </div>
+
+    <script>
+        function clearTutorial() {
+            localStorage.removeItem('piano-tutorial-completed');
+            alert('✓ Tutorial reset! Reload the main page to see it again.');
+        }
+
+        function showTestConsole() {
+            if (typeof window.pianoTutorial !== 'undefined') {
+                console.log('Tutorial instance:', window.pianoTutorial);
+                alert('Check browser console for tutorial details');
+            } else {
+                alert('Open index.html to access tutorial instance');
+            }
+        }
+
+        function resetAndTest() {
+            clearTutorial();
+            window.open('index.html', '_blank');
+        }
+
+        function checkConsole() {
+            const output = document.getElementById('console-output');
+            const hasSeenTutorial = localStorage.getItem('piano-tutorial-completed');
+
+            let html = '<div style="background: #f5f5f5; padding: 15px; border-radius: 4px;">';
+            html += '<strong>Status Check:</strong><br>';
+            html += `Tutorial Completed: ${hasSeenTutorial === 'true' ? 'Yes ✓' : 'No ✗'}<br>`;
+            html += `LocalStorage Keys: ${Object.keys(localStorage).length}<br>`;
+            html += '<br><em>Open index.html and check browser console for full details</em>';
+            html += '</div>';
+
+            output.innerHTML = html;
+        }
+
+        // Auto-check on page load
+        window.addEventListener('load', () => {
+            setTimeout(checkConsole, 500);
+        });
+    </script>
+</body>
+</html>

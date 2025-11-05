@@ -34,15 +34,16 @@ class Piano {
             'i': 'F5',
             'o': 'G5',
             'p': 'A5',
-            'w1': 'C#3',
-            'w2': 'D#3',
-            'w4': 'F#3',
-            'w5': 'G#3',
-            'w6': 'A#3',
-            'w8': 'C#4',
-            'w9': 'D#4',
-            'w-': 'F#4',
-            'w=': 'G#4',
+            '1': 'C#3',
+            '2': 'D#3',
+            '3': 'F#3',
+            '4': 'G#3',
+            '5': 'A#3',
+            '6': 'C#4',
+            '7': 'D#4',
+            '8': 'F#4',
+            '9': 'G#4',
+            '0': 'A#4',
             'z': 'A#4',
             'x': 'C#5',
             'c': 'D#5',
@@ -84,12 +85,6 @@ class Piano {
             'A': 'la',
             'B': 'si'
         };
-
-        // 反转 keyMap 以便查找音符对应的键盘按键
-        const reverseKeyMap = {};
-        for (const [key, note] of Object.entries(this.keyMap)) {
-            reverseKeyMap[note] = key;
-        }
 
         const notes = [
             { note: 'C3', type: 'white' },
@@ -135,20 +130,15 @@ class Piano {
             const key = document.createElement('div');
             key.className = `key ${type}`;
             key.dataset.note = note;
-            
+
             // Add solfege name
             const noteName = note.charAt(0);
             const solfege = solfegeMap[noteName];
             if (solfege) {
                 key.dataset.solfege = solfege;
             }
-            
-            // Add keyboard mapping
-            const keyboardKey = reverseKeyMap[note];
-            if (keyboardKey) {
-                key.dataset.keyboard = keyboardKey;
-            }
-            
+            // 更纯净的外观暂不显示键盘映射标签
+
             keysContainer.appendChild(key);
         });
     }
@@ -388,82 +378,6 @@ class Piano {
     updateKeyHint() {}
     startNewSong() {}
     handleCorrectKey() {}
-}
-
-// 创建一个全局的 piano 实例、practiceMode 实例和 recorder 实例
-let piano;
-let practiceMode;
-let recorder;
-
-async function initializeApp() {
-    try {
-        console.log('Initializing app...');
-        
-        // 确保 DOM 已经完全加载
-        if (document.readyState !== 'complete') {
-            console.log('Waiting for DOM to load...');
-            await new Promise(resolve => {
-                window.addEventListener('load', resolve);
-            });
-            console.log('DOM loaded');
-        }
-
-        // 等待一小段时间确保所有元素都已渲染
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-        console.log('Creating Piano instance');
-        piano = new Piano();
-        console.log('Initializing audio');
-        await piano.audio.init(); // 等待音频初始化完成
-        
-        console.log('Creating PracticeMode instance');
-        practiceMode = new PracticeMode(piano);
-        
-        console.log('Creating PianoRecorder instance');
-        recorder = new PianoRecorder(piano);
-        
-        // 添加点击事件来恢复 AudioContext
-        const resumeAudio = async () => {
-            if (piano?.audio?.context?.state === 'suspended') {
-                try {
-                    await piano.audio.context.resume();
-                    console.log('AudioContext resumed successfully');
-                } catch (error) {
-                    console.error('Failed to resume AudioContext:', error);
-                }
-            }
-        };
-
-        // 添加多个事件监听器来恢复 AudioContext
-        ['click', 'keydown', 'touchstart'].forEach(event => {
-            document.addEventListener(event, resumeAudio, { once: true });
-        });
-
-        // 在页面卸载时释放资源
-        window.addEventListener('beforeunload', () => {
-            if (recorder) {
-                recorder.dispose();
-            }
-            if (piano?.audio?.context) {
-                piano.audio.context.close();
-            }
-        });
-
-        console.log('App initialized successfully');
-    } catch (error) {
-        console.error('Failed to initialize app:', error);
-    }
-}
-
-// 等待 DOM 加载完成
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        console.log('DOMContentLoaded event fired');
-        initializeApp();
-    });
-} else {
-    console.log('DOM already loaded');
-    initializeApp();
 }
 
 function clearNoteHints() {

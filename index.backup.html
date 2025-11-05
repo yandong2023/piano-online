@@ -76,40 +76,6 @@
     <meta name="google-site-verification" content="Fii3zK2l54f0uFP7RPwdn7BEqB4OjC2jc_07JxSs1uI" />
 </head>
 <body>
-    <!-- 首次使用教程遮罩 -->
-    <div id="tutorial-overlay" class="tutorial-overlay" style="display: none;">
-        <div class="tutorial-content">
-            <h2>🎹 欢迎来到在线钢琴!</h2>
-            <p>这是一个用<strong>电脑键盘</strong>弹钢琴的网站</p>
-
-            <div class="tutorial-key-demo">A</div>
-            <p style="font-size: 1rem; color: #666;">现在按下键盘上的 A 键试试!</p>
-
-            <div class="tutorial-steps">
-                <div class="tutorial-step">
-                    <div class="tutorial-step-number">1</div>
-                    <h3>查看键盘标签</h3>
-                    <p>每个琴键上都标有对应的电脑按键</p>
-                </div>
-                <div class="tutorial-step">
-                    <div class="tutorial-step-number">2</div>
-                    <h3>选择歌曲</h3>
-                    <p>从下拉菜单中选择你想练习的曲目</p>
-                </div>
-                <div class="tutorial-step">
-                    <div class="tutorial-step-number">3</div>
-                    <h3>跟着提示弹</h3>
-                    <p>按下"跟着提示弹"按钮,跟随提示演奏</p>
-                </div>
-            </div>
-
-            <div class="tutorial-buttons">
-                <button class="tutorial-skip" id="tutorial-skip">跳过</button>
-                <button class="tutorial-start" id="tutorial-start">开始体验</button>
-            </div>
-        </div>
-    </div>
-
     <!-- 导航栏 -->
     <nav class="nav-bar">
         <div class="nav-container">
@@ -126,111 +92,78 @@
     </nav>
 
     <!-- Hero 区域 -->
-    <section class="hero" style="padding-top: 120px; min-height: auto;">
-        <div class="hero-container" style="max-width: 1200px; margin: 0 auto; text-align: center;">
-            <h1 style="font-size: 2.5rem; margin-bottom: 10px;">用电脑键盘弹钢琴 🎹</h1>
-            <p class="hero-subtitle" style="font-size: 1.2rem; margin-bottom: 20px;">按键盘上的字母键开始演奏 - 试试按 <kbd style="background: #4CAF50; color: white; padding: 4px 12px; border-radius: 4px; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">A</kbd> 键!</p>
+    <section class="hero">
+        <div class="hero-container">
+            <h1>体验专业的钢琴演奏</h1>
+            <p class="hero-subtitle">在任何地方，随时开始您的钢琴学习之旅</p>
+            <div class="hero-description">
+                <p>Piano Online是一个专业的在线钢琴学习平台，我们致力于让钢琴学习变得简单、有趣且人人可及。无论您是完全的初学者，还是想要提升演奏技巧的进阶者，都能在这里找到适合自己的学习内容。</p>
+                <p>通过先进的网页技术和专业的钢琴音源，我们为您提供近乎真实的钢琴演奏体验。您无需购买昂贵的钢琴，只需要一台电脑或平板设备，就能开始您的音乐之旅。</p>
+            </div>
+            <div class="hero-cta">
+                <a href="#practice-section" class="btn primary" onclick="document.querySelector('.practice-section').scrollIntoView({behavior: 'smooth'}); return false;">立即开始</a>
+                <a href="/tutorials.html" class="btn secondary">了解更多</a>
+            </div>
         </div>
     </section>
 
     <!-- 主要练习区域 -->
-    <section class="practice-section" style="padding-top: 20px;">
+    <section class="practice-section">
         <div class="container">
-            <!-- 钢琴键盘 - 移到最上方 -->
-            <div class="piano-container" style="min-height: 240px; max-width: 1200px; margin: 0 auto 30px auto;">
-                <!-- 音符下落区域 -->
-                <div id="note-drop-zone" class="note-drop-zone" style="display: none;">
-                    <div class="drop-lines">
-                        <div class="drop-line" data-note="C"></div>
-                        <div class="drop-line" data-note="C#"></div>
-                        <div class="drop-line" data-note="D"></div>
-                        <div class="drop-line" data-note="D#"></div>
-                        <div class="drop-line" data-note="E"></div>
-                        <div class="drop-line" data-note="F"></div>
-                        <div class="drop-line" data-note="F#"></div>
-                        <div class="drop-line" data-note="G"></div>
-                        <div class="drop-line" data-note="G#"></div>
-                        <div class="drop-line" data-note="A"></div>
-                        <div class="drop-line" data-note="A#"></div>
-                        <div class="drop-line" data-note="B"></div>
-                    </div>
-                    <div id="falling-notes" class="falling-notes"></div>
-                </div>
-                <div class="keys"></div>
-                <style>
-                    .piano-container {
-                        background: linear-gradient(to bottom, #1A1A1A, #2A2A2A);
-                        border-radius: 24px;
-                        padding: var(--spacing-lg);
-                        margin-bottom: var(--spacing-xl);
-                        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-                        overflow: hidden;
-                    }
-                    .keys {
-                        min-height: 180px; /* Same as white key height */
-                        background: linear-gradient(to bottom, #1A1A1A, #2A2A2A);
-                    }
-                </style>
-            </div>
-
-            <div class="practice-layout">
-                <div class="practice-controls-panel">
-                    <div class="practice-controls">
-                        <div class="sustain-control" data-tooltip="让琴声持续更久，像踩真钢琴踏板一样">
-                            <label class="switch">
-                                <input type="checkbox" id="sustain-toggle">
-                                <span class="slider round"></span>
-                            </label>
-                            <span>声音延长 🎵</span>
-                        </div>
-
-                        <div class="song-select-container">
-                            <select id="song-select" class="song-select">
-                                <option value="">选择一首歌曲...</option>
-                                <!-- 难度 1 -->
-                                <option value="happy-birthday">🎂 生日快乐 (简单)</option>
-                                <option value="twinkle">⭐ 小星星 (简单)</option>
-                                <option value="two-tigers">🐯 两只老虎 (简单)</option>
-                                <option value="mary-lamb">🐑 玛丽有只小羊羔 (简单)</option>
-                                <!-- 难度 2 -->
-                                <option value="ode-to-joy">😊 欢乐颂 (中等)</option>
-                                <option value="jingle-bells">🔔 铃儿响叮当 (中等)</option>
-                                <!-- 难度 3 -->
-                                <option value="jasmine">🌸 茉莉花 (较难)</option>
-                                <option value="fur-elise">💝 致爱丽丝 (较难)</option>
-                                <!-- 难度 4 -->
-                                <option value="butterfly-lovers">🦋 梁祝 (高级)</option>
-                            </select>
-                        </div>
-
-                        <div class="practice-buttons">
-                            <button id="start-practice" class="btn primary" data-tooltip="选择歌曲后，跟着提示按键盘弹奏">✨ 跟着提示弹</button>
-                            <button id="stop-practice" class="btn danger" style="display: none;">停止练习</button>
-                            <button id="start-rhythm-game" class="btn secondary" data-tooltip="音符从上往下掉，按对应键消除！">🎮 游戏模式</button>
-                            <button id="stop-rhythm-game" class="btn danger" style="display: none;">结束游戏</button>
-                        </div>
-                    </div>
-
-                    <div id="game-instructions" class="game-instructions" style="display: none;">
-                        <h3>🎮 游戏说明</h3>
-                        <p>音符会从上方下落，当音符到达底部的命中区域时，按下对应的钢琴键来消除音符！</p>
-                        <div class="key-mapping">
-                            <div class="key-map-item"><span class="key">A</span> → C (Do)</div>
-                            <div class="key-map-item"><span class="key">S</span> → D (Re)</div>
-                            <div class="key-map-item"><span class="key">D</span> → E (Mi)</div>
-                            <div class="key-map-item"><span class="key">F</span> → F (Fa)</div>
-                            <div class="key-map-item"><span class="key">G</span> → G (Sol)</div>
-                            <div class="key-map-item"><span class="key">H</span> → A (La)</div>
-                            <div class="key-map-item"><span class="key">J</span> → B (Si)</div>
-                            <div class="key-map-item"><span class="key">K</span> → C (高音Do)</div>
-                        </div>
-                        <p><strong>目标：</strong>尽可能多地命中音符，获得高分！错过太多音符会失去生命值。</p>
-                    </div>
+            <div class="controls">
+                <div class="sustain-control">
+                    <label class="switch">
+                        <input type="checkbox" id="sustain-toggle">
+                        <span class="slider round"></span>
+                    </label>
+                    <span>延音踏板</span>
                 </div>
 
-                <div class="practice-status-panel">
-                    <div id="key-hint" class="key-hint" style="display: none;">
-                        <div class="hint-text">下一个键</div>
+                <div class="song-select-container">
+                    <select id="song-select" class="song-select">
+                        <option value="">选择曲目...</option>
+                        <!-- 难度 1 -->
+                        <option value="happy-birthday">生日快乐</option>
+                        <option value="twinkle">小星星</option>
+                        <option value="two-tigers">两只老虎</option>
+                        <option value="mary-lamb">玛丽有只小羊羔</option>
+                        <!-- 难度 2 -->
+                        <option value="ode-to-joy">欢乐颂</option>
+                        <option value="jingle-bells">铃儿响叮当</option>
+                        <!-- 难度 3 -->
+                        <option value="jasmine">茉莉花</option>
+                        <option value="fur-elise">致爱丽丝</option>
+                        <!-- 难度 4 -->
+                        <option value="butterfly-lovers">梁祝</option>
+                    </select>
+                </div>
+
+                <div class="practice-buttons">
+                    <button id="start-practice" class="btn primary">开始练习</button>
+                    <button id="stop-practice" class="btn danger" style="display: none;">停止练习</button>
+                    <button id="start-rhythm-game" class="btn secondary">节奏大师模式</button>
+                    <button id="stop-rhythm-game" class="btn danger" style="display: none;">结束游戏</button>
+                </div>
+
+                <div id="game-instructions" class="game-instructions" style="display: none;">
+                    <h3>🎮 游戏说明</h3>
+                    <p>音符会从上方下落，当音符到达底部的命中区域时，按下对应的钢琴键来消除音符！</p>
+                    <div class="key-mapping">
+                        <div class="key-map-item"><span class="key">A</span> → C (Do)</div>
+                        <div class="key-map-item"><span class="key">S</span> → D (Re)</div>
+                        <div class="key-map-item"><span class="key">D</span> → E (Mi)</div>
+                        <div class="key-map-item"><span class="key">F</span> → F (Fa)</div>
+                        <div class="key-map-item"><span class="key">G</span> → G (Sol)</div>
+                        <div class="key-map-item"><span class="key">H</span> → A (La)</div>
+                        <div class="key-map-item"><span class="key">J</span> → B (Si)</div>
+                        <div class="key-map-item"><span class="key">K</span> → C (高音Do)</div>
+                    </div>
+                    <p><strong>目标：</strong>尽可能多地命中音符，获得高分！错过太多音符会失去生命值。</p>
+                </div>
+
+                <div class="practice-info" style="display: flex; gap: 20px; align-items: center;">
+                    <div id="key-hint" class="key-hint" style="display: none; margin: 0;">
+                        <div class="hint-text">下一个键:</div>
                         <div class="hint-key"></div>
                         <div class="hint-note"></div>
                     </div>
@@ -258,6 +191,42 @@
                             <span id="game-lives">生命: 3</span>
                         </div>
                     </div>
+                </div>
+
+                <div class="piano-container" style="min-height: 240px; max-width: 1200px; margin: 0 auto;">
+                    <!-- 音符下落区域 -->
+                    <div id="note-drop-zone" class="note-drop-zone" style="display: none;">
+                        <div class="drop-lines">
+                            <div class="drop-line" data-note="C"></div>
+                            <div class="drop-line" data-note="C#"></div>
+                            <div class="drop-line" data-note="D"></div>
+                            <div class="drop-line" data-note="D#"></div>
+                            <div class="drop-line" data-note="E"></div>
+                            <div class="drop-line" data-note="F"></div>
+                            <div class="drop-line" data-note="F#"></div>
+                            <div class="drop-line" data-note="G"></div>
+                            <div class="drop-line" data-note="G#"></div>
+                            <div class="drop-line" data-note="A"></div>
+                            <div class="drop-line" data-note="A#"></div>
+                            <div class="drop-line" data-note="B"></div>
+                        </div>
+                        <div id="falling-notes" class="falling-notes"></div>
+                    </div>
+                    <div class="keys"></div>
+                    <style>
+                        .piano-container {
+                            background: linear-gradient(to bottom, #1A1A1A, #2A2A2A);
+                            border-radius: 24px;
+                            padding: var(--spacing-lg);
+                            margin-bottom: var(--spacing-xl);
+                            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+                            overflow: hidden;
+                        }
+                        .keys {
+                            min-height: 180px; /* Same as white key height */
+                            background: linear-gradient(to bottom, #1A1A1A, #2A2A2A);
+                        }
+                    </style>
                 </div>
             </div>
         </div>

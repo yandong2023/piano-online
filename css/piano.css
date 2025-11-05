@@ -17,6 +17,7 @@
     --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
     --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
     --transition: all 0.3s ease;
+    --nav-height: 90px;
 }
 
 body {
@@ -79,9 +80,10 @@ body {
 
 /* Hero 区域样式 */
 .hero {
-    padding: calc(var(--spacing-xl) * 2) 0;
+    padding: calc(90px + var(--nav-height)) 0 40px;
     background: linear-gradient(135deg, #f8f9fa 0%, #e8f0fe 100%);
-    margin-top: 60px;
+    margin-top: 0;
+    min-height: auto;
 }
 
 .hero-container {
@@ -305,6 +307,82 @@ body {
     margin-bottom: var(--spacing-lg);
 }
 
+.practice-layout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xl);
+    align-items: flex-start;
+    margin-bottom: var(--spacing-xl);
+}
+
+.practice-controls-panel {
+    flex: 1 1 55%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.practice-controls {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg);
+    background: var(--background-light);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+}
+
+.practice-status-panel {
+    flex: 1 1 35%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.practice-status-panel > * {
+    width: 100%;
+}
+
+.practice-status-panel .key-hint,
+.practice-status-panel .stats-panel,
+.practice-status-panel .game-stats-panel {
+    background: var(--background-light);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    padding: var(--spacing-md);
+}
+
+.practice-status-panel .key-hint {
+    display: none;
+    text-align: center;
+    gap: var(--spacing-sm);
+}
+
+.practice-status-panel .key-hint .hint-text {
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.practice-status-panel .hint-key {
+    font-size: 1.8rem;
+    font-weight: 700;
+    background: rgba(26, 115, 232, 0.08);
+    border-radius: 12px;
+    padding: 8px 16px;
+    color: var(--primary-color);
+}
+
+.practice-status-panel .hint-note {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.practice-status-panel .stats-panel,
+.practice-status-panel .game-stats-panel {
+    display: none;
+}
+
 .sustain-control {
     display: flex;
     align-items: center;
@@ -508,7 +586,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 64px;
+    height: 90px;
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 var(--spacing-lg);
@@ -568,7 +646,7 @@ body {
 
 /* Hero 区域样式 */
 .hero {
-    padding: 120px 0 80px;
+    padding: calc(90px + var(--nav-height)) 0 80px;
     background: linear-gradient(180deg, var(--background-light) 0%, var(--background-white) 100%);
     text-align: center;
 }
@@ -1029,27 +1107,6 @@ body {
     white-space: nowrap;
 }
 
-.key::after {
-    content: attr(data-keyboard);
-    position: absolute;
-    bottom: 22px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 11px;
-    font-weight: bold;
-    color: #333;
-    text-transform: uppercase;
-    background: rgba(255, 255, 255, 0.9);
-    padding: 1px 3px;
-    border-radius: 2px;
-    white-space: nowrap;
-}
-
-.key.black::after {
-    color: #fff;
-    background: rgba(0, 0, 0, 0.8);
-}
-
 .key.white {
     width: var(--white-key-width);
     height: var(--white-key-height);
@@ -1246,7 +1303,7 @@ body {
 
 /* Hero 区域 */
 .hero {
-    padding: 8rem 2rem 4rem;
+    padding: calc(90px + var(--nav-height)) 2rem 4rem;
     max-width: 1200px;
     margin: 0 auto;
     display: grid;
@@ -1617,7 +1674,7 @@ body {
     .hero {
         grid-template-columns: 1fr;
         text-align: center;
-        padding-top: 6rem;
+        padding-top: calc(6rem + var(--nav-height));
     }
 
     .hero-content h1 {
@@ -1632,6 +1689,20 @@ body {
         display: none;
     }
 
+    .practice-layout {
+        flex-direction: column;
+        gap: var(--spacing-lg);
+    }
+
+    .practice-controls-panel,
+    .practice-status-panel {
+        flex: 1 1 100%;
+    }
+
+    .practice-controls {
+        padding: var(--spacing-md);
+    }
+
     .features-grid, .steps-container, .testimonials-grid {
         grid-template-columns: 1fr;
     }
@@ -1644,6 +1715,7 @@ body {
         --piano-width: 100%;
         --white-key-width: 40px;
         --black-key-width: 24px;
+        --nav-height: 70px;
     }
 }
 
@@ -3083,24 +3155,271 @@ body {
     margin-right: 5px;
 }
 
+/* Tooltip 样式 */
+[data-tooltip] {
+    position: relative;
+    cursor: help;
+}
+
+[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-8px);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s, transform 0.3s;
+    z-index: 1000;
+    max-width: 300px;
+    white-space: normal;
+    text-align: center;
+}
+
+[data-tooltip]::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.9);
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 1000;
+}
+
+[data-tooltip]:hover::after,
+[data-tooltip]:hover::before {
+    opacity: 1;
+}
+
+[data-tooltip]:hover::after {
+    transform: translateX(-50%) translateY(-4px);
+}
+
+/* 首次使用引导遮罩 */
+.tutorial-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.tutorial-content {
+    background: white;
+    border-radius: 16px;
+    padding: 40px;
+    max-width: 600px;
+    text-align: center;
+    animation: slideUp 0.4s ease;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tutorial-content h2 {
+    color: var(--primary-color);
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.tutorial-content p {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    margin-bottom: 20px;
+    color: var(--text-primary);
+}
+
+.tutorial-key-demo {
+    display: inline-block;
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    color: white;
+    padding: 20px 40px;
+    border-radius: 12px;
+    font-size: 3rem;
+    font-weight: bold;
+    margin: 30px 0;
+    box-shadow: 0 8px 16px rgba(76, 175, 80, 0.4);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 8px 16px rgba(76, 175, 80, 0.4);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 12px 24px rgba(76, 175, 80, 0.6);
+    }
+}
+
+.tutorial-steps {
+    display: flex;
+    gap: 20px;
+    margin: 30px 0;
+    justify-content: center;
+}
+
+.tutorial-step {
+    flex: 1;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.tutorial-step-number {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 50%;
+    line-height: 32px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.tutorial-step h3 {
+    font-size: 1.1rem;
+    margin: 10px 0;
+    color: var(--text-primary);
+}
+
+.tutorial-step p {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.tutorial-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.tutorial-skip {
+    padding: 12px 30px;
+    background: transparent;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.tutorial-skip:hover {
+    background: #f8f9fa;
+    border-color: #999;
+}
+
+.tutorial-start {
+    padding: 12px 30px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+}
+
+.tutorial-start:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(26, 115, 232, 0.4);
+}
+
+/* 按键成功/失败动画 */
+@keyframes keySuccess {
+    0%, 100% {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    50% {
+        box-shadow: 0 0 20px 5px rgba(76, 175, 80, 0.8);
+        transform: translateY(-2px);
+    }
+}
+
+@keyframes keyError {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.key.success {
+    animation: keySuccess 0.5s ease;
+    border: 3px solid #4CAF50 !important;
+}
+
+.key.error {
+    animation: keyError 0.4s ease;
+    border: 3px solid #f44336 !important;
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
     .key-mapping {
         gap: 10px;
     }
-    
+
     .key-map-item {
         padding: 6px 10px;
         font-size: 12px;
     }
-    
+
     .note-drop-zone {
         height: 400px;
     }
-    
+
     .falling-note {
         width: 35px;
         height: 35px;
         font-size: 12px;
+    }
+
+    .tutorial-content {
+        padding: 30px 20px;
+        margin: 20px;
+    }
+
+    .tutorial-steps {
+        flex-direction: column;
+    }
+
+    .tutorial-key-demo {
+        font-size: 2rem;
+        padding: 15px 30px;
     }
 }
