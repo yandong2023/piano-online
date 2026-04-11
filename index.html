@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +11,7 @@
     <meta name="robots" content="index,follow">
     <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
     <link rel="canonical" href="https://piano-online.com" />
-    
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://piano-online.com/">
@@ -19,14 +20,14 @@
     <meta property="og:image" content="https://piano-online.com/images/og-image.jpg">
     <meta property="og:site_name" content="Piano Online">
     <meta property="og:locale" content="zh_CN">
-    
+
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://piano-online.com/">
     <meta name="twitter:title" content="在线钢琴模拟器 - 免费学习钢琴 | Piano Online">
     <meta name="twitter:description" content="专业在线钢琴模拟器，支持88键全键盘演奏，真实钢琴音色。适合钢琴初学者练习。">
     <meta name="twitter:image" content="https://piano-online.com/images/og-image.jpg">
-    
+
     <!-- 预加载关键资源 -->
     <link rel="preconnect" href="https://www.googletagmanager.com">
     <link rel="preconnect" href="https://pagead2.googlesyndication.com">
@@ -34,47 +35,48 @@
     <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com">
     <link rel="stylesheet" href="css/piano.css">
     <!-- 使用本地的 Tone.js -->
-<script src="js/libs/Tone.js"></script>
-<script type="module" src="js/main.js"></script>
-<script>
-    // 等待用户交互来初始化音频
-    document.addEventListener('DOMContentLoaded', () => {
-        const initAudio = async () => {
-            try {
-                await Tone.start();
-                console.log('Tone.js initialized successfully');
-                document.removeEventListener('click', initAudio);
-                document.removeEventListener('keydown', initAudio);
-            } catch (error) {
-                console.error('Failed to initialize Tone.js:', error);
-            }
-        };
-        
-        // 添加用户交互监听器来初始化音频
-        document.addEventListener('click', initAudio);
-        document.addEventListener('keydown', initAudio);
-    });
-</script>
-<script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "tznlxi8oyi");
-</script>
+    <script src="js/libs/Tone.js"></script>
+    <script type="module" src="js/main.js"></script>
+    <script>
+        // 等待用户交互来初始化音频
+        document.addEventListener('DOMContentLoaded', () => {
+            const initAudio = async () => {
+                try {
+                    await Tone.start();
+                    console.log('Tone.js initialized successfully');
+                    document.removeEventListener('click', initAudio);
+                    document.removeEventListener('keydown', initAudio);
+                } catch (error) {
+                    console.error('Failed to initialize Tone.js:', error);
+                }
+            };
+
+            // 添加用户交互监听器来初始化音频
+            document.addEventListener('click', initAudio);
+            document.addEventListener('keydown', initAudio);
+        });
+    </script>
+    <script type="text/javascript">
+        (function (c, l, a, r, i, t, y) {
+            c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
+            t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
+            y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
+        })(window, document, "clarity", "script", "tznlxi8oyi");
+    </script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-EYGD99YB4Y"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
 
-      gtag('config', 'G-EYGD99YB4Y');
+        gtag('config', 'G-EYGD99YB4Y');
     </script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4423187689700927"
-    crossorigin="anonymous"></script>
+        crossorigin="anonymous"></script>
     <meta name="google-site-verification" content="Fii3zK2l54f0uFP7RPwdn7BEqB4OjC2jc_07JxSs1uI" />
 </head>
+
 <body>
     <!-- 首次使用教程遮罩 -->
     <div id="tutorial-overlay" class="tutorial-overlay" style="display: none;">
@@ -129,7 +131,9 @@
     <section class="hero" style="padding-top: 120px; min-height: auto;">
         <div class="hero-container" style="max-width: 1200px; margin: 0 auto; text-align: center;">
             <h1 style="font-size: 2.5rem; margin-bottom: 10px;">用电脑键盘弹钢琴 🎹</h1>
-            <p class="hero-subtitle" style="font-size: 1.2rem; margin-bottom: 20px;">按键盘上的字母键开始演奏 - 试试按 <kbd style="background: #4CAF50; color: white; padding: 4px 12px; border-radius: 4px; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">A</kbd> 键!</p>
+            <p class="hero-subtitle" style="font-size: 1.2rem; margin-bottom: 20px;">按键盘上的字母键开始演奏 - 试试按 <kbd
+                    style="background: #4CAF50; color: white; padding: 4px 12px; border-radius: 4px; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">A</kbd>
+                键!</p>
         </div>
     </section>
 
@@ -166,8 +170,10 @@
                         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
                         overflow: hidden;
                     }
+
                     .keys {
-                        min-height: 180px; /* Same as white key height */
+                        min-height: 180px;
+                        /* Same as white key height */
                         background: linear-gradient(to bottom, #1A1A1A, #2A2A2A);
                     }
                 </style>
@@ -204,9 +210,11 @@
                         </div>
 
                         <div class="practice-buttons">
-                            <button id="start-practice" class="btn primary" data-tooltip="选择歌曲后，跟着提示按键盘弹奏">✨ 跟着提示弹</button>
+                            <button id="start-practice" class="btn primary" data-tooltip="选择歌曲后，跟着提示按键盘弹奏">✨
+                                跟着提示弹</button>
                             <button id="stop-practice" class="btn danger" style="display: none;">停止练习</button>
-                            <button id="start-rhythm-game" class="btn secondary" data-tooltip="音符从上往下掉，按对应键消除！">🎮 游戏模式</button>
+                            <button id="start-rhythm-game" class="btn secondary" data-tooltip="音符从上往下掉，按对应键消除！">🎮
+                                游戏模式</button>
                             <button id="stop-rhythm-game" class="btn danger" style="display: none;">结束游戏</button>
                         </div>
                     </div>
@@ -463,7 +471,7 @@
                         <li>手指独立性练习</li>
                     </ul>
                 </div>
-                
+
                 <div class="guide-section">
                     <h3>经典曲目练习</h3>
                     <p>通过练习经典钢琴曲目来提高您的演奏技巧。从简单的练习曲到复杂的古典作品，循序渐进地提升您的钢琴水平。</p>
@@ -474,7 +482,7 @@
                         <li>《卡农》- 复调音乐训练</li>
                     </ul>
                 </div>
-                
+
                 <div class="guide-section">
                     <h3>音乐理论知识</h3>
                     <p>掌握音乐理论是理解钢琴演奏的关键。了解音符、节拍、调式等基本概念，让您的演奏更加专业。</p>
@@ -678,35 +686,12 @@
                 <p>&copy; 2024 Piano Online. All rights reserved.</p>
                 <div class="footer-links">
                     <a href="https://picapicabooth.app" target="_blank" rel="noopener noreferrer">
-                         picapicabooth
+                        picapicaboothßß
                     </a>
-                    <a href="https://crazycattles3d.com" target="_blank" rel="noopener noreferrer">
-                         crazy cattles 3d
-                    </a>
-                    <a href="https://webptojpb.io" target="_blank" rel="noopener noreferrer">
-                         webptojpb
-                    </a>
-                    <a href="https://sheep3d.com" target="_blank" rel="noopener noreferrer">
-                         sheep3d
-                    </a>
-                    <a href="https://screenshoteditor.org" target="_blank" rel="noopener noreferrer">
-                        screenshot editor
-                   </a>
-                   <a href="https://instantseek.org" target="_blank" rel="noopener noreferrer">
-                    instantseek
-                   </a>
-                    <a href="https://iqtestcc.com" target="_blank" rel="noopener noreferrer">
-                        iq test cc
-                    </a>
-                    <a href="https://minigames.uk" target="_blank" rel="noopener noreferrer">
-                        minigames uk
-                    </a>
-                    <a href="https://sprunkiwendatreatment.com" target="_blank" rel="noopener noreferrer">
-                        sprunkiwenda treatment
-                    </a>
-                    <a href="https://video2text.io" target="_blank" rel="noopener noreferrer">
-                        video2text
-                   </a>
+                    <a href="https://sbtitype.app" target="_blank" rel="noopener noreferrer">
+                        sbti test
+                    </a>ß
+
                 </div>
             </div>
         </div>
@@ -762,4 +747,5 @@
     }
     </script>
 </body>
+
 </html>
