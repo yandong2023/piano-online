@@ -137,7 +137,16 @@ class Piano {
             if (solfege) {
                 key.dataset.solfege = solfege;
             }
-            // 更纯净的外观暂不显示键盘映射标签
+            
+            // 添加键盘映射标签
+            const reverseKeyMap = Object.entries(this.keyMap).reduce((acc, [k, n]) => { acc[n] = k.toUpperCase(); return acc; }, {});
+            const mappedKey = reverseKeyMap[note];
+            if (mappedKey) {
+                const label = document.createElement('div');
+                label.className = 'key-label';
+                label.textContent = mappedKey;
+                key.appendChild(label);
+            }
 
             keysContainer.appendChild(key);
         });
@@ -193,23 +202,154 @@ class Piano {
             }
         });
 
-        // 鼠标事件监听
+        // 鼠标与触摸事件监听
         Object.values(this.keys).forEach(key => {
-            key.addEventListener('mousedown', () => {
+            // 鼠标事件
+            key.addEventListener('mousedown', (e) => {
+                if (e.button !== 0) return; // 仅左键
                 const note = key.dataset.note;
                 this.pressKey(note);
             });
-
             key.addEventListener('mouseup', () => {
                 const note = key.dataset.note;
                 this.releaseKey(note);
             });
-
             key.addEventListener('mouseleave', () => {
                 const note = key.dataset.note;
-                this.releaseKey(note);
+                if (key.classList.contains('active')) this.releaseKey(note);
             });
+            
+            // 触摸事件 (移动端/平板多点触控)
+            key.addEventListener('touchstart', (e) => {
+                e.preventDefault(); // 防止滚动、长按选词等
+                const note = key.dataset.note;
+                this.pressKey(note);
+            }, { passive: false });
+            key.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                const note = key.dataset.note;
+                this.releaseKey(note);
+            }, { passive: false });
+            key.addEventListener('touchcancel', (e) => {
+                e.preventDefault();
+                const note = key.dataset.note;
+                this.releaseKey(note);
+            }, { passive: false });
         });
+
+        // 默认显示按键提示
+        const keysContainer = document.querySelector('.keys');
+        const labelsToggle = document.getElementById('labels-toggle');
+        if (keysContainer) {
+            keysContainer.classList.add('show-labels'); // 默认显示
+        }
+        if (labelsToggle) {
+            labelsToggle.addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    keysContainer.classList.add('show-labels');
+                } else {
+                    keysContainer.classList.remove('show-labels');
+                }
+            });
+        }
+
+        // 全屏逻辑
+        const fullscreenBtn = document.getElementById('toggle-fullscreen');
+        const practiceSection = document.querySelector('.practice-section');
+        if (fullscreenBtn && practiceSection) {
+            fullscreenBtn.addEventListener('click', () => {
+                if (!document.fullscreenElement) {
+                    practiceSection.requestFullscreen().catch(err => {
+                        console.error('全屏请求被拒绝:', err);
+                    });
+                } else {
+                    document.exitFullscreen();
+                }
+            });
+
+            document.addEventListener('fullscreenchange', () => {
+                if (document.fullscreenElement) {
+                    practiceSection.classList.add('fullscreen');
+                    fullscreenBtn.innerHTML = '⛶ 退出全屏';
+                } else {
+                    practiceSection.classList.remove('fullscreen');
+                    fullscreenBtn.innerHTML = '⛶ 全屏模式';
+                }
+            });
+        }
+
+        // MIDI 初始化
+        this.setupMIDI();
+    }
+
+    setupMIDI() {
+        if (navigator.requestMIDIAccess) {
+            navigator.requestMIDIAccess().then(
+                (midiAccess) => {
+                    console.log('MIDI ready!');
+                    const midiStatus = document.getElementById('midi-status');
+                    const statusText = midiStatus?.querySelector('.status-text');
+                    
+                    const updateStatus = () => {
+                        let hasDevice = false;
+                        for (let input of midiAccess.inputs.values()) {
+                            hasDevice = true;
+                            input.onmidimessage = (message) => this.handleMIDIMessage(message);
+                        }
+                        if (midiStatus && statusText) {
+                            if (hasDevice) {
+                                midiStatus.classList.add('online');
+                                midiStatus.classList.remove('offline');
+                                statusText.textContent = 'MIDI 已连接';
+                            } else {
+                                midiStatus.classList.remove('online');
+                                midiStatus.classList.add('offline');
+                                statusText.textContent = '未检测到 MIDI';
+                            }
+                        }
+                    };
+
+                    midiAccess.onstatechange = (e) => {
+                        console.log('MIDI state change:', e.port.name, e.port.state);
+                        updateStatus();
+                    };
+                    updateStatus();
+                },
+                (err) => {
+                    console.error('MIDI access failed:', err);
+                }
+            );
+        }
+    }
+
+    handleMIDIMessage(message) {
+        const command = message.data[0] >> 4;
+        const note = message.data[1];
+        const velocity = message.data.length > 2 ? message.data[2] : 0;
+        
+        // Note: MIDI note 60 is C4 (middle C)
+        const midiToNoteName = (midiNote) => {
+            const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+            const octave = Math.floor(midiNote / 12) - 1;
+            const noteName = noteNames[midiNote % 12];
+            return `${noteName}${octave}`;
+        };
+
+        const noteStr = midiToNoteName(note);
+
+        if (command === 9 && velocity > 0) { // Note on
+            this.pressKey(noteStr);
+        } else if (command === 8 || (command === 9 && velocity === 0)) { // Note off
+            this.releaseKey(noteStr);
+        } else if (command === 11) { // Control change (e.g. sustain pedal)
+            if (message.data[1] === 64) { // Sustain pedal
+                this.sustainPedal = velocity >= 64;
+                const sustainControl = document.querySelector('.sustain-control input');
+                if (sustainControl) {
+                    sustainControl.checked = this.sustainPedal;
+                }
+            }
+        }
     }
 
     getNoteFromKeyCode(key) {

@@ -182,12 +182,25 @@
             <div class="practice-layout">
                 <div class="practice-controls-panel">
                     <div class="practice-controls">
-                        <div class="sustain-control" data-tooltip="让琴声持续更久，像踩真钢琴踏板一样">
-                            <label class="switch">
-                                <input type="checkbox" id="sustain-toggle">
-                                <span class="slider round"></span>
-                            </label>
-                            <span>声音延长 🎵</span>
+                        <div class="control-row" style="display: flex; gap: var(--spacing-md); align-items: center; flex-wrap: wrap;">
+                            <div class="sustain-control" data-tooltip="让琴声持续更久，像踩真钢琴踏板一样">
+                                <label class="switch">
+                                    <input type="checkbox" id="sustain-toggle">
+                                    <span class="slider round"></span>
+                                </label>
+                                <span>声音延长 🎵</span>
+                            </div>
+                            <div class="sustain-control" data-tooltip="在琴键上显示对应的电脑键盘字母">
+                                <label class="switch">
+                                    <input type="checkbox" id="labels-toggle" checked>
+                                    <span class="slider round"></span>
+                                </label>
+                                <span>按键提示 🔠</span>
+                            </div>
+                            <div id="midi-status" class="midi-status offline" data-tooltip="连接 MIDI 键盘后可直接弹奏" style="font-size: 0.9em; padding: 4px 8px; border-radius: 4px; background: rgba(0,0,0,0.05); display: flex; align-items: center; gap: 4px;">
+                                <span class="status-dot" style="width: 8px; height: 8px; border-radius: 50%; background: #ccc; display: inline-block;"></span>
+                                <span class="status-text">MIDI 未连接</span>
+                            </div>
                         </div>
 
                         <div class="song-select-container">
@@ -216,6 +229,8 @@
                             <button id="start-rhythm-game" class="btn secondary" data-tooltip="音符从上往下掉，按对应键消除！">🎮
                                 游戏模式</button>
                             <button id="stop-rhythm-game" class="btn danger" style="display: none;">结束游戏</button>
+                            <button id="toggle-fullscreen" class="btn secondary" data-tooltip="全屏模式提供更好的沉浸感">⛶
+                                全屏模式</button>
                         </div>
                     </div>
 

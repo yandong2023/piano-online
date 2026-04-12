@@ -3423,3 +3423,90 @@ body {
         padding: 15px 30px;
     }
 }
+
+/* ======== 最新优化：全屏、手机触摸、按键提示、MIDI状态 ======== */
+
+/* 消除移动端键盘区域复杂的默认触摸行为，防止缩放和滚动 */
+.keys {
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* 全屏模式下的 .practice-section 和 .piano-container */
+.practice-section.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    background-color: #111;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: hidden;
+}
+
+.practice-section.fullscreen .container {
+    max-width: 100%;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+.practice-section.fullscreen .piano-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.practice-section.fullscreen #note-drop-zone {
+    flex: 1;
+}
+
+.practice-section.fullscreen .keys {
+    flex-shrink: 0;
+}
+
+/* 按键提示标签 */
+.key-label {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #666;
+    pointer-events: none; /* 防止遮挡点击 */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* 黑键的标签靠下一点，且颜色较浅 */
+.key.black .key-label {
+    bottom: 8px;
+    color: #aaa;
+    font-size: 0.75rem;
+}
+
+/* 只有加了 show-labels 的时候才显示其内部的 .key-label */
+.keys.show-labels .key-label {
+    opacity: 1;
+}
+
+/* MIDI 状态指示灯颜色 */
+.midi-status.online .status-dot {
+    background: #4caf50 !important;
+    box-shadow: 0 0 8px #4caf50;
+}
+.midi-status.online .status-text {
+    color: #388e3c;
+    font-weight: bold;
+}
+
