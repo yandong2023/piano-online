@@ -259,13 +259,16 @@ class Piano {
         const practiceSection = document.querySelector('.practice-section');
         if (fullscreenBtn && practiceSection) {
             const enterPracticeFullscreen = async () => {
-                practiceSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 if (!document.fullscreenElement) {
                     try {
                         await practiceSection.requestFullscreen();
+                        practiceSection.scrollIntoView({ behavior: 'instant', block: 'start' });
                     } catch (err) {
                         console.error('全屏请求被拒绝:', err);
+                        practiceSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }
+                } else {
+                    practiceSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             };
 
