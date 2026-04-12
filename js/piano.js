@@ -255,17 +255,33 @@ class Piano {
 
         // 全屏逻辑
         const fullscreenBtn = document.getElementById('toggle-fullscreen');
+        const heroStartBtn = document.getElementById('hero-start-fullscreen');
         const practiceSection = document.querySelector('.practice-section');
         if (fullscreenBtn && practiceSection) {
+            const enterPracticeFullscreen = async () => {
+                practiceSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                if (!document.fullscreenElement) {
+                    try {
+                        await practiceSection.requestFullscreen();
+                    } catch (err) {
+                        console.error('全屏请求被拒绝:', err);
+                    }
+                }
+            };
+
             fullscreenBtn.addEventListener('click', () => {
                 if (!document.fullscreenElement) {
-                    practiceSection.requestFullscreen().catch(err => {
-                        console.error('全屏请求被拒绝:', err);
-                    });
+                    enterPracticeFullscreen();
                 } else {
                     document.exitFullscreen();
                 }
             });
+
+            if (heroStartBtn) {
+                heroStartBtn.addEventListener('click', () => {
+                    enterPracticeFullscreen();
+                });
+            }
 
             document.addEventListener('fullscreenchange', () => {
                 if (document.fullscreenElement) {
