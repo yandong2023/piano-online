@@ -1,6 +1,7 @@
 import PianoAudio from './piano-audio.js';
 import { PracticeMode } from './practice-mode.js';
 import { PianoRecorder } from './recorder.js';
+import { createPracticeEntryController } from './practice-entry.mjs';
 
 console.log('piano.js loaded');
 
@@ -258,17 +259,15 @@ class Piano {
         const heroStartBtn = document.getElementById('hero-start-fullscreen');
         const practiceSection = document.querySelector('.practice-section');
         if (fullscreenBtn && practiceSection) {
+            const practiceEntry = createPracticeEntryController({
+                documentRef: document,
+                practiceSection
+            });
+
             const enterPracticeFullscreen = async () => {
-                if (!document.fullscreenElement) {
-                    try {
-                        await practiceSection.requestFullscreen();
-                        practiceSection.scrollIntoView({ behavior: 'instant', block: 'start' });
-                    } catch (err) {
-                        console.error('全屏请求被拒绝:', err);
-                        practiceSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }
-                } else {
-                    practiceSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                const result = await practiceEntry.enter();
+                if (result.mode === 'scroll-fallback' && result.error) {
+                    console.error('全屏请求被拒绝:', result.error);
                 }
             };
 
