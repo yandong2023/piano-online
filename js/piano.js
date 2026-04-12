@@ -281,7 +281,7 @@ class Piano {
 
             if (heroStartBtn) {
                 heroStartBtn.addEventListener('click', () => {
-                    enterPracticeFullscreen();
+                    practiceEntry.focusTarget();
                 });
             }
 

@@ -31,6 +31,10 @@ export const createPracticeEntryController = ({
     }
 
     return {
+        focusTarget() {
+            moveIntoView(practiceSection, 'smooth');
+            return { mode: 'scroll-only' };
+        },
         async enter() {
             if (getFullscreenElement(documentRef)) {
                 moveIntoView(practiceSection, 'smooth');

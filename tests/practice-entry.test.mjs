@@ -88,4 +88,26 @@ const createDocumentStub = (fullscreenElement = null) => ({
     });
 }
 
+{
+    const section = createSection();
+    const documentStub = createDocumentStub(null);
+    const controller = createPracticeEntryController({
+        documentRef: documentStub,
+        practiceSection: section
+    });
+
+    const result = controller.focusTarget();
+
+    assert.deepEqual(result, { mode: 'scroll-only' });
+    assert.deepEqual(section.calls[0], {
+        type: 'scrollIntoView',
+        options: { behavior: 'smooth', block: 'start' }
+    });
+    assert.deepEqual(section.calls[1], {
+        type: 'focus',
+        options: { preventScroll: true }
+    });
+    assert.equal(section.calls.includes('requestFullscreen'), false);
+}
+
 console.log('practice-entry tests passed');
