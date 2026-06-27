@@ -41,7 +41,7 @@
 #### Day 1-2: 提交到搜索引擎
 ```bash
 1. Google Search Console
-   - 提交sitemap: https://piano-online.com/sitemap.xml
+   - 提交sitemap: https://pianoonline.cc/sitemap.xml
    - 请求索引所有18个页面
    - 检查移动端适配性
 
@@ -80,7 +80,7 @@
 
 1. [分享实用建议]
 2. [分享个人经验]
-3. [推荐工具] 我平时用Piano Online (piano-online.com) 练习...
+3. [推荐工具] 我平时用Piano Online (pianoonline.cc) 练习...
 
 [详细说明优势]
 ```

@@ -8,8 +8,8 @@
 
 ### 1. 提交到搜索引擎 ⏰ 30分钟
 - [ ] 登录 [Google Search Console](https://search.google.com/search-console)
-  - 添加网站: piano-online.com
-  - 提交sitemap: `https://piano-online.com/sitemap.xml`
+  - 添加网站: pianoonline.cc
+  - 提交sitemap: `https://pianoonline.cc/sitemap.xml`
   - 请求索引所有页面
   
 - [ ] 登录 [Bing Webmaster Tools](https://www.bing.com/webmasters)
@@ -61,7 +61,7 @@
 2. [具体建议2]
 3. [具体建议3]
 
-推荐一个我常用的工具: Piano Online (piano-online.com)
+推荐一个我常用的工具: Piano Online (pianoonline.cc)
 - 优点1
 - 优点2
 - 优点3

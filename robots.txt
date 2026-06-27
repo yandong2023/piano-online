@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # 允许搜索引擎索引所有内容
-Sitemap: https://piano-online.com/sitemap.xml
+Sitemap: https://pianoonline.cc/sitemap.xml
 
 # 禁止访问敏感目录
 Disallow: /admin/
