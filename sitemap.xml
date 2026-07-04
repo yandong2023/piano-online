@@ -3,31 +3,31 @@
     <!-- 主要页面 -->
     <url>
         <loc>https://pianoonline.cc/</loc>
-        <lastmod>2025-10-26</lastmod>
+        <lastmod>2026-07-04</lastmod>
         <changefreq>daily</changefreq>
         <priority>1.0</priority>
     </url>
     <url>
         <loc>https://pianoonline.cc/piano.html</loc>
-        <lastmod>2025-10-26</lastmod>
+        <lastmod>2026-07-04</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.9</priority>
     </url>
     <url>
         <loc>https://pianoonline.cc/practice.html</loc>
-        <lastmod>2025-10-26</lastmod>
+        <lastmod>2026-07-04</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.9</priority>
     </url>
     <url>
         <loc>https://pianoonline.cc/tutorials.html</loc>
-        <lastmod>2025-10-26</lastmod>
+        <lastmod>2026-07-04</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://pianoonline.cc/about.html</loc>
-        <lastmod>2025-10-26</lastmod>
+        <lastmod>2026-07-04</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.6</priority>
     </url>
@@ -35,25 +35,25 @@
     <!-- 教程文章 - 基础入门 -->
     <url>
         <loc>https://pianoonline.cc/articles/tutorials/piano-basics.html</loc>
-        <lastmod>2025-10-26</lastmod>
+        <lastmod>2026-07-04</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://pianoonline.cc/articles/tutorials/reading-notes.html</loc>
-        <lastmod>2025-10-26</lastmod>
+        <lastmod>2026-07-04</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://pianoonline.cc/articles/tutorials/finger-numbers.html</loc>
-        <lastmod>2025-10-26</lastmod>
+        <lastmod>2026-07-04</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
         <loc>https://pianoonline.cc/articles/tutorials/rhythm-basics.html</loc>
-        <lastmod>2025-10-26</lastmod>
+        <lastmod>2026-07-04</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
     </url>
@@ -61,19 +61,19 @@
     <!-- 教程文章 - 练习方法 -->
     <url>
         <loc>https://pianoonline.cc/articles/tutorials/practice-methods.html</loc>
-        <lastmod>2025-10-26</lastmod>
+        <lastmod>2026-07-04</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://pianoonline.cc/articles/tutorials/scales-practice.html</loc>
-        <lastmod>2025-10-26</lastmod>
+        <lastmod>2026-07-04</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
         <loc>https://pianoonline.cc/articles/tutorials/hand-coordination.html</loc>
-        <lastmod>2025-10-26</lastmod>
+        <lastmod>2026-07-04</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
     </url>
@@ -81,13 +81,13 @@
     <!-- 教程文章 - 乐理知识 -->
     <url>
         <loc>https://pianoonline.cc/articles/tutorials/music-theory.html</loc>
-        <lastmod>2025-10-26</lastmod>
+        <lastmod>2026-07-04</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://pianoonline.cc/articles/tutorials/advanced-music-theory.html</loc>
-        <lastmod>2025-10-26</lastmod>
+        <lastmod>2026-07-04</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
     </url>
@@ -95,25 +95,25 @@
     <!-- 教程文章 - 进阶技巧 -->
     <url>
         <loc>https://pianoonline.cc/articles/tutorials/sight-reading.html</loc>
-        <lastmod>2025-10-26</lastmod>
+        <lastmod>2026-07-04</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
         <loc>https://pianoonline.cc/articles/tutorials/performance-skills.html</loc>
-        <lastmod>2025-10-26</lastmod>
+        <lastmod>2026-07-04</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
         <loc>https://pianoonline.cc/articles/tutorials/music-analysis.html</loc>
-        <lastmod>2025-10-26</lastmod>
+        <lastmod>2026-07-04</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
         <loc>https://pianoonline.cc/articles/tutorials/piano-maintenance.html</loc>
-        <lastmod>2025-10-26</lastmod>
+        <lastmod>2026-07-04</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.6</priority>
     </url>

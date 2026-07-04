@@ -4,11 +4,19 @@ Allow: /
 # 允许搜索引擎索引所有内容
 Sitemap: https://pianoonline.cc/sitemap.xml
 
-# 禁止访问敏感目录
+# 禁止访问敏感目录和开发文件
 Disallow: /admin/
 Disallow: /private/
 Disallow: /temp/
+Disallow: /scripts/
+Disallow: /tests/
+Disallow: /node_modules/
 Disallow: /*.log$
+Disallow: /*.py$
+Disallow: /generate_samples
+Disallow: /verify.js
+Disallow: /setup.js
+Disallow: /download_samples.sh
 
 # 允许访问静态资源
 Allow: /css/

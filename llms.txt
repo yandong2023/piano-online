@@ -1,5 +1,5 @@
 # 钢琴在线学习平台 - 大语言模型爬虫指南
-# 更新日期: 2025-04-25
+# 更新日期: 2026-07-04
 
 # 所有大语言模型爬虫的默认规则
 User-Agent: *
@@ -8,7 +8,6 @@ Allow: /index.html
 Allow: /about.html
 Allow: /piano.html
 Allow: /practice.html
-Allow: /tutorial.html
 Allow: /tutorials.html
 Allow: /articles/
 Disallow: /api/
@@ -28,7 +27,6 @@ Allow: /index.html
 Allow: /about.html
 Allow: /piano.html
 Allow: /practice.html
-Allow: /tutorial.html
 Allow: /tutorials.html
 Allow: /articles/
 Disallow: /
@@ -39,7 +37,6 @@ Allow: /index.html
 Allow: /about.html
 Allow: /piano.html
 Allow: /practice.html
-Allow: /tutorial.html
 Allow: /tutorials.html
 Allow: /articles/
 Disallow: /

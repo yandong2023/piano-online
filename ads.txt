@@ -1,4 +1,4 @@
-# ads.txt file for piano-online
+# ads.txt file for pianoonline.cc
 # This file is used to authorize digital sellers for this domain
 
 # Google AdSense

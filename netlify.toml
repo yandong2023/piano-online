@@ -1,0 +1,22 @@
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "/tutorial.html"
+  to = "/tutorials.html"
+  status = 301
+
+[[redirects]]
+  from = "/tutorial-content.html"
+  to = "/tutorials.html"
+  status = 301
+
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Content-Type = "text/html; charset=utf-8"
+
+[[headers]]
+  for = "/sitemap.xml"
+  [headers.values]
+    Content-Type = "application/xml; charset=utf-8"
