@@ -123,6 +123,17 @@
                 <a href="/tutorials.html">教程</a>
                 <a href="/practice.html">练习</a>
                 <a href="/about.html">关于</a>
+                <div class="lang-switcher">
+                    <button class="lang-switcher-btn" aria-expanded="false" aria-haspopup="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                        <span>中文</span>
+                        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                    </button>
+                    <div class="lang-dropdown">
+                        <a href="/" class="active" hreflang="zh-CN">中文<svg class="check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></a>
+                        <a href="/en/" hreflang="en">English</a>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
@@ -270,19 +281,27 @@
                         <div class="song-select-container">
                             <select id="song-select" class="song-select">
                                 <option value="">选择一首歌曲...</option>
-                                <!-- 难度 1 -->
+                                <!-- 简单 -->
                                 <option value="happy-birthday">🎂 生日快乐 (简单)</option>
                                 <option value="twinkle">⭐ 小星星 (简单)</option>
                                 <option value="two-tigers">🐯 两只老虎 (简单)</option>
                                 <option value="mary-lamb">🐑 玛丽有只小羊羔 (简单)</option>
-                                <!-- 难度 2 -->
-                                <option value="ode-to-joy">😊 欢乐颂 (中等)</option>
+                                <option value="london-bridge">🌉 伦敦大桥 (简单)</option>
+                                <option value="row-boat">🚣 划船歌 (简单)</option>
+                                <!-- 中等 -->
+                                <option value="ode-to-joy">😊 欢乐颂 - 贝多芬 (中等)</option>
                                 <option value="jingle-bells">🔔 铃儿响叮当 (中等)</option>
-                                <!-- 难度 3 -->
+                                <option value="amazing-grace">🙏 奇异恩典 (中等)</option>
+                                <option value="silent-night">🌙 平安夜 (中等)</option>
+                                <option value="auld-lang-syne">🎉 友谊地久天长 (中等)</option>
+                                <!-- 较难 -->
                                 <option value="jasmine">🌸 茉莉花 (较难)</option>
-                                <option value="fur-elise">💝 致爱丽丝 (较难)</option>
-                                <!-- 难度 4 -->
+                                <option value="fur-elise">💝 致爱丽丝 - 贝多芬 (较难)</option>
+                                <option value="moonlight">🌕 月光奏鸣曲 - 贝多芬 (较难)</option>
+                                <!-- 高级 -->
                                 <option value="butterfly-lovers">🦋 梁祝 (高级)</option>
+                                <option value="canon">🎼 卡农 - 帕赫贝尔 (高级)</option>
+                                <option value="river-flows">🌊 你的心河 - Yiruma (高级)</option>
                             </select>
                         </div>
 
@@ -839,6 +858,24 @@
             }
         ]
     }
+    </script>
+    <script>
+    // 语言切换下拉菜单
+    document.addEventListener('DOMContentLoaded', () => {
+        const switcher = document.querySelector('.lang-switcher');
+        const btn = document.querySelector('.lang-switcher-btn');
+        if (switcher && btn) {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                switcher.classList.toggle('open');
+                btn.setAttribute('aria-expanded', switcher.classList.contains('open'));
+            });
+            document.addEventListener('click', () => {
+                switcher.classList.remove('open');
+                btn.setAttribute('aria-expanded', 'false');
+            });
+        }
+    });
     </script>
 </body>
 

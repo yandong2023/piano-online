@@ -94,10 +94,20 @@
             <a href="/en/" class="nav-logo"><img src="/images/logo.svg" alt="Piano Online Logo" class="logo-img"></a>
             <div class="nav-links">
                 <a href="/en/" class="active">Home</a>
-                <a href="/tutorials.html">Tutorials</a>
-                <a href="/practice.html">Practice</a>
-                <a href="/about.html">About</a>
-                <a href="/" hreflang="zh-CN">中文</a>
+                <a href="/en/tutorials.html">Tutorials</a>
+                <a href="/en/#practice-start">Practice</a>
+                <a href="/en/about.html">About</a>
+                <div class="lang-switcher">
+                    <button class="lang-switcher-btn" aria-expanded="false" aria-haspopup="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                        <span>English</span>
+                        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                    </button>
+                    <div class="lang-dropdown">
+                        <a href="/" hreflang="zh-CN">中文</a>
+                        <a href="/en/" class="active" hreflang="en">English<svg class="check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></a>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
@@ -166,15 +176,24 @@
                         <div class="song-select-container">
                             <select id="song-select" class="song-select">
                                 <option value="">Choose a song...</option>
+                                <!-- Easy -->
                                 <option value="happy-birthday">🎂 Happy Birthday (easy)</option>
                                 <option value="twinkle">⭐ Twinkle Twinkle Little Star (easy)</option>
-                                <option value="two-tigers">🐯 Two Tigers / Frère Jacques (easy)</option>
-                                <option value="mary-lamb">🐑 Mary Had a Little Lamb (easy)</option>
-                                <option value="ode-to-joy">😊 Ode to Joy (medium)</option>
+                                <option value="mary-lamb">� Mary Had a Little Lamb (easy)</option>
+                                <option value="london-bridge">🌉 London Bridge (easy)</option>
+                                <option value="row-boat">� Row Row Row Your Boat (easy)</option>
+                                <!-- Medium -->
+                                <option value="ode-to-joy">😊 Ode to Joy - Beethoven (medium)</option>
                                 <option value="jingle-bells">🔔 Jingle Bells (medium)</option>
-                                <option value="jasmine">🌸 Jasmine Flower (hard)</option>
-                                <option value="fur-elise">💝 Für Elise (hard)</option>
-                                <option value="butterfly-lovers">🦋 Butterfly Lovers (advanced)</option>
+                                <option value="amazing-grace">🙏 Amazing Grace (medium)</option>
+                                <option value="silent-night">🌙 Silent Night (medium)</option>
+                                <option value="auld-lang-syne">🎉 Auld Lang Syne (medium)</option>
+                                <!-- Hard -->
+                                <option value="fur-elise">💝 Für Elise - Beethoven (hard)</option>
+                                <option value="canon">🎼 Canon in D - Pachelbel (hard)</option>
+                                <option value="moonlight">🌕 Moonlight Sonata - Beethoven (hard)</option>
+                                <!-- Advanced -->
+                                <option value="river-flows">🌊 River Flows in You - Yiruma (advanced)</option>
                             </select>
                         </div>
                         <div class="practice-buttons">
@@ -241,7 +260,7 @@
     </section>
 
     <footer class="footer">
-        <div class="container"><div class="footer-content"><p>&copy; 2024 Piano Online. All rights reserved.</p><div class="footer-links"><a href="/" hreflang="zh-CN">Chinese version</a><a href="/tutorials.html">Tutorials</a><a href="/practice.html">Practice</a></div></div></div>
+        <div class="container"><div class="footer-content"><p>&copy; 2024 Piano Online. All rights reserved.</p><div class="footer-links"><a href="/" hreflang="zh-CN">Chinese version</a><a href="/en/tutorials.html">Tutorials</a><a href="/en/#practice-start">Practice</a></div></div></div>
     </footer>
 
     <script type="application/ld+json">
@@ -252,6 +271,24 @@
     </script>
     <script type="application/ld+json">
     {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Do I need a real piano?","acceptedAnswer":{"@type":"Answer","text":"No. You can start with your computer keyboard or touch screen. A MIDI keyboard is optional."}},{"@type":"Question","name":"Is this online piano free?","acceptedAnswer":{"@type":"Answer","text":"Yes. The virtual piano and beginner practice tools are free to use in your browser."}},{"@type":"Question","name":"Can beginners use it?","acceptedAnswer":{"@type":"Answer","text":"Yes. Choose an easy song and follow the next-key prompts to build confidence step by step."}},{"@type":"Question","name":"Does it support MIDI keyboards?","acceptedAnswer":{"@type":"Answer","text":"Yes, supported browsers can detect connected MIDI keyboards and let you play directly."}}]}
+    </script>
+    <script>
+    // Language switcher dropdown
+    document.addEventListener('DOMContentLoaded', () => {
+        const switcher = document.querySelector('.lang-switcher');
+        const btn = document.querySelector('.lang-switcher-btn');
+        if (switcher && btn) {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                switcher.classList.toggle('open');
+                btn.setAttribute('aria-expanded', switcher.classList.contains('open'));
+            });
+            document.addEventListener('click', () => {
+                switcher.classList.remove('open');
+                btn.setAttribute('aria-expanded', 'false');
+            });
+        }
+    });
     </script>
 </body>
 

@@ -38,6 +38,7 @@ body {
     top: 0;
     z-index: 1000;
     padding: var(--spacing-sm) 0;
+    overflow: visible;
 }
 
 .nav-container {
@@ -61,6 +62,7 @@ body {
 
 .nav-links {
     display: flex;
+    align-items: center;
     gap: var(--spacing-md);
 }
 
@@ -77,6 +79,116 @@ body {
     color: var(--primary-color);
     background-color: rgba(26, 115, 232, 0.1);
 }
+
+.lang-switcher {
+    position: relative;
+    margin-left: var(--spacing-sm);
+}
+
+.lang-switcher-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+}
+
+.lang-switcher-btn:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.lang-switcher-btn svg {
+    width: 18px;
+    height: 18px;
+    opacity: 0.7;
+}
+
+.lang-switcher-btn .arrow {
+    width: 12px;
+    height: 12px;
+    opacity: 0.5;
+    transition: transform 0.2s ease;
+}
+
+.lang-switcher.open .lang-switcher-btn .arrow {
+    transform: rotate(180deg);
+}
+
+.lang-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    min-width: 140px;
+    padding: 6px 0;
+    display: none;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: all 0.2s ease;
+    z-index: 2001;
+}
+
+.lang-switcher.open .lang-dropdown {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.lang-dropdown a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 400;
+    border-radius: 0;
+    transition: background-color 0.15s ease;
+}
+
+.lang-dropdown a:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: var(--text-primary);
+}
+
+.lang-dropdown a.active {
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+.lang-dropdown a .check {
+    width: 16px;
+    height: 16px;
+    margin-left: auto;
+    opacity: 0;
+}
+
+.lang-dropdown a.active .check {
+    opacity: 1;
+}
+
+/* Ensure dropdown links are not styled like navbar pills */
+.nav-links .lang-dropdown a,
+.nav-links .lang-dropdown a:hover {
+    padding: 10px 16px !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
 
 /* Hero 区域样式 */
 .hero {
@@ -4112,15 +4224,14 @@ body {
     margin: 0 auto;
     padding: 0 24px;
     display: flex;
-    align-items: center;
+    align-items: flex-start; /* top-align columns to match CN layout */
     justify-content: space-between;
-    align-items: center;
     gap: 48px;
 }
 
 .hero-home-copy {
     text-align: left;
-    flex: 1 1 58%;
+    flex: 1 1 60%; /* give a bit more width to left text */
     max-width: 680px;
     min-width: 0;
 }
@@ -4153,6 +4264,31 @@ body {
     overflow-wrap: normal;
     max-width: 8em;
     text-wrap: balance;
+}
+
+/* English heading tends to be longer; set comfortable line length */
+html[lang="en"] .hero-home-copy h1 {
+    max-width: 22ch; /* widen measure so left text looks broader */
+    word-break: normal;
+    overflow-wrap: break-word;
+}
+
+/* EN-specific layout tuning to match CN optics */
+html[lang="en"] .hero-home-container {
+    max-width: 1320px;
+    gap: 64px;
+}
+
+html[lang="en"] .hero-home-copy {
+    flex: 1 1 62%;
+}
+
+@media (min-width: 1200px) {
+  html[lang="en"] .hero-home-visual {
+      flex: 0 0 480px;
+      max-width: 480px;
+      margin-right: -96px; /* push visual further to the right */
+  }
 }
 
 .hero-home-copy .hero-subtitle {
@@ -4191,9 +4327,10 @@ body {
 
 .hero-home-visual {
     position: relative;
-    flex: 0 0 420px;
-    max-width: 420px;
+    flex: 0 0 460px; /* push visual a bit to the right */
+    max-width: 460px;
     margin-left: auto;
+    align-self: flex-start; /* ensure visual aligns with top of text column */
 }
 
 .hero-visual-card {

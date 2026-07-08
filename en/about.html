@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About - Piano Online</title>
+  <meta name="description" content="About Piano Online: a free virtual piano with keyboard support, guided practice, and rhythm game mode." />
+  <link rel="canonical" href="https://pianoonline.cc/en/about.html" />
+  <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
+  <link rel="stylesheet" href="/css/piano.css" />
+  <!-- GA & ads (kept consistent) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-EYGD99YB4Y"></script>
+  <script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'G-EYGD99YB4Y');</script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4423187689700927" crossorigin="anonymous"></script>
+</head>
+<body>
+  <nav class="nav-bar">
+    <div class="nav-container">
+      <a href="/en/" class="nav-logo"><img src="/images/logo.svg" alt="Piano Online Logo" class="logo-img" /></a>
+      <div class="nav-links">
+        <a href="/en/">Home</a>
+        <a href="/en/tutorials.html">Tutorials</a>
+        <a href="/en/#practice-start">Practice</a>
+        <a href="/en/about.html" class="active">About</a>
+        <div class="lang-switcher">
+          <button class="lang-switcher-btn" aria-expanded="false" aria-haspopup="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1 4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            <span>English</span>
+            <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="lang-dropdown">
+            <a href="/about.html" hreflang="zh-CN">中文</a>
+            <a href="/en/about.html" class="active" hreflang="en">English<svg class="check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container" style="padding-top: calc(var(--nav-height) + 32px); min-height: 60vh;">
+    <h1>About Piano Online</h1>
+    <p>Piano Online is a free, browser-based virtual piano focused on beginner-friendly practice. It supports computer keyboard input, guided song prompts, a rhythm game mode, MIDI (in supported browsers), and full-screen playing.</p>
+    <h2>Mission</h2>
+    <p>Make piano learning simple, fun, and accessible to everyone — wherever you are.</p>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <p>&copy; 2024 Piano Online. All rights reserved.</p>
+        <div class="footer-links"><a href="/" hreflang="zh-CN">Chinese version</a><a href="/en/tutorials.html">Tutorials</a><a href="/en/#practice-start">Practice</a></div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const sw = document.querySelector('.lang-switcher');
+      const btn = document.querySelector('.lang-switcher-btn');
+      if (sw && btn) {
+        btn.addEventListener('click', (e) => { e.stopPropagation(); sw.classList.toggle('open'); btn.setAttribute('aria-expanded', sw.classList.contains('open')); });
+        document.addEventListener('click', () => { sw.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); });
+      }
+    });
+  </script>
+</body>
+</html>
