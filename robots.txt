@@ -3,6 +3,7 @@ Allow: /
 
 # 允许搜索引擎索引所有内容
 Sitemap: https://pianoonline.cc/sitemap.xml
+Sitemap: https://pianoonline.cc/sitemap-songs.xml
 
 # 禁止访问敏感目录和开发文件
 Disallow: /admin/
