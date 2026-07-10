@@ -1,11 +1,10 @@
 import { songs, calculateScore } from './practice-songs.js';
+import { t } from './i18n.js';
 
-console.log('practice-mode.js loaded');
-console.log('Imported songs:', songs);
+const PROGRESS_STORAGE_KEY = 'piano-online-progress-v1';
 
 class PracticeMode {
     constructor(piano) {
-        console.log('PracticeMode constructor called');
         this.piano = piano;
         this.currentSong = null;
         this.currentNoteIndex = 0;
@@ -13,15 +12,23 @@ class PracticeMode {
         this.startTime = null;
         this.correctNotes = 0;
         this.wrongNotes = 0;
+        this.resultModal = null;
 
-        // 等待 DOM 加载完成后再初始化
+        this.loadResultStyles();
         this.initializeUI();
     }
 
+    loadResultStyles() {
+        if (document.querySelector('link[data-practice-result-styles]')) return;
+
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = '/css/practice-result.css';
+        link.dataset.practiceResultStyles = 'true';
+        document.head.appendChild(link);
+    }
+
     initializeUI() {
-        console.log('Initializing UI...');
-        
-        // 获取UI元素
         this.songSelect = document.getElementById('song-select');
         this.startButton = document.getElementById('start-practice');
         this.stopButton = document.getElementById('stop-practice');
@@ -30,129 +37,80 @@ class PracticeMode {
         this.wrongNotesSpan = document.getElementById('wrong-notes');
         this.progressSpan = document.getElementById('progress');
         this.keyHint = document.getElementById('key-hint');
-
-        // 检查是否找到所有必需的元素
-        if (!this.songSelect || !this.startButton || !this.stopButton || !this.practiceStats) {
-            console.error('Some required UI elements are missing');
-            console.log('songSelect:', this.songSelect);
-            console.log('startButton:', this.startButton);
-            console.log('stopButton:', this.stopButton);
-            console.log('practiceStats:', this.practiceStats);
-            return;
-        }
-
-        // 获取提示元素
         this.keyHintKey = this.keyHint?.querySelector('.hint-key');
         this.keyHintNote = this.keyHint?.querySelector('.hint-note');
 
-        // 初始状态下禁用开始按钮
-        this.startButton.disabled = true;
+        if (!this.songSelect || !this.startButton || !this.stopButton || !this.practiceStats) {
+            console.error('Practice mode UI is incomplete');
+            return;
+        }
 
-        // 设置事件监听器
+        this.startButton.disabled = true;
+        this.startButton.textContent = `✨ ${t('practice.start')}`;
+        this.stopButton.textContent = t('practice.stop');
         this.setupEventListeners();
+        this.updateStats();
     }
 
     setupEventListeners() {
-        // 歌曲选择事件
-        this.songSelect.addEventListener('change', (e) => {
-            const songId = e.target.value;
-            if (songId && songs[songId]) {
-                this.currentSong = {
-                    ...songs[songId],
-                    id: songId
-                };
-                this.startButton.disabled = false;
-                console.log('Selected song:', this.currentSong);
-            } else {
-                this.currentSong = null;
-                this.startButton.disabled = true;
-            }
+        this.songSelect.addEventListener('change', (event) => {
+            const songId = event.target.value;
+            this.currentSong = songId && songs[songId]
+                ? { ...songs[songId], id: songId }
+                : null;
+            this.startButton.disabled = !this.currentSong;
         });
 
-        // 开始按钮事件
-        this.startButton.addEventListener('click', () => {
-            console.log('Start button clicked');
-            this.startPractice();
-        });
-        
-        // 停止按钮事件
-        this.stopButton.addEventListener('click', () => {
-            console.log('Stop button clicked');
-            this.stopPractice();
-        });
-
-        // 设置钢琴的音符回调
+        this.startButton.addEventListener('click', () => this.startPractice());
+        this.stopButton.addEventListener('click', () => this.stopPractice());
         this.piano.onNotePlay = (note) => this.handleNotePlayed(note);
     }
 
     startPractice() {
-        console.log('Starting practice with song:', this.currentSong);
         if (!this.currentSong) {
-            console.error('No song selected');
+            this.showTransientMessage(t('practice.noSong'));
             return;
         }
 
+        this.closeResultModal();
         this.isPlaying = true;
         this.currentNoteIndex = 0;
         this.correctNotes = 0;
         this.wrongNotes = 0;
         this.startTime = Date.now();
 
-        // 显示/隐藏相应的按钮
-        if (this.startButton && this.stopButton) {
-            this.startButton.style.display = 'none';
-            this.stopButton.style.display = 'block';
-        }
+        this.startButton.style.display = 'none';
+        this.stopButton.style.display = 'block';
+        this.practiceStats.style.display = 'block';
+        if (this.keyHint) this.keyHint.style.display = 'block';
 
-        // 显示统计面板
-        if (this.practiceStats) {
-            this.practiceStats.style.display = 'block';
-        }
-
-        // 显示提示面板
-        if (this.keyHint) {
-            this.keyHint.style.display = 'block';
-        }
-
-        // 更新统计信息
         this.updateStats();
-        
-        // 显示第一个音符提示
         this.updateKeyHint();
-        
-        console.log('Practice started successfully');
+        this.track('song_start', { song_id: this.currentSong.id });
     }
 
-    stopPractice() {
-        console.log('Stopping practice');
+    stopPractice({ completed = false, showResult = false } = {}) {
+        if (!this.isPlaying && !showResult) return;
+
         this.isPlaying = false;
-        
-        // 显示/隐藏相应的按钮
-        if (this.startButton && this.stopButton) {
-            this.startButton.style.display = 'block';
-            this.stopButton.style.display = 'none';
-        }
-
-        // 隐藏统计面板
-        if (this.practiceStats) {
-            this.practiceStats.style.display = 'none';
-        }
-
-        // 隐藏提示面板
-        if (this.keyHint) {
-            this.keyHint.style.display = 'none';
-        }
-
-        // 移除所有键的高亮
+        this.startButton.style.display = 'block';
+        this.stopButton.style.display = 'none';
+        this.practiceStats.style.display = 'none';
+        if (this.keyHint) this.keyHint.style.display = 'none';
         this.clearKeyHighlight();
 
-        // 计算并显示最终得分
-        if (this.correctNotes > 0 || this.wrongNotes > 0) {
-            const score = calculateScore(this.correctNotes, this.wrongNotes);
-            alert(`练习结束!\n正确: ${this.correctNotes}\n错误: ${this.wrongNotes}\n得分: ${score}`);
+        if (showResult && this.currentSong) {
+            this.showResultModal({ completed });
         }
-        
-        console.log('Practice stopped successfully');
+    }
+
+    finishPractice() {
+        this.stopPractice({ completed: true, showResult: true });
+        this.track('song_complete', {
+            song_id: this.currentSong.id,
+            correct_notes: this.correctNotes,
+            wrong_notes: this.wrongNotes
+        });
     }
 
     handleNotePlayed(note) {
@@ -162,96 +120,61 @@ class PracticeMode {
         const keyElement = this.piano.keys[note];
 
         if (note === expectedNote) {
-            this.correctNotes++;
-            this.currentNoteIndex++;
+            this.correctNotes += 1;
+            this.currentNoteIndex += 1;
+            this.flashKey(keyElement, 'success', 450);
 
-            // 显示成功视觉反馈
-            if (keyElement) {
-                keyElement.classList.add('success');
-                setTimeout(() => {
-                    keyElement.classList.remove('success');
-                }, 500);
-            }
-
-            // 检查是否完成
             if (this.currentNoteIndex >= this.currentSong.notes.length) {
-                this.stopPractice();
-                this.showCompletionMessage();
+                this.finishPractice();
                 return;
             }
         } else {
-            this.wrongNotes++;
-
-            // 显示错误视觉反馈
-            if (keyElement) {
-                keyElement.classList.add('error');
-                setTimeout(() => {
-                    keyElement.classList.remove('error');
-                }, 400);
-            }
+            this.wrongNotes += 1;
+            this.flashKey(keyElement, 'error', 350);
         }
 
-        // 更新统计信息和提示
         this.updateStats();
         this.updateKeyHint();
     }
 
-    showCompletionMessage() {
-        const accuracy = this.correctNotes / (this.correctNotes + this.wrongNotes) * 100;
-        const message = `
-            🎉 恭喜完成！
-
-            正确: ${this.correctNotes}
-            错误: ${this.wrongNotes}
-            准确率: ${accuracy.toFixed(1)}%
-        `;
-        alert(message);
+    flashKey(keyElement, className, duration) {
+        if (!keyElement) return;
+        keyElement.classList.add(className);
+        window.setTimeout(() => keyElement.classList.remove(className), duration);
     }
 
     updateStats() {
-        if (!this.currentSong) return;
+        const totalNotes = this.currentSong?.notes.length || 0;
+        const progress = totalNotes
+            ? Math.round((this.currentNoteIndex / totalNotes) * 100)
+            : 0;
 
-        const totalNotes = this.currentSong.notes.length;
-        const progress = Math.round((this.currentNoteIndex / totalNotes) * 100);
-
-        this.correctNotesSpan.textContent = `正确: ${this.correctNotes}`;
-        this.wrongNotesSpan.textContent = `错误: ${this.wrongNotes}`;
-        this.progressSpan.textContent = `进度: ${progress}%`;
+        if (this.correctNotesSpan) {
+            this.correctNotesSpan.textContent = `${t('practice.correct')}: ${this.correctNotes}`;
+        }
+        if (this.wrongNotesSpan) {
+            this.wrongNotesSpan.textContent = `${t('practice.wrong')}: ${this.wrongNotes}`;
+        }
+        if (this.progressSpan) {
+            this.progressSpan.textContent = `${t('practice.progress')}: ${progress}%`;
+        }
     }
 
     updateKeyHint() {
-        console.log('Updating key hint, isPlaying:', this.isPlaying, 'currentSong:', this.currentSong);
         if (!this.isPlaying || !this.currentSong) return;
 
         const currentNote = this.currentSong.notes[this.currentNoteIndex];
         const keyboardKey = this.getKeyboardKeyForNote(currentNote);
-        console.log('Current note:', currentNote, 'Keyboard key:', keyboardKey);
 
-        // 更新提示文本
-        if (this.keyHintKey && this.keyHintNote) {
-            this.keyHintKey.textContent = keyboardKey;
-            this.keyHintNote.textContent = currentNote;
-            console.log('Updated hint text successfully');
-        } else {
-            console.error('Key hint elements not found');
-        }
-
-        // 高亮当前键
+        if (this.keyHintKey) this.keyHintKey.textContent = keyboardKey;
+        if (this.keyHintNote) this.keyHintNote.textContent = currentNote;
         this.highlightKey(currentNote);
     }
 
     getKeyboardKeyForNote(note) {
-        // 遍历钢琴的 keyMap 找到对应的键盘按键
-        const candidates = [];
-        for (const [key, mappedNote] of Object.entries(this.piano.keyMap)) {
-            if (mappedNote === note) {
-                candidates.push(key);
-            }
-        }
-
-        if (candidates.length === 0) {
-            return '';
-        }
+        const candidates = Object.entries(this.piano.keyMap)
+            .filter(([, mappedNote]) => mappedNote === note)
+            .map(([key]) => key);
 
         const priority = (key) => {
             if (/^[a-z]$/.test(key)) return 0;
@@ -260,31 +183,158 @@ class PracticeMode {
         };
 
         candidates.sort((a, b) => priority(a) - priority(b));
-
-        const chosenKey = candidates[0];
-        return chosenKey.length > 1 && chosenKey.startsWith('w')
-            ? chosenKey.substring(1)
-            : chosenKey.toUpperCase();
+        return candidates[0]?.toUpperCase() || '';
     }
 
     highlightKey(note) {
-        // 移除之前的高亮
         this.clearKeyHighlight();
-
-        // 添加新的高亮
-        const keys = document.querySelectorAll('.piano-key');
-        keys.forEach(key => {
-            if (key.dataset.note === note) {
-                key.classList.add('current');
-            }
+        document.querySelectorAll('.key').forEach((key) => {
+            if (key.dataset.note === note) key.classList.add('current');
         });
     }
 
     clearKeyHighlight() {
-        const keys = document.querySelectorAll('.piano-key');
-        keys.forEach(key => {
+        document.querySelectorAll('.key.current').forEach((key) => {
             key.classList.remove('current');
         });
+    }
+
+    showResultModal({ completed }) {
+        this.closeResultModal();
+
+        const totalAttempts = this.correctNotes + this.wrongNotes;
+        const accuracy = totalAttempts
+            ? Math.round((this.correctNotes / totalAttempts) * 100)
+            : 0;
+        const score = calculateScore(this.correctNotes, this.wrongNotes);
+        const durationSeconds = Math.max(0, Math.round((Date.now() - this.startTime) / 1000));
+        const duration = this.formatDuration(durationSeconds);
+        const progress = this.saveProgress(score, accuracy, durationSeconds, completed);
+
+        const modal = document.createElement('div');
+        modal.className = 'practice-result-modal';
+        modal.setAttribute('role', 'dialog');
+        modal.setAttribute('aria-modal', 'true');
+        modal.setAttribute('aria-labelledby', 'practice-result-title');
+
+        const nextSongOption = this.getNextSongOption();
+        modal.innerHTML = `
+            <div class="practice-result-card">
+                <h2 id="practice-result-title">${completed ? '🎉 ' : ''}${t(completed ? 'practice.completedTitle' : 'practice.stoppedTitle')}</h2>
+                <p class="practice-result-song">${this.escapeHtml(this.getSongName())}</p>
+                <div class="practice-result-score">${score}</div>
+                ${progress.isNewBest ? `<div class="practice-result-badge">${t('practice.newBest')}</div>` : ''}
+                <div class="practice-result-grid">
+                    <div class="practice-result-stat"><strong>${accuracy}%</strong><span>${t('practice.accuracy')}</span></div>
+                    <div class="practice-result-stat"><strong>${duration}</strong><span>${t('practice.duration')}</span></div>
+                    <div class="practice-result-stat"><strong>${progress.bestScore}</strong><span>${t('practice.bestScore')}</span></div>
+                </div>
+                <div class="practice-result-actions">
+                    <button type="button" class="btn primary" data-action="retry">${t('practice.practiceAgain')}</button>
+                    ${nextSongOption ? `<button type="button" class="btn secondary" data-action="next">${t('practice.nextSong')}</button>` : ''}
+                    <button type="button" class="btn secondary" data-action="close">${t('practice.close')}</button>
+                </div>
+            </div>
+        `;
+
+        modal.addEventListener('click', (event) => {
+            if (event.target === modal || event.target.closest('[data-action="close"]')) {
+                this.closeResultModal();
+                return;
+            }
+
+            if (event.target.closest('[data-action="retry"]')) {
+                this.startPractice();
+                return;
+            }
+
+            if (event.target.closest('[data-action="next"]') && nextSongOption) {
+                this.songSelect.value = nextSongOption.value;
+                this.songSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                this.startPractice();
+            }
+        });
+
+        document.body.appendChild(modal);
+        this.resultModal = modal;
+        modal.querySelector('[data-action="retry"]')?.focus();
+    }
+
+    getNextSongOption() {
+        const options = Array.from(this.songSelect.options).filter((option) => option.value);
+        const currentIndex = options.findIndex((option) => option.value === this.currentSong?.id);
+        return currentIndex >= 0 ? options[currentIndex + 1] || null : null;
+    }
+
+    getSongName() {
+        const selectedOption = this.songSelect.selectedOptions?.[0];
+        return selectedOption?.textContent?.replace(/^\S+\s*/, '').trim()
+            || this.currentSong?.nameEn
+            || this.currentSong?.name
+            || '';
+    }
+
+    saveProgress(score, accuracy, durationSeconds, completed) {
+        let progress = {};
+        try {
+            progress = JSON.parse(localStorage.getItem(PROGRESS_STORAGE_KEY) || '{}');
+        } catch {
+            progress = {};
+        }
+
+        const previous = progress[this.currentSong.id] || {};
+        const bestScore = Math.max(previous.bestScore || 0, score);
+        const isNewBest = score > (previous.bestScore || 0);
+
+        progress[this.currentSong.id] = {
+            bestScore,
+            bestAccuracy: Math.max(previous.bestAccuracy || 0, accuracy),
+            bestDurationSeconds: previous.bestDurationSeconds
+                ? Math.min(previous.bestDurationSeconds, durationSeconds)
+                : durationSeconds,
+            completed: Boolean(previous.completed || completed),
+            attempts: (previous.attempts || 0) + 1,
+            lastPracticedAt: new Date().toISOString()
+        };
+
+        localStorage.setItem(PROGRESS_STORAGE_KEY, JSON.stringify(progress));
+        return { bestScore, isNewBest };
+    }
+
+    formatDuration(totalSeconds) {
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        return `${minutes}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    closeResultModal() {
+        this.resultModal?.remove();
+        this.resultModal = null;
+    }
+
+    showTransientMessage(message) {
+        const element = document.createElement('div');
+        element.className = 'practice-result-badge';
+        element.style.position = 'fixed';
+        element.style.left = '50%';
+        element.style.bottom = '32px';
+        element.style.zIndex = '10001';
+        element.style.transform = 'translateX(-50%)';
+        element.textContent = message;
+        document.body.appendChild(element);
+        window.setTimeout(() => element.remove(), 2200);
+    }
+
+    escapeHtml(value) {
+        const element = document.createElement('div');
+        element.textContent = value;
+        return element.innerHTML;
+    }
+
+    track(eventName, params) {
+        if (typeof window.gtag === 'function') {
+            window.gtag('event', eventName, params);
+        }
     }
 }
 
