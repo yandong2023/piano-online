@@ -1,0 +1,88 @@
+/* Piano Online modern homepage layer */
+
+.home-modern {
+  background: var(--po-bg-primary, #0b0b10);
+  color: var(--po-text-primary, #ffffff);
+}
+
+.hero-modern {
+  min-height: 720px;
+  display: flex;
+  align-items: center;
+  padding: 120px 24px 80px;
+  background: radial-gradient(circle at top, rgba(212,175,55,.18), transparent 45%), #0b0b10;
+}
+
+.hero-modern-container {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+
+.hero-modern h1 {
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+}
+
+.hero-modern p {
+  color: rgba(255,255,255,.72);
+  font-size: 1.2rem;
+  max-width: 560px;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.hero-piano-card {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 28px;
+  padding: 28px;
+  backdrop-filter: blur(20px);
+}
+
+.song-grid-modern {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.song-card-modern {
+  border-radius: 20px;
+  padding: 24px;
+  background: #17171d;
+  border: 1px solid rgba(255,255,255,.08);
+  transition: transform .2s ease;
+}
+
+.song-card-modern:hover {
+  transform: translateY(-4px);
+}
+
+@media (max-width: 900px) {
+  .hero-modern-container {
+    grid-template-columns: 1fr;
+  }
+
+  .song-grid-modern {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .song-grid-modern {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+  }
+}
