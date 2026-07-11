@@ -59,6 +59,10 @@ class PracticeMode {
                 ? { ...songs[songId], id: songId }
                 : null;
             this.startButton.disabled = !this.currentSong;
+            this.emitPracticeEvent('songchange', {
+                songId: this.currentSong?.id || null,
+                noteIndex: 0
+            });
         });
 
         this.startButton.addEventListener('click', () => this.startPractice());
@@ -86,6 +90,11 @@ class PracticeMode {
 
         this.updateStats();
         this.updateKeyHint();
+        this.emitPracticeEvent('start', {
+            songId: this.currentSong.id,
+            noteIndex: 0,
+            totalNotes: this.currentSong.notes.length
+        });
         this.track('song_start', { song_id: this.currentSong.id });
     }
 
@@ -98,6 +107,11 @@ class PracticeMode {
         this.practiceStats.style.display = 'none';
         if (this.keyHint) this.keyHint.style.display = 'none';
         this.clearKeyHighlight();
+        this.emitPracticeEvent('stop', {
+            songId: this.currentSong?.id || null,
+            noteIndex: this.currentNoteIndex,
+            completed
+        });
 
         if (showResult && this.currentSong) {
             this.showResultModal({ completed });
@@ -105,6 +119,12 @@ class PracticeMode {
     }
 
     finishPractice() {
+        this.emitPracticeEvent('progress', {
+            songId: this.currentSong.id,
+            noteIndex: this.currentSong.notes.length,
+            totalNotes: this.currentSong.notes.length,
+            completed: true
+        });
         this.stopPractice({ completed: true, showResult: true });
         this.track('song_complete', {
             song_id: this.currentSong.id,
@@ -135,6 +155,14 @@ class PracticeMode {
 
         this.updateStats();
         this.updateKeyHint();
+        this.emitPracticeEvent('progress', {
+            songId: this.currentSong.id,
+            noteIndex: this.currentNoteIndex,
+            totalNotes: this.currentSong.notes.length,
+            correctNotes: this.correctNotes,
+            wrongNotes: this.wrongNotes,
+            expectedNote: this.currentSong.notes[this.currentNoteIndex]
+        });
     }
 
     flashKey(keyElement, className, duration) {
@@ -329,6 +357,10 @@ class PracticeMode {
         const element = document.createElement('div');
         element.textContent = value;
         return element.innerHTML;
+    }
+
+    emitPracticeEvent(name, detail) {
+        document.dispatchEvent(new CustomEvent(`piano:practice-${name}`, { detail }));
     }
 
     track(eventName, params) {
