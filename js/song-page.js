@@ -43,6 +43,7 @@ function syncStatusPanel() {
     });
 
     panel.classList.toggle('is-active', active);
+    panel.closest('.practice-layout')?.classList.toggle('has-active-status', active);
 }
 
 function initializeSongPage() {
