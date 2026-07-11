@@ -5,7 +5,7 @@ import { publicSongs } from '../data/song-library.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = path.resolve(HERE, '..');
-const ASSET_VERSION = '20260711.7';
+const ASSET_VERSION = '20260711.8';
 
 const KEY_MAP = {
   C3: 'A', 'C#3': '1', D3: 'S', 'D#3': '2', E3: 'D', F3: 'F', 'F#3': '3',
@@ -18,22 +18,51 @@ const KEY_MAP = {
 
 const categoryOrder = ['beginner', 'kids', 'traditional', 'holiday', 'classical', 'ragtime'];
 const categoryLabels = {
-  zh: { beginner: '入门歌曲', kids: '童谣与儿歌', traditional: '传统旋律', holiday: '节日歌曲', classical: '古典名曲', ragtime: '拉格泰姆' },
-  en: { beginner: 'First songs', kids: 'Nursery & children’s songs', traditional: 'Traditional melodies', holiday: 'Holiday songs', classical: 'Classical essentials', ragtime: 'Ragtime' }
+  zh: {
+    beginner: '入门歌曲',
+    kids: '童谣与儿歌',
+    traditional: '传统旋律',
+    holiday: '节日歌曲',
+    classical: '古典名曲',
+    ragtime: '拉格泰姆'
+  },
+  en: {
+    beginner: 'First songs',
+    kids: 'Nursery & children’s songs',
+    traditional: 'Traditional melodies',
+    holiday: 'Holiday songs',
+    classical: 'Classical essentials',
+    ragtime: 'Ragtime'
+  }
 };
 
 function esc(value = '') {
-  return String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
 }
 
-function localeText(song, locale) { return song.title?.[locale] || song.title?.zh || ''; }
+function localeText(song, locale) {
+  return song.title?.[locale] || song.title?.zh || '';
+}
+
 function difficultyLabel(level, locale) {
   const zh = ['入门', '简单', '中等', '进阶'];
   const en = ['Starter', 'Easy', 'Medium', 'Advanced'];
-  return (locale === 'zh' ? zh : en)[Math.max(0, Math.min(3, Number(level) - 1))];
+  const index = Math.max(0, Math.min(3, Number(level) - 1));
+  return (locale === 'zh' ? zh : en)[index];
 }
-function songUrl(song, locale) { return locale === 'zh' ? `/songs/${song.slug}/` : `/en/songs/${song.slug}/`; }
-function languageUrl(song, locale) { return locale === 'zh' ? `/en/songs/${song.slug}/` : `/songs/${song.slug}/`; }
+
+function songUrl(song, locale) {
+  return locale === 'zh' ? `/songs/${song.slug}/` : `/en/songs/${song.slug}/`;
+}
+
+function languageUrl(song, locale) {
+  return locale === 'zh' ? `/en/songs/${song.slug}/` : `/songs/${song.slug}/`;
+}
 
 function nav(locale, active = 'songs') {
   const zh = locale === 'zh';
@@ -44,6 +73,7 @@ function nav(locale, active = 'songs') {
     [`${base}/tutorials.html`.replace('//', '/'), zh ? '学习' : 'Learn', 'learn'],
     [zh ? '/#practice-start' : '/en/#practice-start', zh ? '在线钢琴' : 'Piano', 'piano']
   ];
+
   return `<nav class="nav-bar"><div class="nav-container"><a href="${zh ? '/' : '/en/'}" class="nav-logo"><img src="/images/logo.svg" alt="${zh ? '钢琴在线' : 'Piano Online'}" class="logo-img"></a><div class="nav-links">${links.map(([href, label, key]) => `<a href="${href}"${key === active ? ' class="active"' : ''}>${label}</a>`).join('')}<a href="${zh ? '/en/songs/' : '/songs/'}">${zh ? 'English' : '中文'}</a></div></div></nav>`;
 }
 
@@ -64,12 +94,16 @@ function sharedHead({ locale, title, description, canonical, alternate }) {
 <meta property="og:image" content="https://pianoonline.cc/images/og-image.jpg">
 <link rel="stylesheet" href="/css/piano.css?v=${ASSET_VERSION}">
 <link rel="stylesheet" href="/css/song-pages.css?v=${ASSET_VERSION}">
-<link rel="stylesheet" href="/css/secondary-pages.css?v=${ASSET_VERSION}">`;
+<link rel="stylesheet" href="/css/secondary-pages.css?v=${ASSET_VERSION}">
+<link rel="stylesheet" href="/css/song-library-fix.css?v=${ASSET_VERSION}">`;
 }
 
 function card(song, locale) {
   const title = localeText(song, locale);
-  const composer = song.composer ? `<span>${esc(song.composer)}</span>` : '';
+  const composer = song.composer
+    ? `<span class="song-card-composer">${esc(song.composer)}</span>`
+    : '';
+
   return `<a class="song-card" href="${songUrl(song, locale)}" data-category="${esc(song.category)}">
   <span class="song-card-level">${difficultyLabel(song.difficulty, locale)}</span>
   <h3>${esc(title)}</h3>
@@ -81,22 +115,52 @@ function card(song, locale) {
 
 function renderLibrary(locale) {
   const zh = locale === 'zh';
-  const groups = categoryOrder.map((category) => ({ category, songs: publicSongs.filter((song) => song.category === category) })).filter((group) => group.songs.length);
+  const groups = categoryOrder
+    .map((category) => ({
+      category,
+      songs: publicSongs.filter((song) => song.category === category)
+    }))
+    .filter((group) => group.songs.length);
+
   const total = publicSongs.length;
-  const title = zh ? `在线钢琴经典曲库｜${total} 首入门、童谣与古典名曲` : `${total} Classic Piano Songs to Play Online`;
-  const description = zh ? `浏览 ${total} 首可在线练习的经典钢琴曲，包括童谣、传统旋律、节日歌曲和公版古典名曲。` : `Explore ${total} playable piano classics, including beginner songs, traditional melodies, holiday music and public-domain classical themes.`;
+  const title = zh
+    ? `在线钢琴经典曲库｜${total} 首入门、童谣与古典名曲`
+    : `${total} Classic Piano Songs to Play Online`;
+  const description = zh
+    ? `浏览 ${total} 首可在线练习的经典钢琴曲，包括童谣、传统旋律、节日歌曲和公版古典名曲。`
+    : `Explore ${total} playable piano classics, including beginner songs, traditional melodies, holiday music and public-domain classical themes.`;
   const canonical = zh ? 'https://pianoonline.cc/songs/' : 'https://pianoonline.cc/en/songs/';
   const alternate = zh ? 'https://pianoonline.cc/en/songs/' : 'https://pianoonline.cc/songs/';
 
   return `<!DOCTYPE html>
 <html lang="${zh ? 'zh-CN' : 'en'}">
 <head>${sharedHead({ locale, title, description, canonical, alternate })}</head>
-<body class="secondary-page song-library-page premium-song-library">
+<body class="secondary-page song-library-theme premium-song-library">
 ${nav(locale)}
-<main class="song-library-main">
-  <header class="song-library-hero"><div class="song-library-hero-inner"><div class="section-kicker">${zh ? '经典曲库' : 'Classic song library'}</div><h1>${zh ? '从熟悉的旋律，走进钢琴。' : 'Start with a melody you already know.'}</h1><p>${zh ? `已收录 ${total} 首可直接练习的经典曲目。按难度和类型挑一首，查看电脑按键并立即开始。` : `${total} playable classics, organized by style and difficulty. Choose a song, see the keyboard letters and begin.`}</p><div class="library-stats"><span>${total} ${zh ? '首歌曲' : 'songs'}</span><span>${zh ? '中英文页面' : 'Bilingual pages'}</span><span>${zh ? '无需注册' : 'No signup'}</span></div></div></header>
+<main class="song-library-page song-library-main">
+  <header class="song-library-hero">
+    <div class="song-library-hero-inner">
+      <div class="section-kicker">${zh ? '经典曲库' : 'Classic song library'}</div>
+      <h1>${zh ? '从熟悉的旋律，走进钢琴。' : 'Start with a melody you already know.'}</h1>
+      <p>${zh ? `已收录 ${total} 首可直接练习的经典曲目。按难度和类型挑一首，查看电脑按键并立即开始。` : `${total} playable classics, organized by style and difficulty. Choose a song, see the keyboard letters and begin.`}</p>
+      <div class="library-stats">
+        <span>${total} ${zh ? '首歌曲' : 'songs'}</span>
+        <span>${zh ? '中英文页面' : 'Bilingual pages'}</span>
+        <span>${zh ? '无需注册' : 'No signup'}</span>
+      </div>
+    </div>
+  </header>
   <div class="container song-library-groups">
-    ${groups.map((group) => `<section class="song-category-section" id="${group.category}"><div class="song-category-heading"><div><div class="section-kicker">${esc(group.category)}</div><h2>${categoryLabels[locale][group.category]}</h2></div><span>${group.songs.length} ${zh ? '首' : 'songs'}</span></div><div class="song-card-grid">${group.songs.map((song) => card(song, locale)).join('')}</div></section>`).join('')}
+    ${groups.map((group) => `<section class="song-category-section" id="${group.category}">
+      <div class="song-category-heading">
+        <div>
+          <div class="section-kicker">${esc(group.category)}</div>
+          <h2>${categoryLabels[locale][group.category]}</h2>
+        </div>
+        <span>${group.songs.length} ${zh ? '首' : 'songs'}</span>
+      </div>
+      <div class="song-card-grid">${group.songs.map((song) => card(song, locale)).join('')}</div>
+    </section>`).join('')}
   </div>
 </main>
 <footer class="footer"><div class="container"><div class="footer-content"><p>&copy; 2026 Piano Online</p><div class="footer-links"><a href="${zh ? '/' : '/en/'}">${zh ? '首页' : 'Home'}</a><a href="${zh ? '/tutorials.html' : '/en/tutorials.html'}">${zh ? '学习' : 'Learn'}</a></div></div></div></footer>
@@ -108,8 +172,19 @@ function relatedSongs(song) {
   const rest = publicSongs.filter((item) => item.id !== song.id && item.category !== song.category);
   return [...same, ...rest].slice(0, 3);
 }
-function keyboardPreview(notes) { return notes.slice(0, 20).map((note) => `<span class="note-chip" title="${esc(note)}">${esc(KEY_MAP[note] || note)}</span>`).join(''); }
-function options(locale, selectedId) { return publicSongs.map((song) => `<option value="${esc(song.id)}"${song.id === selectedId ? ' selected' : ''}>${esc(localeText(song, locale))}</option>`).join(''); }
+
+function keyboardPreview(notes) {
+  return notes
+    .slice(0, 20)
+    .map((note) => `<span class="note-chip" title="${esc(note)}">${esc(KEY_MAP[note] || note)}</span>`)
+    .join('');
+}
+
+function options(locale, selectedId) {
+  return publicSongs
+    .map((song) => `<option value="${esc(song.id)}"${song.id === selectedId ? ' selected' : ''}>${esc(localeText(song, locale))}</option>`)
+    .join('');
+}
 
 function renderSong(song, locale) {
   const zh = locale === 'zh';
@@ -136,17 +211,28 @@ ${nav(locale)}
 }
 
 function renderSitemap() {
-  const urls = publicSongs.flatMap((song) => [`  <url><loc>https://pianoonline.cc/songs/${song.slug}/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>`, `  <url><loc>https://pianoonline.cc/en/songs/${song.slug}/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>`]);
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url><loc>https://pianoonline.cc/songs/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>\n  <url><loc>https://pianoonline.cc/en/songs/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>\n${urls.join('\n')}\n</urlset>`;
+  const urls = publicSongs.flatMap((song) => [
+    `  <url><loc>https://pianoonline.cc/songs/${song.slug}/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>`,
+    `  <url><loc>https://pianoonline.cc/en/songs/${song.slug}/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>`
+  ]);
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://pianoonline.cc/songs/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://pianoonline.cc/en/songs/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+${urls.join('\n')}
+</urlset>`;
 }
 
 export async function generateSongSite(rootDir = PROJECT_ROOT) {
   const zhLibraryDir = path.join(rootDir, 'songs');
   const enLibraryDir = path.join(rootDir, 'en', 'songs');
+
   await mkdir(zhLibraryDir, { recursive: true });
   await mkdir(enLibraryDir, { recursive: true });
   await writeFile(path.join(zhLibraryDir, 'index.html'), renderLibrary('zh'), 'utf8');
   await writeFile(path.join(enLibraryDir, 'index.html'), renderLibrary('en'), 'utf8');
+
   for (const song of publicSongs) {
     const zhDir = path.join(zhLibraryDir, song.slug);
     const enDir = path.join(enLibraryDir, song.slug);
@@ -155,11 +241,14 @@ export async function generateSongSite(rootDir = PROJECT_ROOT) {
     await writeFile(path.join(zhDir, 'index.html'), renderSong(song, 'zh'), 'utf8');
     await writeFile(path.join(enDir, 'index.html'), renderSong(song, 'en'), 'utf8');
   }
+
   await writeFile(path.join(rootDir, 'sitemap-songs.xml'), renderSitemap(), 'utf8');
   return { count: publicSongs.length, pages: publicSongs.length * 2 + 2 };
 }
 
-const directRun = process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href;
+const directRun = process.argv[1]
+  && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href;
+
 if (directRun) {
   const result = await generateSongSite(PROJECT_ROOT);
   console.log(`Generated ${result.pages} song pages from ${result.count} public-domain or traditional songs.`);
