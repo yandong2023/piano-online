@@ -41,11 +41,27 @@ test('generator creates representative Chinese and English pages', () => {
   }
 });
 
-test('generated library pages expose the expanded catalog', async () => {
+test('generated library pages expose the expanded catalog and premium theme', async () => {
   const zh = await readFile('songs/index.html', 'utf8');
   const en = await readFile('en/songs/index.html', 'utf8');
+
   assert.match(zh, /35 首歌曲/);
   assert.match(zh, /G大调小步舞曲/);
   assert.match(en, /35 songs/);
   assert.match(en, /Eine kleine Nachtmusik/);
+
+  for (const html of [zh, en]) {
+    assert.match(html, /class="secondary-page song-library-theme premium-song-library"/);
+    assert.match(html, /class="song-library-page song-library-main"/);
+    assert.match(html, /song-library-fix\.css\?v=20260711\.8/);
+    assert.match(html, /class="song-card-composer"/);
+  }
+});
+
+test('premium song library stylesheet defines readable dark cards', async () => {
+  const css = await readFile('css/song-library-fix.css', 'utf8');
+  assert.match(css, /body\.premium-song-library \.song-card/);
+  assert.match(css, /display:\s*flex;/);
+  assert.match(css, /margin-top:\s*auto;/);
+  assert.match(css, /color:\s*#fff;/);
 });
