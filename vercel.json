@@ -33,6 +33,24 @@
       ]
     },
     {
+      "source": "/js/song-page.js",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/js/score-viewer.js",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/data/song-scores.mjs",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, must-revalidate" }
+      ]
+    },
+    {
       "source": "/css/home-premium.css",
       "headers": [
         { "key": "Cache-Control", "value": "no-cache, must-revalidate" }
@@ -52,6 +70,12 @@
     },
     {
       "source": "/css/secondary-pages.css",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/css/score-viewer.css",
       "headers": [
         { "key": "Cache-Control", "value": "no-cache, must-revalidate" }
       ]
