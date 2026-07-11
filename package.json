@@ -7,7 +7,7 @@
     "start": "http-server -p 8000 -c-1",
     "generate:songs": "node scripts/generate-song-pages.mjs",
     "test:audio": "node --test tests/audio-note-utils.test.mjs",
-    "test": "npm run generate:songs && node --check js/main.js && node --check js/song-discovery.js && node --check js/song-page.js && node --check js/concert-hall-ui.js && node --check js/piano-audio.js && node --check js/audio-runtime.mjs && npm run test:audio"
+    "test": "npm run generate:songs && node --check js/main.js && node --check js/home-premium-style.js && node --check js/song-discovery.js && node --check js/song-page.js && node --check js/concert-hall-ui.js && node --check js/piano-audio.js && node --check js/audio-runtime.mjs && npm run test:audio"
   },
   "keywords": ["virtual piano", "online piano", "piano songs"],
   "author": "",

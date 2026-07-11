@@ -4,14 +4,18 @@ const isChineseHomepage = lang.startsWith('zh') && normalizedPath === '/';
 const isEnglishHomepage = lang.startsWith('en') && normalizedPath === '/en/';
 const isHomepage = isChineseHomepage || isEnglishHomepage;
 
+function appendStylesheet(href, dataAttribute) {
+  if (document.querySelector(`link[${dataAttribute}]`)) return;
+
+  const stylesheet = document.createElement('link');
+  stylesheet.rel = 'stylesheet';
+  stylesheet.href = href;
+  stylesheet.setAttribute(dataAttribute, 'true');
+  document.head.appendChild(stylesheet);
+}
+
 if (isHomepage) {
   document.body?.classList.add('homepage-premium');
-
-  if (!document.querySelector('link[data-home-premium]')) {
-    const stylesheet = document.createElement('link');
-    stylesheet.rel = 'stylesheet';
-    stylesheet.href = '/css/home-premium.css';
-    stylesheet.dataset.homePremium = 'true';
-    document.head.appendChild(stylesheet);
-  }
+  appendStylesheet('/css/home-premium.css', 'data-home-premium');
+  appendStylesheet('/css/homepage-detail-fixes.css', 'data-home-detail-fixes');
 }
