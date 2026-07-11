@@ -29,10 +29,11 @@
 
     <link rel="preconnect" href="https://www.googletagmanager.com">
     <link rel="preconnect" href="https://pagead2.googlesyndication.com">
-    <link rel="stylesheet" href="/css/piano.css">
-    <link rel="stylesheet" href="/css/home-premium.css">
-    <link rel="stylesheet" href="/css/homepage-detail-fixes.css">
-    <script type="module" src="/js/main.js"></script>
+    <link rel="stylesheet" href="/css/piano.css?v=20260711.4">
+    <link rel="stylesheet" href="/css/home-premium.css?v=20260711.4">
+    <link rel="stylesheet" href="/css/homepage-detail-fixes.css?v=20260711.4">
+    <link rel="stylesheet" href="/css/song-pages.css?v=20260711.4">
+    <script type="module" src="/js/main.js?v=20260711.4"></script>
 
     <script type="text/javascript">
         (function (c, l, a, r, i, t, y) {
@@ -126,6 +127,20 @@
             </div>
         </section>
 
+        <section class="song-library-section">
+            <div class="container">
+                <div class="song-library-heading">
+                    <div><div class="section-kicker">Start with a song</div><h2>Popular beginner piano songs</h2><p>Open a song page, view the keyboard letters, and start guided practice.</p></div>
+                    <a class="song-library-all" href="/en/songs/">View all songs</a>
+                </div>
+                <div class="song-card-grid">
+                    <a class="song-card" href="/en/songs/happy-birthday/"><span class="song-card-level">Easy</span><h3>Happy Birthday</h3><p>A familiar melody for your first practice</p><span class="song-card-action">Start learning →</span></a>
+                    <a class="song-card" href="/en/songs/twinkle-twinkle-little-star/"><span class="song-card-level">Easy</span><h3>Twinkle Twinkle Little Star</h3><p>Clear rhythm and beginner-friendly notes</p><span class="song-card-action">Start learning →</span></a>
+                    <a class="song-card" href="/en/songs/ode-to-joy/"><span class="song-card-level">Medium</span><h3>Ode to Joy</h3><p>Practice steady timing and connected phrases</p><span class="song-card-action">Start learning →</span></a>
+                </div>
+            </div>
+        </section>
+
         <section id="practice-start" class="practice-section homepage-practice" tabindex="-1">
             <div class="container">
                 <div class="section-intro">
@@ -150,20 +165,7 @@
                             <div class="song-select-container">
                                 <select id="song-select" class="song-select">
                                     <option value="">Choose a song...</option>
-                                    <option value="happy-birthday">Happy Birthday</option>
-                                    <option value="twinkle">Twinkle Twinkle Little Star</option>
-                                    <option value="mary-lamb">Mary Had a Little Lamb</option>
-                                    <option value="london-bridge">London Bridge</option>
-                                    <option value="row-boat">Row Row Row Your Boat</option>
-                                    <option value="ode-to-joy">Ode to Joy</option>
-                                    <option value="jingle-bells">Jingle Bells</option>
-                                    <option value="amazing-grace">Amazing Grace</option>
-                                    <option value="silent-night">Silent Night</option>
-                                    <option value="auld-lang-syne">Auld Lang Syne</option>
-                                    <option value="fur-elise">Für Elise</option>
-                                    <option value="canon">Canon in D</option>
-                                    <option value="moonlight">Moonlight Sonata</option>
-                                    <option value="river-flows">River Flows in You</option>
+                                    <option value="happy-birthday">Happy Birthday</option><option value="twinkle">Twinkle Twinkle Little Star</option><option value="mary-lamb">Mary Had a Little Lamb</option><option value="london-bridge">London Bridge</option><option value="row-boat">Row Row Row Your Boat</option><option value="ode-to-joy">Ode to Joy</option><option value="jingle-bells">Jingle Bells</option><option value="amazing-grace">Amazing Grace</option><option value="silent-night">Silent Night</option><option value="auld-lang-syne">Auld Lang Syne</option><option value="fur-elise">Für Elise</option><option value="canon">Canon in D</option><option value="moonlight">Moonlight Sonata</option><option value="river-flows">River Flows in You</option>
                                 </select>
                             </div>
                             <div class="practice-buttons">
@@ -174,7 +176,7 @@
                                 <button id="toggle-fullscreen" class="btn secondary">Full screen</button>
                             </div>
                         </div>
-                        <div id="game-instructions" class="game-instructions" style="display:none;"><h3>Rhythm mode</h3><p>Press the matching piano key when each falling note reaches the hit zone.</p></div>
+                        <div id="game-instructions" class="game-instructions" style="display:none;"><h3>Rhythm mode</h3><p>Press the matching key when a note reaches the hit area.</p><div class="key-mapping"></div></div>
                     </div>
                     <div class="practice-status-panel">
                         <div id="key-hint" class="key-hint" style="display:none;"><div class="hint-text">Next key</div><div class="hint-key"></div><div class="hint-note"></div></div>
@@ -185,30 +187,30 @@
             </div>
         </section>
 
-        <section class="features homepage-feature-section">
+        <section class="features">
             <div class="container">
-                <div class="section-intro centered"><div class="section-kicker">Made for everyday music</div><h2>Everything you need to start playing</h2></div>
+                <h2>Play whenever inspiration arrives</h2>
                 <div class="features-grid">
-                    <div class="feature-card"><div class="feature-icon">⌨️</div><h3>Play with your keyboard</h3><p>Clear computer-key labels help you start without learning notation first.</p></div>
-                    <div class="feature-card"><div class="feature-icon">🎼</div><h3>Learn familiar songs</h3><p>Follow guided prompts and finish a complete melody one note at a time.</p></div>
-                    <div class="feature-card"><div class="feature-icon">🎧</div><h3>Practice in your own space</h3><p>Play quietly at home, enter full screen, and return whenever inspiration arrives.</p></div>
+                    <div class="feature-card"><div class="feature-icon">🎹</div><h3>Ready in the browser</h3><p>No download or signup. Use your computer keyboard and start playing.</p></div>
+                    <div class="feature-card"><div class="feature-icon">🎼</div><h3>Learn with prompts</h3><p>Choose a familiar melody and follow the next-key guidance at your own pace.</p></div>
+                    <div class="feature-card"><div class="feature-icon">✨</div><h3>Make space for music</h3><p>Enter full screen, remove distractions, and enjoy a focused playing session.</p></div>
                 </div>
             </div>
         </section>
 
-        <section class="homepage-final-cta"><div class="container"><p class="section-kicker">Your music is closer than you think</p><h2>Start with one note today.</h2><a class="btn primary" href="#practice-start">Open the piano</a></div></section>
+        <section class="home-final-cta"><div class="container"><h2>Music should never feel far away.</h2><p>Press your first key and let the melody begin at home.</p><a class="btn primary" href="#practice-start">Start playing</a></div></section>
     </main>
 
-    <footer class="footer"><div class="container"><div class="footer-content"><p>&copy; 2026 Piano Online.</p><div class="footer-links"><a href="/en/songs/">Songs</a><a href="/en/tutorials.html">Learn</a><a href="/" hreflang="zh-CN">中文</a></div></div></div></footer>
+    <footer class="footer"><div class="container"><div class="footer-content"><p>&copy; 2026 Piano Online</p><div class="footer-links"><a href="/en/songs/">Songs</a><a href="/en/tutorials.html">Learn</a><a href="/" hreflang="zh-CN">中文</a></div></div></div></footer>
 
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Piano Online","url":"https://pianoonline.cc/en/","description":"Free virtual piano for playing songs with a computer keyboard.","applicationCategory":"MusicApplication","operatingSystem":"Web Browser","inLanguage":"en-US","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Piano Online","alternateName":"Virtual Piano Online","url":"https://pianoonline.cc/en/","description":"Play piano online with your computer keyboard and learn beginner songs with guided key prompts.","applicationCategory":"MusicApplication","operatingSystem":"Web Browser","inLanguage":"en-US","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const switcher = document.querySelector('.lang-switcher');
-            const btn = document.querySelector('.lang-switcher-btn');
-            if (!switcher || !btn) return;
-            btn.addEventListener('click', (event) => { event.stopPropagation(); switcher.classList.toggle('open'); btn.setAttribute('aria-expanded', switcher.classList.contains('open')); });
-            document.addEventListener('click', () => { switcher.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); });
+            const button = document.querySelector('.lang-switcher-btn');
+            if (!switcher || !button) return;
+            button.addEventListener('click', (event) => { event.stopPropagation(); switcher.classList.toggle('open'); button.setAttribute('aria-expanded', switcher.classList.contains('open')); });
+            document.addEventListener('click', () => { switcher.classList.remove('open'); button.setAttribute('aria-expanded', 'false'); });
         });
     </script>
 </body>

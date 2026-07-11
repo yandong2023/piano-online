@@ -29,10 +29,11 @@
 
     <link rel="preconnect" href="https://www.googletagmanager.com">
     <link rel="preconnect" href="https://pagead2.googlesyndication.com">
-    <link rel="stylesheet" href="/css/piano.css">
-    <link rel="stylesheet" href="/css/home-premium.css">
-    <link rel="stylesheet" href="/css/homepage-detail-fixes.css">
-    <script type="module" src="/js/main.js"></script>
+    <link rel="stylesheet" href="/css/piano.css?v=20260711.4">
+    <link rel="stylesheet" href="/css/home-premium.css?v=20260711.4">
+    <link rel="stylesheet" href="/css/homepage-detail-fixes.css?v=20260711.4">
+    <link rel="stylesheet" href="/css/song-pages.css?v=20260711.4">
+    <script type="module" src="/js/main.js?v=20260711.4"></script>
 
     <script type="text/javascript">
         (function (c, l, a, r, i, t, y) {
@@ -126,6 +127,20 @@
             </div>
         </section>
 
+        <section class="song-library-section">
+            <div class="container">
+                <div class="song-library-heading">
+                    <div><div class="section-kicker">从一首歌开始</div><h2>适合新手的热门歌曲</h2><p>查看按键字母，直接进入提示练习。</p></div>
+                    <a class="song-library-all" href="/songs/">查看全部歌曲</a>
+                </div>
+                <div class="song-card-grid">
+                    <a class="song-card" href="/songs/happy-birthday/"><span class="song-card-level">简单</span><h3>生日快乐</h3><p>熟悉旋律，适合第一次练习</p><span class="song-card-action">开始学习 →</span></a>
+                    <a class="song-card" href="/songs/twinkle-twinkle-little-star/"><span class="song-card-level">简单</span><h3>小星星</h3><p>节奏清晰，适合新手入门</p><span class="song-card-action">开始学习 →</span></a>
+                    <a class="song-card" href="/songs/ode-to-joy/"><span class="song-card-level">中等</span><h3>欢乐颂</h3><p>练习连贯旋律和稳定节拍</p><span class="song-card-action">开始学习 →</span></a>
+                </div>
+            </div>
+        </section>
+
         <section id="practice-start" class="practice-section homepage-practice" tabindex="-1">
             <div class="container">
                 <div class="section-intro">
@@ -150,23 +165,7 @@
                             <div class="song-select-container">
                                 <select id="song-select" class="song-select">
                                     <option value="">选择一首歌曲...</option>
-                                    <option value="happy-birthday">生日快乐</option>
-                                    <option value="twinkle">小星星</option>
-                                    <option value="two-tigers">两只老虎</option>
-                                    <option value="mary-lamb">玛丽有只小羊羔</option>
-                                    <option value="london-bridge">伦敦大桥</option>
-                                    <option value="row-boat">划船歌</option>
-                                    <option value="ode-to-joy">欢乐颂</option>
-                                    <option value="jingle-bells">铃儿响叮当</option>
-                                    <option value="amazing-grace">奇异恩典</option>
-                                    <option value="silent-night">平安夜</option>
-                                    <option value="auld-lang-syne">友谊地久天长</option>
-                                    <option value="jasmine">茉莉花</option>
-                                    <option value="fur-elise">致爱丽丝</option>
-                                    <option value="moonlight">月光奏鸣曲</option>
-                                    <option value="butterfly-lovers">梁祝</option>
-                                    <option value="canon">卡农</option>
-                                    <option value="river-flows">你的心河</option>
+                                    <option value="happy-birthday">生日快乐</option><option value="twinkle">小星星</option><option value="two-tigers">两只老虎</option><option value="mary-lamb">玛丽有只小羊羔</option><option value="london-bridge">伦敦大桥</option><option value="row-boat">划船歌</option><option value="ode-to-joy">欢乐颂</option><option value="jingle-bells">铃儿响叮当</option><option value="amazing-grace">奇异恩典</option><option value="silent-night">平安夜</option><option value="auld-lang-syne">友谊地久天长</option><option value="jasmine">茉莉花</option><option value="fur-elise">致爱丽丝</option><option value="moonlight">月光奏鸣曲</option><option value="butterfly-lovers">梁祝</option><option value="canon">卡农</option><option value="river-flows">你的心河</option>
                                 </select>
                             </div>
                             <div class="practice-buttons">
@@ -174,44 +173,44 @@
                                 <button id="stop-practice" class="btn danger" style="display:none;">停止练习</button>
                                 <button id="start-rhythm-game" class="btn secondary">节奏模式</button>
                                 <button id="stop-rhythm-game" class="btn danger" style="display:none;">结束游戏</button>
-                                <button id="toggle-fullscreen" class="btn secondary">全屏弹奏</button>
+                                <button id="toggle-fullscreen" class="btn secondary">全屏演奏</button>
                             </div>
                         </div>
-                        <div id="game-instructions" class="game-instructions" style="display:none;"><h3>节奏模式</h3><p>音符落到命中区域时，按下对应的钢琴键。</p></div>
+                        <div id="game-instructions" class="game-instructions" style="display:none;"><h3>节奏模式</h3><p>音符到达命中区域时，按下对应琴键。</p><div class="key-mapping"></div></div>
                     </div>
                     <div class="practice-status-panel">
                         <div id="key-hint" class="key-hint" style="display:none;"><div class="hint-text">下一个键</div><div class="hint-key"></div><div class="hint-note"></div></div>
-                        <div id="practice-stats" class="stats-panel" style="display:none;"><div class="stat-item"><span id="correct-notes">正确：0</span></div><div class="stat-item"><span id="wrong-notes">错误：0</span></div><div class="stat-item"><span id="progress">进度：0%</span></div></div>
-                        <div id="game-stats" class="game-stats-panel" style="display:none;"><div class="game-stat-item"><span id="game-score">分数：0</span></div><div class="game-stat-item"><span id="game-combo">连击：0</span></div><div class="game-stat-item"><span id="game-lives">生命：3</span></div></div>
+                        <div id="practice-stats" class="stats-panel" style="display:none;"><div class="stat-item"><span id="correct-notes">正确: 0</span></div><div class="stat-item"><span id="wrong-notes">错误: 0</span></div><div class="stat-item"><span id="progress">进度: 0%</span></div></div>
+                        <div id="game-stats" class="game-stats-panel" style="display:none;"><div class="game-stat-item"><span id="game-score">分数: 0</span></div><div class="game-stat-item"><span id="game-combo">连击: 0</span></div><div class="game-stat-item"><span id="game-lives">生命: 3</span></div></div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="features homepage-feature-section">
+        <section class="features">
             <div class="container">
-                <div class="section-intro centered"><div class="section-kicker">为日常音乐而设计</div><h2>从第一个音符，到完整一首歌。</h2></div>
+                <h2>随时开始，不必等到拥有一架钢琴</h2>
                 <div class="features-grid">
-                    <div class="feature-card"><div class="feature-icon">⌨️</div><h3>电脑键盘直接弹</h3><p>清晰的按键标签，让你不学五线谱也能先弹出旋律。</p></div>
-                    <div class="feature-card"><div class="feature-icon">🎼</div><h3>从熟悉的歌曲开始</h3><p>跟着提示一个音一个音练，完成之后还能看到练习结果。</p></div>
-                    <div class="feature-card"><div class="feature-icon">🎧</div><h3>在自己的空间练习</h3><p>在家随时打开，全屏沉浸弹奏，让音乐融入日常生活。</p></div>
+                    <div class="feature-card"><div class="feature-icon">🎹</div><h3>打开即弹</h3><p>无需下载和注册，进入网页即可用电脑键盘演奏。</p></div>
+                    <div class="feature-card"><div class="feature-icon">🎼</div><h3>跟着提示学歌</h3><p>选择熟悉的旋律，根据下一个按键提示逐步完成练习。</p></div>
+                    <div class="feature-card"><div class="feature-icon">✨</div><h3>沉浸式演奏</h3><p>进入全屏，减少干扰，在自己的空间里享受弹奏。</p></div>
                 </div>
             </div>
         </section>
 
-        <section class="homepage-final-cta"><div class="container"><p class="section-kicker">音乐其实离你很近</p><h2>今天，就从一个音符开始。</h2><a class="btn primary" href="#practice-start">打开钢琴</a></div></section>
+        <section class="home-final-cta"><div class="container"><h2>音乐不该离你太远。</h2><p>现在按下第一个键，让旋律从家里开始。</p><a class="btn primary" href="#practice-start">开始弹奏</a></div></section>
     </main>
 
-    <footer class="footer"><div class="container"><div class="footer-content"><p>&copy; 2026 Piano Online.</p><div class="footer-links"><a href="/songs/">曲库</a><a href="/tutorials.html">学习</a><a href="/en/" hreflang="en">English</a></div></div></div></footer>
+    <footer class="footer"><div class="container"><div class="footer-content"><p>&copy; 2026 Piano Online</p><div class="footer-links"><a href="/songs/">曲库</a><a href="/tutorials.html">学习</a><a href="/en/" hreflang="en">English</a></div></div></div></footer>
 
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Piano Online","alternateName":"在线钢琴","url":"https://pianoonline.cc/","description":"可以使用电脑键盘弹奏歌曲的免费在线钢琴。","applicationCategory":"MusicApplication","operatingSystem":"Web Browser","inLanguage":"zh-CN","offers":{"@type":"Offer","price":"0","priceCurrency":"CNY"}}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Piano Online","alternateName":"在线钢琴","url":"https://pianoonline.cc/","description":"用电脑键盘在线弹钢琴，并通过按键提示练习入门歌曲。","applicationCategory":"MusicApplication","operatingSystem":"Web Browser","inLanguage":"zh-CN","offers":{"@type":"Offer","price":"0","priceCurrency":"CNY"}}</script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const switcher = document.querySelector('.lang-switcher');
-            const btn = document.querySelector('.lang-switcher-btn');
-            if (!switcher || !btn) return;
-            btn.addEventListener('click', (event) => { event.stopPropagation(); switcher.classList.toggle('open'); btn.setAttribute('aria-expanded', switcher.classList.contains('open')); });
-            document.addEventListener('click', () => { switcher.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); });
+            const button = document.querySelector('.lang-switcher-btn');
+            if (!switcher || !button) return;
+            button.addEventListener('click', (event) => { event.stopPropagation(); switcher.classList.toggle('open'); button.setAttribute('aria-expanded', switcher.classList.contains('open')); });
+            document.addEventListener('click', () => { switcher.classList.remove('open'); button.setAttribute('aria-expanded', 'false'); });
         });
     </script>
 </body>
