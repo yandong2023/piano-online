@@ -1,0 +1,66 @@
+:root {
+  --ui-bg: #0b0b0f;
+  --ui-surface: #15151d;
+  --ui-surface-soft: #20202a;
+  --ui-text: #f8fafc;
+  --ui-muted: #a1a1aa;
+  --ui-gold: #f5c76b;
+  --ui-purple: #8b5cf6;
+  --ui-green: #22c55e;
+  --ui-radius-lg: 24px;
+  --ui-radius-md: 16px;
+  --ui-shadow: 0 20px 60px rgba(0,0,0,.35);
+}
+
+.modern-section {
+  background: var(--ui-bg);
+  color: var(--ui-text);
+}
+
+.modern-card {
+  background: var(--ui-surface);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: var(--ui-radius-md);
+  box-shadow: var(--ui-shadow);
+}
+
+.modern-btn {
+  border-radius: 999px;
+  padding: 12px 24px;
+  font-weight: 700;
+  border: 0;
+  cursor: pointer;
+  transition: transform .2s ease, opacity .2s ease;
+}
+
+.modern-btn:hover {
+  transform: translateY(-2px);
+}
+
+.modern-btn-primary {
+  background: var(--ui-gold);
+  color: #18181b;
+}
+
+.piano-toolbar-modern {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 18px;
+  background: var(--ui-surface);
+  border-radius: 18px;
+  color: var(--ui-text);
+}
+
+.song-pill {
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--ui-surface-soft);
+  color: var(--ui-text);
+}
+
+@media(max-width:768px){
+  .piano-toolbar-modern {
+    flex-wrap: wrap;
+  }
+}

@@ -1,0 +1,70 @@
+/* Modern homepage layout foundation */
+
+.home-modern {
+    --hero-gap: clamp(2rem, 5vw, 5rem);
+}
+
+.home-modern .hero-container {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 520px);
+    gap: var(--hero-gap);
+    align-items: center;
+}
+
+.hero-modern-title {
+    max-width: 720px;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+}
+
+.hero-modern-subtitle {
+    max-width: 560px;
+    margin-top: 1.5rem;
+    font-size: 1.15rem;
+}
+
+.hero-modern-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+}
+
+.song-grid-modern {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+}
+
+.song-card-modern {
+    border-radius: 24px;
+    padding: 1.5rem;
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.song-card-modern:hover {
+    transform: translateY(-4px);
+}
+
+.piano-toolbar-modern {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+    .home-modern .hero-container {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-modern-title {
+        font-size: 2.4rem;
+    }
+
+    .hero-modern-actions {
+        flex-direction: column;
+    }
+}
