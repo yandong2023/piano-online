@@ -1,1 +1,1 @@
-export { songs, calculateScore } from '../data/song-catalog.mjs';
+export { songs, calculateScore } from '../data/song-library.mjs';
