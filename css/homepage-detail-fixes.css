@@ -1,63 +1,94 @@
-/* Final homepage detail fixes: keep this file scoped and loaded after home-premium.css. */
+/* Static homepage refinements. Loaded directly from index.html and /en/index.html. */
 
 body.homepage-premium .hero.hero-home {
     padding: calc(var(--nav-height, 90px) + 34px) 0 62px;
 }
 
 body.homepage-premium .hero-home .hero-home-container {
-    grid-template-columns: minmax(0, 1.04fr) minmax(420px, 0.96fr);
-    gap: clamp(48px, 6vw, 86px);
+    grid-template-columns: minmax(0, 1.02fr) minmax(420px, 0.98fr);
+    gap: clamp(48px, 6vw, 88px);
     align-items: center;
 }
 
 body.homepage-premium .hero-home-copy {
     position: relative;
     z-index: 2;
-    max-width: 620px;
+    max-width: 640px;
     padding: 10px 0 8px;
 }
 
 body.homepage-premium .hero-home .hero-eyebrow {
-    margin-bottom: 18px;
+    margin-bottom: 20px;
 }
 
 body.homepage-premium .hero-home h1 {
-    margin-bottom: 18px;
+    margin: 0 0 20px;
+    text-wrap: balance;
 }
 
 html[lang^="zh"] body.homepage-premium .hero-home h1 {
     max-width: 9ch;
-    font-size: clamp(3rem, 4.6vw, 4.4rem);
+    font-size: clamp(3.25rem, 4.9vw, 4.8rem);
     line-height: 1.08;
     letter-spacing: -0.045em;
     word-break: normal;
     overflow-wrap: break-word;
-    text-wrap: pretty;
 }
 
 html[lang="en"] body.homepage-premium .hero-home h1 {
-    max-width: 8.6ch;
-    font-size: clamp(3.35rem, 5vw, 5rem);
-    line-height: 1.02;
-    letter-spacing: -0.06em;
+    max-width: 10.2ch;
+    font-size: clamp(3.4rem, 5.1vw, 5.15rem);
+    line-height: 1.01;
+    letter-spacing: -0.062em;
     overflow-wrap: normal;
     word-break: normal;
 }
 
 body.homepage-premium .hero-home .hero-subtitle {
-    max-width: 36rem;
-    margin: 0 0 26px;
-    font-size: clamp(1.05rem, 1.45vw, 1.14rem);
+    max-width: 37rem;
+    margin: 0 0 18px;
+    font-size: clamp(1.05rem, 1.45vw, 1.16rem);
     line-height: 1.76;
     color: #556274;
 }
 
-body.homepage-premium .hero-home .hero-proof-list {
-    margin-bottom: 30px;
+body.homepage-premium .hero-trust-line {
+    margin: 0 0 30px;
+    color: #7b8493;
+    font-size: 0.94rem;
+    font-weight: 650;
+    letter-spacing: 0.025em;
 }
 
 body.homepage-premium .hero-home .hero-cta {
-    gap: 16px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 22px;
+    justify-content: flex-start;
+}
+
+body.homepage-premium .hero-home .hero-btn {
+    min-width: 190px;
+    min-height: 56px;
+}
+
+body.homepage-premium .hero-text-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    min-height: 48px;
+    color: #162033;
+    font-weight: 750;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(22, 32, 51, 0.25);
+    transition: color 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+
+body.homepage-premium .hero-text-link:hover {
+    color: #b8872d;
+    border-color: rgba(184, 135, 45, 0.52);
+    transform: translateX(2px);
 }
 
 body.homepage-premium .hero-home-visual {
@@ -67,14 +98,50 @@ body.homepage-premium .hero-home-visual {
 }
 
 body.homepage-premium .hero-home .hero-visual-card {
-    width: min(100%, 500px);
-    max-width: 500px;
+    width: min(100%, 520px);
+    max-width: 520px;
     padding: 20px;
     transform: translateY(6px);
 }
 
+body.homepage-premium .hero-stage-card {
+    position: relative;
+}
+
+body.homepage-premium .hero-stage-card::after {
+    content: '';
+    position: absolute;
+    inset: 18% 9% -12% 9%;
+    z-index: -1;
+    border-radius: 50%;
+    background: rgba(15, 23, 42, 0.22);
+    filter: blur(42px);
+}
+
 body.homepage-premium .hero-home .hero-visual-screen {
+    padding: 28px 26px 24px;
     box-shadow: 0 18px 40px rgba(3, 8, 20, 0.24);
+}
+
+body.homepage-premium .hero-stage-kicker {
+    margin-bottom: 9px;
+    color: rgba(244, 199, 107, 0.9);
+    font-size: 0.76rem;
+    font-weight: 750;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+body.homepage-premium .hero-stage-title {
+    margin-bottom: 24px;
+    color: #f8fafc;
+    font-size: clamp(1.25rem, 2vw, 1.65rem);
+    font-weight: 720;
+    letter-spacing: -0.025em;
+}
+
+body.homepage-premium .hero-home .hero-screen-row {
+    margin-bottom: 22px;
 }
 
 body.homepage-premium .hero-home .hero-mini-keys {
@@ -82,8 +149,27 @@ body.homepage-premium .hero-home .hero-mini-keys {
     padding: 16px 14px 12px;
 }
 
+body.homepage-premium .hero-stage-status {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-top: 14px;
+    padding: 0 4px;
+    color: rgba(226, 232, 240, 0.68);
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+body.homepage-premium .hero-stage-status > span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #58c787;
+    box-shadow: 0 0 0 5px rgba(88, 199, 135, 0.12);
+}
+
 body.homepage-premium .quick-start-card {
-    min-height: 190px;
+    min-height: 184px;
     box-sizing: border-box;
 }
 
@@ -92,6 +178,9 @@ body.homepage-premium .homepage-practice > .container {
 }
 
 body.homepage-premium .homepage-practice .piano-container {
+    min-height: 240px;
+    max-width: 1200px;
+    margin: 0 auto 30px;
     overflow-x: auto !important;
     overflow-y: hidden !important;
     scrollbar-width: thin;
@@ -117,7 +206,6 @@ body.homepage-premium .homepage-practice .keys {
     justify-content: center;
 }
 
-/* The old keyboard renders both data-note and keyboard labels. Keep only keyboard labels. */
 body.homepage-premium .homepage-practice .key::before {
     display: none !important;
 }
@@ -161,6 +249,31 @@ body.homepage-premium .song-select-container {
     min-width: 0;
 }
 
+body.homepage-premium .practice-controls .control-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+body.homepage-premium .midi-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.05);
+    color: #667085;
+    font-size: 0.88rem;
+}
+
+body.homepage-premium .midi-status .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #a8b0bd;
+}
+
 body.homepage-premium .practice-status-panel:empty {
     display: none;
 }
@@ -171,13 +284,66 @@ body.homepage-premium .practice-buttons .btn {
     text-align: center;
 }
 
-/* Reserve side space for AdSense side-rail ads on common desktop widths. */
+body.homepage-premium .section-intro.centered {
+    max-width: 780px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+body.homepage-premium .homepage-feature-section {
+    padding: 88px 0;
+}
+
+body.homepage-premium .homepage-feature-section .features-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+body.homepage-premium .homepage-final-cta {
+    padding: 26px 24px 96px;
+    text-align: center;
+}
+
+body.homepage-premium .homepage-final-cta .container {
+    max-width: 980px;
+    padding: 64px 32px;
+    border-radius: 34px;
+    color: #f8fafc;
+    background:
+        radial-gradient(circle at 50% 0%, rgba(244, 199, 107, 0.16), transparent 34%),
+        linear-gradient(145deg, #172033 0%, #090e19 100%);
+    box-shadow: 0 28px 70px rgba(15, 23, 42, 0.2);
+}
+
+body.homepage-premium .homepage-final-cta .section-kicker {
+    color: #e3bd6e;
+}
+
+body.homepage-premium .homepage-final-cta h2 {
+    margin: 10px 0 28px;
+    color: #fff;
+    font-size: clamp(2rem, 4vw, 3.25rem);
+    letter-spacing: -0.045em;
+}
+
+body.homepage-premium .homepage-final-cta .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 170px;
+    min-height: 52px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #f0dfbc 0%, #dfbf7c 100%);
+    color: #3f3012;
+    text-decoration: none;
+    font-weight: 800;
+}
+
 @media (min-width: 1280px) and (max-width: 1760px) {
     body.homepage-premium .nav-container,
     body.homepage-premium .hero-home .hero-home-container,
     body.homepage-premium .quick-start-grid,
     body.homepage-premium .homepage-practice > .container,
-    body.homepage-premium .value-proposition .container,
     body.homepage-premium .features .container,
     body.homepage-premium .song-library-section .container {
         width: min(1120px, calc(100% - 320px));
@@ -202,11 +368,11 @@ body.homepage-premium .practice-buttons .btn {
     }
 
     html[lang^="zh"] body.homepage-premium .hero-home h1 {
-        font-size: clamp(2.85rem, 5.4vw, 4rem);
+        font-size: clamp(2.9rem, 5.4vw, 4.1rem);
     }
 
     html[lang="en"] body.homepage-premium .hero-home h1 {
-        font-size: clamp(3rem, 5.4vw, 4.4rem);
+        font-size: clamp(3rem, 5.4vw, 4.45rem);
     }
 }
 
@@ -217,7 +383,7 @@ body.homepage-premium .practice-buttons .btn {
 
     body.homepage-premium .hero-home .hero-home-container {
         grid-template-columns: 1fr;
-        gap: 30px;
+        gap: 34px;
     }
 
     body.homepage-premium .hero-home-copy,
@@ -230,12 +396,16 @@ body.homepage-premium .practice-buttons .btn {
     }
 
     body.homepage-premium .hero-home .hero-visual-card {
-        max-width: 560px;
+        max-width: 580px;
         transform: none;
     }
 
     body.homepage-premium .homepage-practice .keys {
         min-width: 760px !important;
+    }
+
+    body.homepage-premium .homepage-feature-section .features-grid {
+        grid-template-columns: 1fr;
     }
 }
 
@@ -243,8 +413,17 @@ body.homepage-premium .practice-buttons .btn {
     html[lang^="zh"] body.homepage-premium .hero-home h1,
     html[lang="en"] body.homepage-premium .hero-home h1 {
         max-width: 100%;
-        font-size: clamp(2.35rem, 10vw, 3.1rem);
+        font-size: clamp(2.45rem, 10vw, 3.25rem);
         line-height: 1.08;
+    }
+
+    body.homepage-premium .hero-home .hero-cta {
+        align-items: stretch;
+    }
+
+    body.homepage-premium .hero-text-link {
+        justify-content: center;
+        border-bottom: none;
     }
 
     body.homepage-premium .hero-home .hero-visual-card {
@@ -256,5 +435,15 @@ body.homepage-premium .practice-buttons .btn {
         margin-right: -4px !important;
         padding-left: 12px !important;
         padding-right: 12px !important;
+    }
+
+    body.homepage-premium .homepage-final-cta {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    body.homepage-premium .homepage-final-cta .container {
+        padding: 48px 20px;
+        border-radius: 26px;
     }
 }
