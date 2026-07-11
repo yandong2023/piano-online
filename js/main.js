@@ -5,6 +5,7 @@ import { RhythmGame } from './rhythm-game.js';
 import { Tutorial } from './tutorial.js';
 import { initializeSongDiscovery } from './song-discovery.js';
 import { installAudioRuntime } from './audio-runtime.mjs';
+import { initializeConcertHallUI } from './concert-hall-ui.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   let recorder = null;
@@ -13,6 +14,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   try {
     initializeSongDiscovery();
+    initializeConcertHallUI();
 
     const hasPiano = Boolean(document.querySelector('.keys'));
     if (!hasPiano) return;
