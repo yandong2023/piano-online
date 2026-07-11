@@ -9,6 +9,14 @@ body.song-detail-page .song-practice-shell .practice-status-panel {
     box-shadow: none !important;
 }
 
+body.song-detail-page .song-practice-shell .practice-layout {
+    grid-template-columns: 1fr !important;
+}
+
+body.song-detail-page .song-practice-shell .practice-layout.has-active-status {
+    grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr) !important;
+}
+
 body.song-detail-page .song-practice-shell .practice-controls {
     padding: 0 !important;
     background: transparent !important;
@@ -109,6 +117,12 @@ body.song-detail-page .song-practice-shell.fullscreen {
 
 body.song-detail-page .song-practice-shell.fullscreen .piano-container {
     margin-top: 22px;
+}
+
+@media (max-width: 980px) {
+    body.song-detail-page .song-practice-shell .practice-layout.has-active-status {
+        grid-template-columns: 1fr !important;
+    }
 }
 
 @media (max-width: 720px) {
