@@ -1,14 +1,34 @@
 /* Final homepage detail fixes: keep this file scoped and loaded after home-premium.css. */
 
+body.homepage-premium .hero.hero-home {
+    padding: calc(var(--nav-height, 90px) + 34px) 0 62px;
+}
+
 body.homepage-premium .hero-home .hero-home-container {
-    grid-template-columns: minmax(0, 1fr) minmax(360px, 0.82fr);
-    gap: clamp(32px, 4vw, 56px);
+    grid-template-columns: minmax(0, 1.04fr) minmax(420px, 0.96fr);
+    gap: clamp(48px, 6vw, 86px);
+    align-items: center;
+}
+
+body.homepage-premium .hero-home-copy {
+    position: relative;
+    z-index: 2;
+    max-width: 620px;
+    padding: 10px 0 8px;
+}
+
+body.homepage-premium .hero-home .hero-eyebrow {
+    margin-bottom: 18px;
+}
+
+body.homepage-premium .hero-home h1 {
+    margin-bottom: 18px;
 }
 
 html[lang^="zh"] body.homepage-premium .hero-home h1 {
-    max-width: 100%;
-    font-size: clamp(3rem, 4.65vw, 4.35rem);
-    line-height: 1.06;
+    max-width: 9ch;
+    font-size: clamp(3rem, 4.6vw, 4.4rem);
+    line-height: 1.08;
     letter-spacing: -0.045em;
     word-break: normal;
     overflow-wrap: break-word;
@@ -16,26 +36,50 @@ html[lang^="zh"] body.homepage-premium .hero-home h1 {
 }
 
 html[lang="en"] body.homepage-premium .hero-home h1 {
-    max-width: 11ch;
-    font-size: clamp(3rem, 4.55vw, 4.25rem);
-    line-height: 1.03;
-    letter-spacing: -0.05em;
+    max-width: 8.6ch;
+    font-size: clamp(3.35rem, 5vw, 5rem);
+    line-height: 1.02;
+    letter-spacing: -0.06em;
     overflow-wrap: normal;
     word-break: normal;
 }
 
-body.homepage-premium .hero-home-copy {
-    position: relative;
-    z-index: 2;
+body.homepage-premium .hero-home .hero-subtitle {
+    max-width: 36rem;
+    margin: 0 0 26px;
+    font-size: clamp(1.05rem, 1.45vw, 1.14rem);
+    line-height: 1.76;
+    color: #556274;
+}
+
+body.homepage-premium .hero-home .hero-proof-list {
+    margin-bottom: 30px;
+}
+
+body.homepage-premium .hero-home .hero-cta {
+    gap: 16px;
 }
 
 body.homepage-premium .hero-home-visual {
     position: relative;
     z-index: 1;
+    justify-content: center;
 }
 
 body.homepage-premium .hero-home .hero-visual-card {
-    max-width: 430px;
+    width: min(100%, 500px);
+    max-width: 500px;
+    padding: 20px;
+    transform: translateY(6px);
+}
+
+body.homepage-premium .hero-home .hero-visual-screen {
+    box-shadow: 0 18px 40px rgba(3, 8, 20, 0.24);
+}
+
+body.homepage-premium .hero-home .hero-mini-keys {
+    margin-top: 18px;
+    padding: 16px 14px 12px;
 }
 
 body.homepage-premium .quick-start-card {
@@ -142,33 +186,52 @@ body.homepage-premium .practice-buttons .btn {
     }
 
     body.homepage-premium .hero-home .hero-home-container {
-        grid-template-columns: minmax(0, 1.05fr) minmax(380px, 0.95fr);
-        gap: 44px;
+        grid-template-columns: minmax(0, 1fr) minmax(400px, 0.92fr);
+        gap: 54px;
     }
 
     body.homepage-premium .hero-home .hero-visual-card {
-        max-width: 410px;
+        max-width: 470px;
     }
 }
 
 @media (max-width: 1100px) {
     body.homepage-premium .hero-home .hero-home-container {
-        grid-template-columns: minmax(0, 1fr) minmax(330px, 0.78fr);
-        gap: 30px;
+        grid-template-columns: minmax(0, 1fr) minmax(350px, 0.84fr);
+        gap: 34px;
     }
 
     html[lang^="zh"] body.homepage-premium .hero-home h1 {
-        font-size: clamp(2.85rem, 5.5vw, 3.85rem);
+        font-size: clamp(2.85rem, 5.4vw, 4rem);
+    }
+
+    html[lang="en"] body.homepage-premium .hero-home h1 {
+        font-size: clamp(3rem, 5.4vw, 4.4rem);
     }
 }
 
 @media (max-width: 860px) {
+    body.homepage-premium .hero.hero-home {
+        padding-bottom: 46px;
+    }
+
     body.homepage-premium .hero-home .hero-home-container {
         grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    body.homepage-premium .hero-home-copy,
+    body.homepage-premium .hero-home .hero-subtitle {
+        max-width: 100%;
+    }
+
+    body.homepage-premium .hero-home-visual {
+        justify-content: flex-start;
     }
 
     body.homepage-premium .hero-home .hero-visual-card {
         max-width: 560px;
+        transform: none;
     }
 
     body.homepage-premium .homepage-practice .keys {
@@ -182,6 +245,10 @@ body.homepage-premium .practice-buttons .btn {
         max-width: 100%;
         font-size: clamp(2.35rem, 10vw, 3.1rem);
         line-height: 1.08;
+    }
+
+    body.homepage-premium .hero-home .hero-visual-card {
+        width: 100%;
     }
 
     body.homepage-premium .homepage-practice .piano-container {
