@@ -7,7 +7,7 @@ import { publicSongs, songs } from '../data/song-library.mjs';
 const ids = publicSongs.map((song) => song.id);
 const slugs = publicSongs.map((song) => song.slug);
 
-test('classic library includes at least 35 public songs', () => {
+ test('classic library includes at least 35 public songs', () => {
   assert.ok(publicSongs.length >= 35, `expected at least 35 songs, received ${publicSongs.length}`);
 });
 
@@ -53,12 +53,12 @@ test('generated library pages expose the expanded catalog and premium theme', as
   for (const html of [zh, en]) {
     assert.match(html, /class="secondary-page song-library-theme premium-song-library"/);
     assert.match(html, /class="song-library-page song-library-main"/);
-    assert.match(html, /song-library-fix\.css\?v=20260711\.9/);
+    assert.match(html, /song-library-fix\.css\?v=20260711\.10/);
     assert.match(html, /class="song-card-composer"/);
   }
 });
 
-test('generated song pages include working practice and fullscreen controls', async () => {
+test('generated song pages include working practice, fullscreen and score controls', async () => {
   const zh = await readFile('songs/blue-danube/index.html', 'utf8');
   const en = await readFile('en/songs/blue-danube/index.html', 'utf8');
 
@@ -67,9 +67,28 @@ test('generated song pages include working practice and fullscreen controls', as
     assert.match(html, /id="stop-practice"/);
     assert.match(html, /id="toggle-fullscreen"/);
     assert.match(html, /data-start-song/);
-    assert.match(html, /song-interactions\.css\?v=20260711\.9/);
-    assert.match(html, /song-page\.js\?v=20260711\.9/);
+    assert.match(html, /data-score-viewer/);
+    assert.match(html, /data-score-ready="true"/);
+    assert.match(html, /score-viewer\.css\?v=20260711\.10/);
+    assert.match(html, /song-interactions\.css\?v=20260711\.10/);
+    assert.match(html, /song-page\.js\?v=20260711\.10/);
   }
+});
+
+test('second-batch songs render as score-ready in both locales', async () => {
+  for (const slug of ['two-tigers', 'mary-had-a-little-lamb', 'minuet-in-g', 'we-wish-you-a-merry-christmas']) {
+    const zh = await readFile(`songs/${slug}/index.html`, 'utf8');
+    const en = await readFile(`en/songs/${slug}/index.html`, 'utf8');
+    assert.match(zh, /data-score-ready="true"/, `${slug} Chinese page is not score-ready`);
+    assert.match(en, /data-score-ready="true"/, `${slug} English page is not score-ready`);
+  }
+});
+
+test('songs without score data keep the friendly fallback', async () => {
+  const zh = await readFile('songs/turkish-march/index.html', 'utf8');
+  const en = await readFile('en/songs/turkish-march/index.html', 'utf8');
+  assert.match(zh, /data-score-ready="false"/);
+  assert.match(en, /data-score-ready="false"/);
 });
 
 test('premium song library stylesheet defines readable dark cards', async () => {
