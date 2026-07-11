@@ -1,4 +1,4 @@
-import { getSongById } from '../data/song-catalog.mjs';
+import { getSongById } from '../data/song-library.mjs';
 
 window.addEventListener('load', () => {
     const songId = document.body.dataset.songId;

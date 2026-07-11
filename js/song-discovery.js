@@ -1,14 +1,14 @@
-import { featuredSongs, getSongTitle } from '../data/song-catalog.mjs';
+import { featuredSongs, getSongTitle } from '../data/song-library.mjs';
 
 function locale() {
     return document.documentElement.lang?.toLowerCase().startsWith('en') ? 'en' : 'zh';
 }
 
 function ensureStylesheet() {
-    if (document.querySelector('link[href="/css/song-pages.css"]')) return;
+    if (document.querySelector('link[href*="/css/song-pages.css"]')) return;
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = '/css/song-pages.css';
+    link.href = '/css/song-pages.css?v=20260711.7';
     document.head.appendChild(link);
 }
 
@@ -53,7 +53,7 @@ function addHomepageSongs(currentLocale) {
                 </a>
             </div>
             <div class="song-card-grid">
-                ${featuredSongs.map((song) => `
+                ${featuredSongs.slice(0, 5).map((song) => `
                     <a class="song-card" href="${songHref(song, currentLocale)}">
                         <span class="song-card-level">${currentLocale === 'en' ? `Level ${song.difficulty}` : `难度 ${song.difficulty}`}</span>
                         <h3>${getSongTitle(song, currentLocale)}</h3>
