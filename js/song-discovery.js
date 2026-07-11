@@ -8,17 +8,41 @@ function ensureStylesheet() {
     if (document.querySelector('link[href*="/css/song-pages.css"]')) return;
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = '/css/song-pages.css?v=20260711.7';
+    link.href = '/css/song-pages.css?v=20260711.10';
     document.head.appendChild(link);
+}
+
+function normalizeNavigationPath(href) {
+    try {
+        const url = new URL(href, window.location.origin);
+        const withoutIndex = url.pathname.replace(/\/index\.html$/, '/');
+        return withoutIndex.endsWith('/') ? withoutIndex : `${withoutIndex}/`;
+    } catch {
+        return String(href || '');
+    }
+}
+
+function hasLibraryNavigation(nav, targetHref) {
+    const targetPath = normalizeNavigationPath(targetHref);
+    return Array.from(nav.querySelectorAll(':scope > a')).some((anchor) => {
+        const href = anchor.getAttribute('href') || anchor.href;
+        return normalizeNavigationPath(href) === targetPath;
+    });
 }
 
 function addLibraryNavigation(currentLocale) {
     const nav = document.querySelector('.nav-links');
-    if (!nav || nav.querySelector('[data-song-library-link]')) return;
+    const targetHref = currentLocale === 'en' ? '/en/songs/' : '/songs/';
+
+    if (!nav
+        || nav.querySelector('[data-song-library-link]')
+        || hasLibraryNavigation(nav, targetHref)) {
+        return;
+    }
 
     const link = document.createElement('a');
     link.dataset.songLibraryLink = 'true';
-    link.href = currentLocale === 'en' ? '/en/songs/' : '/songs/';
+    link.href = targetHref;
     link.textContent = currentLocale === 'en' ? 'Songs' : '曲库';
 
     const anchors = nav.querySelectorAll(':scope > a');
@@ -73,3 +97,5 @@ export function initializeSongDiscovery() {
     addLibraryNavigation(currentLocale);
     addHomepageSongs(currentLocale);
 }
+
+export { normalizeNavigationPath };

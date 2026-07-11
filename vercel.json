@@ -33,6 +33,12 @@
       ]
     },
     {
+      "source": "/js/song-discovery.js",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, must-revalidate" }
+      ]
+    },
+    {
       "source": "/js/song-page.js",
       "headers": [
         { "key": "Cache-Control", "value": "no-cache, must-revalidate" }
