@@ -5,27 +5,37 @@ import test from 'node:test';
 const pages = [
   {
     path: 'index.html',
-    title: '想弹的时候，音乐就在手边。',
+    titleStart: '把家，变成你的',
+    titleAccent: '音乐厅。',
     songsHref: '/songs/'
   },
   {
     path: 'en/index.html',
-    title: 'Play the music you love, right from home.',
+    titleStart: 'Turn your home into a',
+    titleAccent: 'concert hall.',
     songsHref: '/en/songs/'
   }
 ];
 
 for (const page of pages) {
-  test(`${page.path} renders one stable, cache-busted first paint`, async () => {
+  test(`${page.path} renders one stable premium first paint`, async () => {
     const html = await readFile(page.path, 'utf8');
 
     assert.match(html, /<body class="homepage-premium">/);
     assert.match(html, /href="\/css\/home-premium\.css\?v=[^"]+"/);
     assert.match(html, /href="\/css\/homepage-detail-fixes\.css\?v=[^"]+"/);
     assert.match(html, /href="\/css\/song-pages\.css\?v=[^"]+"/);
+    assert.match(html, /href="\/css\/concert-hero\.css\?v=[^"]+"/);
     assert.match(html, /src="\/js\/main\.js\?v=[^"]+"/);
-    assert.ok(html.includes(`<h1>${page.title}</h1>`));
+    assert.match(html, /<section class="hero hero-home hero-concert">/);
+    assert.ok(html.includes(page.titleStart));
+    assert.ok(html.includes(`<span class="hero-accent">${page.titleAccent}</span>`));
     assert.ok(html.includes(`href="${page.songsHref}" data-song-library-link="true"`));
+
+    for (const requiredId of ['hero-start-fullscreen', 'song-select', 'sustain-toggle', 'labels-toggle', 'start-practice', 'start-rhythm-game', 'toggle-fullscreen']) {
+      assert.ok(html.includes(`id="${requiredId}"`), `${page.path} is missing #${requiredId}`);
+    }
+
     assert.doesNotMatch(html, /home-premium-style\.js/);
     assert.doesNotMatch(html, /en-home-style\.js/);
   });
