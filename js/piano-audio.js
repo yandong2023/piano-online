@@ -1,176 +1,219 @@
+import {
+  midiToFrequency,
+  nearestSampleNote,
+  noteToMidi,
+  playbackRateForNote,
+  sampleUrl,
+} from './audio-note-utils.mjs';
+
 class PianoAudio {
-    constructor() {
-        console.log('PianoAudio constructor called');
-        this.initialized = false;
-        this.sampler = null;
-        this.reverb = null;
-        this.context = null;
-        this.samples = {};
-        this.gainNode = null;
-        this.sustainedNotes = new Set();
-        
-        // 创建所有音符的音频元素
-        this.audioElements = {};
-        this.volume = 0.5;
-        
-        // 预加载所有音符
-        this.preloadNotes();
+  constructor() {
+    this.initialized = false;
+    this.context = null;
+    this.gainNode = null;
+    this.volume = 0.62;
+    this.releaseSeconds = 0.14;
+    this.sustainEnabled = false;
+    this.sustainedNotes = new Set();
+    this.pressedNotes = new Set();
+    this.buffers = new Map();
+    this.loadingBuffers = new Map();
+    this.activeVoices = new Map();
+    this.lastTriggerAt = new Map();
+    this.duplicateWindowMs = 24;
+  }
+
+  async init() {
+    if (this.initialized) return true;
+
+    try {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextClass) throw new Error('Web Audio API is not supported');
+
+      this.context = new AudioContextClass();
+      this.gainNode = this.context.createGain();
+      this.gainNode.gain.value = this.volume;
+      this.gainNode.connect(this.context.destination);
+      this.initialized = true;
+
+      // Warm the most common beginner range without blocking first paint.
+      ['C4', 'E4', 'G4', 'C5'].forEach((note) => {
+        this.loadBuffer(note).catch(() => {});
+      });
+
+      return true;
+    } catch (error) {
+      console.error('Failed to initialize piano audio:', error);
+      return false;
     }
+  }
 
-    async init() {
-        if (this.initialized) return true;
+  async ensureRunning() {
+    if (!this.initialized) await this.init();
+    if (this.context?.state === 'suspended') await this.context.resume();
+  }
 
-        try {
-            console.log('Initializing PianoAudio');
-            
-            // 检查 Tone 是否已定义
-            if (typeof Tone === 'undefined') {
-                throw new Error('Tone.js not loaded');
-            }
+  async loadBuffer(sampleNote) {
+    if (this.buffers.has(sampleNote)) return this.buffers.get(sampleNote);
+    if (this.loadingBuffers.has(sampleNote)) return this.loadingBuffers.get(sampleNote);
 
-            // 创建 AudioContext
-            this.context = new (window.AudioContext || window.webkitAudioContext)();
-            
-            // 创建增益节点
-            this.gainNode = this.context.createGain();
-            this.gainNode.connect(this.context.destination);
-            
-            // 设置音量
-            this.setVolume(this.volume);
-            
-            console.log('AudioContext created');
-            
-            // 标记为已初始化
-            this.initialized = true;
-            return true;
-        } catch (error) {
-            console.error('Failed to initialize audio:', error);
-            return false;
-        }
+    const promise = fetch(sampleUrl(sampleNote), { cache: 'force-cache' })
+      .then((response) => {
+        if (!response.ok) throw new Error(`Sample request failed: ${response.status}`);
+        return response.arrayBuffer();
+      })
+      .then((data) => this.context.decodeAudioData(data.slice(0)))
+      .then((buffer) => {
+        this.buffers.set(sampleNote, buffer);
+        this.loadingBuffers.delete(sampleNote);
+        return buffer;
+      })
+      .catch((error) => {
+        this.loadingBuffers.delete(sampleNote);
+        throw error;
+      });
+
+    this.loadingBuffers.set(sampleNote, promise);
+    return promise;
+  }
+
+  async playNote(note, velocity = 0.9) {
+    const nowMs = typeof performance !== 'undefined' ? performance.now() : Date.now();
+    const previousTrigger = this.lastTriggerAt.get(note) || 0;
+    if (nowMs - previousTrigger < this.duplicateWindowMs) return false;
+    this.lastTriggerAt.set(note, nowMs);
+    this.pressedNotes.add(note);
+
+    try {
+      await this.ensureRunning();
+      const sampleNote = nearestSampleNote(note);
+      const buffer = await this.loadBuffer(sampleNote);
+
+      if (!this.pressedNotes.has(note) && !this.sustainEnabled) return false;
+
+      this.releaseVoices(note, 0.025);
+
+      const source = this.context.createBufferSource();
+      const voiceGain = this.context.createGain();
+      const startedAt = this.context.currentTime;
+      const normalizedVelocity = Math.min(1, Math.max(0.08, Number(velocity) || 0.9));
+
+      source.buffer = buffer;
+      source.playbackRate.value = playbackRateForNote(note, sampleNote);
+      voiceGain.gain.setValueAtTime(normalizedVelocity, startedAt);
+      source.connect(voiceGain);
+      voiceGain.connect(this.gainNode);
+
+      const voice = { source, gainNode: voiceGain, released: false };
+      const voices = this.activeVoices.get(note) || new Set();
+      voices.add(voice);
+      this.activeVoices.set(note, voices);
+
+      source.onended = () => {
+        voices.delete(voice);
+        if (voices.size === 0) this.activeVoices.delete(note);
+        source.disconnect();
+        voiceGain.disconnect();
+      };
+
+      source.start(startedAt);
+      return true;
+    } catch (error) {
+      console.warn(`Falling back to oscillator for ${note}:`, error);
+      if (!this.pressedNotes.has(note) && !this.sustainEnabled) return false;
+      await this.ensureRunning();
+      this.playOscillatorFallback(note, velocity);
+      return false;
     }
+  }
 
-    preloadNotes() {
-        console.log('Preloading notes');
-        // 只加载实际存在的音符文件
-        const notes = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
-        const octaves = ['3', '4', '5', '6'];
-        
-        notes.forEach(note => {
-            octaves.forEach(octave => {
-                const noteId = `${note}${octave}`;
-                const audio = new Audio(`samples/piano-${noteId}.mp3`);
-                audio.preload = 'auto';
-                this.audioElements[noteId] = audio;
-                
-                // 对于升号音符，使用相邻的音符
-                if (note !== 'E' && note !== 'B') {
-                    const sharpNoteId = `${note}#${octave}`;
-                    this.audioElements[sharpNoteId] = audio;
-                }
-                
-                console.log(`Preloading note: samples/piano-${noteId}.mp3`);
-            });
-        });
-    }
+  playOscillatorFallback(note, velocity = 0.7) {
+    const oscillator = this.context.createOscillator();
+    const voiceGain = this.context.createGain();
+    const startedAt = this.context.currentTime;
+    const normalizedVelocity = Math.min(0.65, Math.max(0.06, Number(velocity) || 0.7));
 
-    async playNote(note) {
-        console.log('Playing note:', note);
-        try {
-            // 如果音频上下文被暂停，等待用户交互时会自动恢复
-            if (this.context && this.context.state === 'suspended') {
-                await this.context.resume();
-            }
-            
-            if (this.sampler && this.sampler.loaded) {
-                this.sampler.triggerAttack(note);
-            } else {
-                // 如果是升号音符，使用相邻的音符
-                const audioElement = this.audioElements[note] || this.audioElements[this.getNearestNote(note)];
-                if (audioElement) {
-                    audioElement.currentTime = 0;
-                    audioElement.volume = this.volume;
-                    audioElement.play().catch(error => {
-                        console.error('Failed to play note:', error);
-                        // 如果播放失败，尝试重新加载
-                        audioElement.load();
-                    });
-                } else {
-                    console.warn('No audio element found for note:', note);
-                }
-            }
-        } catch (error) {
-            console.error('Error playing note:', note, error);
-        }
-    }
+    oscillator.type = 'triangle';
+    oscillator.frequency.value = midiToFrequency(noteToMidi(note));
+    voiceGain.gain.setValueAtTime(normalizedVelocity, startedAt);
+    voiceGain.gain.exponentialRampToValueAtTime(0.0001, startedAt + 1.4);
+    oscillator.connect(voiceGain);
+    voiceGain.connect(this.gainNode);
 
-    stopNote(note) {
-        console.log('Stopping note:', note);
-        try {
-            if (this.sampler && this.sampler.loaded) {
-                this.sampler.triggerRelease(note);
-            } else if (this.audioElements[note]) {
-                // 如果使用的是音频元素，设置淡出效果
-                const audio = this.audioElements[note];
-                const fadeOut = setInterval(() => {
-                    if (audio.volume > 0.1) {
-                        audio.volume -= 0.1;
-                    } else {
-                        audio.pause();
-                        audio.volume = this.volume;
-                        clearInterval(fadeOut);
-                    }
-                }, 50);
-            }
-        } catch (error) {
-            console.error('Error stopping note:', note, error);
-        }
-    }
+    const voice = { source: oscillator, gainNode: voiceGain, released: false };
+    const voices = this.activeVoices.get(note) || new Set();
+    voices.add(voice);
+    this.activeVoices.set(note, voices);
 
-    getNearestNote(note) {
-        // 将升号音符映射到相邻的音符
-        const noteMap = {
-            'C#': 'D',
-            'D#': 'E',
-            'F#': 'G',
-            'G#': 'A',
-            'A#': 'B'
-        };
-        
-        const noteName = note.slice(0, -1);  // 去掉最后的数字
-        const octave = note.slice(-1);       // 获取八度数
-        
-        if (noteMap[noteName]) {
-            return noteMap[noteName] + octave;
-        }
-        return note;
-    }
+    oscillator.onended = () => {
+      voices.delete(voice);
+      if (voices.size === 0) this.activeVoices.delete(note);
+      oscillator.disconnect();
+      voiceGain.disconnect();
+    };
 
-    setVolume(value) {
-        console.log('Setting volume:', value);
-        this.volume = value;
-        if (this.sampler) {
-            this.sampler.volume.value = Tone.gainToDb(value);
-        }
-        if (this.gainNode) {
-            this.gainNode.gain.value = value;
-        }
-        // 设置所有音频元素的音量
-        Object.values(this.audioElements).forEach(audio => {
-            audio.volume = value;
-        });
-    }
+    oscillator.start(startedAt);
+    oscillator.stop(startedAt + 1.45);
+  }
 
-    setSustain(enabled) {
-        if (enabled) {
-            this.sustainedNotes.clear();
-        } else {
-            // 释放所有持续的音符
-            this.sustainedNotes.forEach(note => {
-                this.stopNote(note);
-            });
-            this.sustainedNotes.clear();
-        }
+  stopNote(note) {
+    this.pressedNotes.delete(note);
+    if (this.sustainEnabled) {
+      this.sustainedNotes.add(note);
+      return;
     }
+    this.releaseVoices(note);
+  }
+
+  releaseVoices(note, releaseSeconds = this.releaseSeconds) {
+    const voices = this.activeVoices.get(note);
+    if (!voices || !this.context) return;
+
+    const now = this.context.currentTime;
+    voices.forEach((voice) => {
+      if (voice.released) return;
+      voice.released = true;
+      const gain = voice.gainNode.gain;
+      const current = Math.max(0.0001, gain.value || 0.0001);
+      gain.cancelScheduledValues(now);
+      gain.setValueAtTime(current, now);
+      gain.exponentialRampToValueAtTime(0.0001, now + releaseSeconds);
+      try {
+        voice.source.stop(now + releaseSeconds + 0.03);
+      } catch (_) {
+        // A source can only be stopped once.
+      }
+    });
+  }
+
+  setVolume(value) {
+    this.volume = Math.min(1, Math.max(0, Number(value) || 0));
+    if (this.gainNode && this.context) {
+      this.gainNode.gain.setTargetAtTime(this.volume, this.context.currentTime, 0.015);
+    }
+  }
+
+  setSustain(enabled) {
+    const next = Boolean(enabled);
+    if (next === this.sustainEnabled) return;
+    this.sustainEnabled = next;
+
+    if (!next) {
+      const deferred = [...this.sustainedNotes];
+      this.sustainedNotes.clear();
+      deferred.forEach((note) => {
+        if (!this.pressedNotes.has(note)) this.releaseVoices(note);
+      });
+    }
+  }
+
+  dispose() {
+    [...this.activeVoices.keys()].forEach((note) => this.releaseVoices(note, 0.02));
+    this.activeVoices.clear();
+    this.buffers.clear();
+    this.loadingBuffers.clear();
+    if (this.context && this.context.state !== 'closed') this.context.close();
+  }
 }
 
 export default PianoAudio;
