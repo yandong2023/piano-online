@@ -11,7 +11,7 @@
     "test:home": "node --test tests/homepage-static.test.mjs",
     "test:secondary": "node --test tests/secondary-pages.test.mjs",
     "test:songs": "node --test tests/song-library.test.mjs",
-    "test": "npm run generate:songs && node --check js/main.js && node --check js/song-discovery.js && node --check js/song-page.js && node --check js/concert-hall-ui.js && node --check js/piano-audio.js && node --check js/audio-runtime.mjs && node --check scripts/render-song-pages.mjs && node --check scripts/build-site.mjs && npm run test:audio && npm run test:home && npm run test:secondary && npm run test:songs"
+    "test": "npm run generate:songs && node --check js/main.js && node --check js/song-discovery.js && node --check js/song-page.js && node --check js/score-viewer.js && node --check js/concert-hall-ui.js && node --check js/piano-audio.js && node --check js/audio-runtime.mjs && node --check data/song-scores.mjs && node --check scripts/render-song-pages.mjs && node --check scripts/build-site.mjs && npm run test:audio && npm run test:home && npm run test:secondary && npm run test:songs"
   },
   "keywords": ["virtual piano", "online piano", "piano songs"],
   "author": "",
