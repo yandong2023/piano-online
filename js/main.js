@@ -1,4 +1,4 @@
-import './en-home-style.js';
+import './home-premium-style.js';
 import { Piano } from './piano.js';
 import { PracticeMode } from './practice-mode.js';
 import { PianoRecorder } from './recorder.js';
