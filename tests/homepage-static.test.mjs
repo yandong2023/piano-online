@@ -16,14 +16,25 @@ const pages = [
 ];
 
 for (const page of pages) {
-  test(`${page.path} renders the final hero without runtime styling`, async () => {
+  test(`${page.path} renders one stable, cache-busted first paint`, async () => {
     const html = await readFile(page.path, 'utf8');
 
     assert.match(html, /<body class="homepage-premium">/);
-    assert.match(html, /<link rel="stylesheet" href="\/css\/home-premium\.css">/);
-    assert.match(html, /<link rel="stylesheet" href="\/css\/homepage-detail-fixes\.css">/);
+    assert.match(html, /href="\/css\/home-premium\.css\?v=[^"]+"/);
+    assert.match(html, /href="\/css\/homepage-detail-fixes\.css\?v=[^"]+"/);
+    assert.match(html, /href="\/css\/song-pages\.css\?v=[^"]+"/);
+    assert.match(html, /src="\/js\/main\.js\?v=[^"]+"/);
     assert.ok(html.includes(`<h1>${page.title}</h1>`));
     assert.ok(html.includes(`href="${page.songsHref}" data-song-library-link="true"`));
     assert.doesNotMatch(html, /home-premium-style\.js/);
+    assert.doesNotMatch(html, /en-home-style\.js/);
   });
 }
+
+test('legacy homepage modules are inert compatibility shims', async () => {
+  const legacyHome = await readFile('js/home-premium-style.js', 'utf8');
+  const legacyEnglish = await readFile('js/en-home-style.js', 'utf8');
+
+  assert.doesNotMatch(legacyHome, /textContent|classList\.add|createElement\(['"]link/);
+  assert.doesNotMatch(legacyEnglish, /textContent|classList\.add|createElement\(['"]link/);
+});
