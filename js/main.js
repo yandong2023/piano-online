@@ -4,6 +4,7 @@ import { PianoRecorder } from './recorder.js';
 import { RhythmGame } from './rhythm-game.js';
 import { Tutorial } from './tutorial.js';
 import { initializeSongDiscovery } from './song-discovery.js';
+import { populateSongSelects } from './song-select-options.js';
 import { installAudioRuntime } from './audio-runtime.mjs';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -13,6 +14,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   try {
     initializeSongDiscovery();
+    populateSongSelects();
 
     const hasPiano = Boolean(document.querySelector('.keys'));
     if (!hasPiano) return;
