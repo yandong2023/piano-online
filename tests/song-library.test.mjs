@@ -53,8 +53,22 @@ test('generated library pages expose the expanded catalog and premium theme', as
   for (const html of [zh, en]) {
     assert.match(html, /class="secondary-page song-library-theme premium-song-library"/);
     assert.match(html, /class="song-library-page song-library-main"/);
-    assert.match(html, /song-library-fix\.css\?v=20260711\.8/);
+    assert.match(html, /song-library-fix\.css\?v=20260711\.9/);
     assert.match(html, /class="song-card-composer"/);
+  }
+});
+
+test('generated song pages include working practice and fullscreen controls', async () => {
+  const zh = await readFile('songs/blue-danube/index.html', 'utf8');
+  const en = await readFile('en/songs/blue-danube/index.html', 'utf8');
+
+  for (const html of [zh, en]) {
+    assert.match(html, /id="start-practice"/);
+    assert.match(html, /id="stop-practice"/);
+    assert.match(html, /id="toggle-fullscreen"/);
+    assert.match(html, /data-start-song/);
+    assert.match(html, /song-interactions\.css\?v=20260711\.9/);
+    assert.match(html, /song-page\.js\?v=20260711\.9/);
   }
 });
 
@@ -64,4 +78,11 @@ test('premium song library stylesheet defines readable dark cards', async () => 
   assert.match(css, /display:\s*flex;/);
   assert.match(css, /margin-top:\s*auto;/);
   assert.match(css, /color:\s*#fff;/);
+});
+
+test('song interaction stylesheet hides inactive status space and supports fullscreen', async () => {
+  const css = await readFile('css/song-interactions.css', 'utf8');
+  assert.match(css, /practice-status-panel\.is-active/);
+  assert.match(css, /practice-layout\.has-active-status/);
+  assert.match(css, /song-practice-shell\.fullscreen/);
 });

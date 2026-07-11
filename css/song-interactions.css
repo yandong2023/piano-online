@@ -1,0 +1,132 @@
+/* Song-detail interaction and control fixes. */
+body.song-detail-page .song-practice-shell .practice-controls-panel,
+body.song-detail-page .song-practice-shell .practice-status-panel {
+    color: #eef2f8;
+    background:
+        radial-gradient(circle at 100% 0%, rgba(222, 181, 94, 0.08), transparent 30%),
+        rgba(255, 255, 255, 0.045) !important;
+    border: 1px solid rgba(255, 255, 255, 0.09) !important;
+    box-shadow: none !important;
+}
+
+body.song-detail-page .song-practice-shell .practice-layout {
+    grid-template-columns: 1fr !important;
+}
+
+body.song-detail-page .song-practice-shell .practice-layout.has-active-status {
+    grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr) !important;
+}
+
+body.song-detail-page .song-practice-shell .practice-controls {
+    padding: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+body.song-detail-page .song-practice-shell .control-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+body.song-detail-page .song-practice-shell .sustain-control,
+body.song-detail-page .song-practice-shell #midi-status {
+    color: rgba(238, 242, 248, 0.82) !important;
+}
+
+body.song-detail-page .song-practice-shell #midi-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.055) !important;
+}
+
+body.song-detail-page .song-practice-shell .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #8993a5;
+}
+
+body.song-detail-page .song-practice-shell .practice-buttons {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 12px;
+    margin-top: 18px;
+}
+
+body.song-detail-page .song-practice-shell .practice-buttons .btn {
+    min-height: 52px;
+    width: 100%;
+    border-radius: 15px;
+    font-weight: 760;
+    white-space: normal;
+}
+
+body.song-detail-page .song-practice-shell .practice-buttons .btn.primary {
+    color: #31250e;
+    border: 0;
+    background: linear-gradient(135deg, #f3dfb7, #d6ad58);
+    box-shadow: 0 16px 32px rgba(214, 173, 88, 0.13);
+}
+
+body.song-detail-page .song-practice-shell .practice-buttons .btn.secondary {
+    color: #eef2f8;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.055);
+}
+
+body.song-detail-page .song-practice-shell .practice-buttons .btn:disabled {
+    cursor: wait;
+    opacity: 0.55;
+}
+
+body.song-detail-page .song-practice-shell .practice-status-panel {
+    display: none;
+    min-height: 0;
+}
+
+body.song-detail-page .song-practice-shell .practice-status-panel.is-active {
+    display: block;
+}
+
+body.song-detail-page .song-practice-shell .key-hint,
+body.song-detail-page .song-practice-shell .stats-panel {
+    margin: 0;
+    color: #eef2f8;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+body.song-detail-page .song-practice-shell .stats-panel {
+    display: grid;
+    gap: 10px;
+}
+
+body.song-detail-page .song-practice-shell.fullscreen {
+    overflow: auto;
+    padding: clamp(18px, 3vw, 34px);
+    background:
+        radial-gradient(circle at 82% 8%, rgba(218, 176, 91, 0.15), transparent 22%),
+        #090d15;
+}
+
+body.song-detail-page .song-practice-shell.fullscreen .piano-container {
+    margin-top: 22px;
+}
+
+@media (max-width: 980px) {
+    body.song-detail-page .song-practice-shell .practice-layout.has-active-status {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+@media (max-width: 720px) {
+    body.song-detail-page .song-practice-shell .practice-buttons {
+        grid-template-columns: 1fr;
+    }
+}
