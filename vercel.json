@@ -29,6 +29,18 @@
       "headers": [
         { "key": "Cache-Control", "value": "no-cache, must-revalidate" }
       ]
+    },
+    {
+      "source": "/css/song-pages.css",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/css/secondary-pages.css",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, must-revalidate" }
+      ]
     }
   ]
 }
