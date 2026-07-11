@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Virtual Piano Online - Free Keyboard Piano Simulator | Piano Online</title>
-    <meta name="description" content="Play a free virtual piano online with your computer keyboard. Practice beginner songs, follow note prompts, try rhythm game mode, and learn piano basics without downloads or signup.">
-    <meta name="keywords" content="virtual piano, online piano, piano simulator, play piano online, keyboard piano, free piano online, piano practice, learn piano online">
+    <title>Virtual Piano Online — Play Songs with Your Keyboard</title>
+    <meta name="description" content="Turn your computer keyboard into a piano. Play instantly, learn beginner songs with simple prompts, and practice online without downloads or signup.">
+    <meta name="keywords" content="virtual piano, online piano, play piano online, keyboard piano, piano songs, piano practice">
     <meta name="author" content="Piano Online">
     <meta name="robots" content="index,follow">
     <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
@@ -17,41 +16,24 @@
 
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://pianoonline.cc/en/">
-    <meta property="og:title" content="Virtual Piano Online - Free Keyboard Piano Simulator">
-    <meta property="og:description" content="Play piano online in your browser. Use your computer keyboard, follow song prompts, and practice with a rhythm game.">
+    <meta property="og:title" content="Play the music you love, right from home">
+    <meta property="og:description" content="Turn your computer keyboard into a piano and start playing in seconds.">
     <meta property="og:image" content="https://pianoonline.cc/images/og-image.jpg">
     <meta property="og:site_name" content="Piano Online">
     <meta property="og:locale" content="en_US">
-    <meta property="og:locale:alternate" content="zh_CN">
 
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://pianoonline.cc/en/">
-    <meta name="twitter:title" content="Virtual Piano Online - Free Keyboard Piano Simulator">
-    <meta name="twitter:description" content="Play piano online with your computer keyboard. Free, browser-based, beginner-friendly.">
+    <meta name="twitter:title" content="Virtual Piano Online">
+    <meta name="twitter:description" content="Play songs online with your computer keyboard — free and beginner friendly.">
     <meta name="twitter:image" content="https://pianoonline.cc/images/og-image.jpg">
 
     <link rel="preconnect" href="https://www.googletagmanager.com">
     <link rel="preconnect" href="https://pagead2.googlesyndication.com">
-    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
-    <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com">
     <link rel="stylesheet" href="/css/piano.css">
-    <script src="/js/libs/Tone.js"></script>
+    <link rel="stylesheet" href="/css/home-premium.css">
+    <link rel="stylesheet" href="/css/homepage-detail-fixes.css">
     <script type="module" src="/js/main.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const initAudio = async () => {
-                try {
-                    await Tone.start();
-                    document.removeEventListener('click', initAudio);
-                    document.removeEventListener('keydown', initAudio);
-                } catch (error) {
-                    console.error('Failed to initialize Tone.js:', error);
-                }
-            };
-            document.addEventListener('click', initAudio);
-            document.addEventListener('keydown', initAudio);
-        });
-    </script>
+
     <script type="text/javascript">
         (function (c, l, a, r, i, t, y) {
             c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
@@ -69,34 +51,28 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4423187689700927" crossorigin="anonymous"></script>
     <meta name="google-site-verification" content="Fii3zK2l54f0uFP7RPwdn7BEqB4OjC2jc_07JxSs1uI">
 </head>
-
-<body>
-    <div id="tutorial-overlay" class="tutorial-overlay" style="display: none;">
+<body class="homepage-premium">
+    <div id="tutorial-overlay" class="tutorial-overlay" style="display:none;">
         <div class="tutorial-content">
-            <h2>🎹 Welcome to Piano Online!</h2>
-            <p>This is a virtual piano you can play with your <strong>computer keyboard</strong>.</p>
+            <h2>Welcome to Piano Online</h2>
+            <p>Use your computer keyboard to play the piano immediately.</p>
             <div class="tutorial-key-demo">A</div>
-            <p style="font-size: 1rem; color: #666;">Press the A key now to hear your first note.</p>
-            <div class="tutorial-steps">
-                <div class="tutorial-step"><div class="tutorial-step-number">1</div><h3>Read the labels</h3><p>Each piano key shows the matching computer key.</p></div>
-                <div class="tutorial-step"><div class="tutorial-step-number">2</div><h3>Choose a song</h3><p>Select a beginner-friendly song from the dropdown menu.</p></div>
-                <div class="tutorial-step"><div class="tutorial-step-number">3</div><h3>Follow the prompts</h3><p>Use guided practice to play the next note.</p></div>
-            </div>
+            <p>Press A to hear your first note.</p>
             <div class="tutorial-buttons">
                 <button class="tutorial-skip" id="tutorial-skip">Skip</button>
-                <button class="tutorial-start" id="tutorial-start">Start Playing</button>
+                <button class="tutorial-start" id="tutorial-start">Start playing</button>
             </div>
         </div>
     </div>
 
     <nav class="nav-bar">
         <div class="nav-container">
-            <a href="/en/" class="nav-logo"><img src="/images/logo.svg" alt="Piano Online Logo" class="logo-img"></a>
+            <a href="/en/" class="nav-logo"><img src="/images/logo.svg" alt="Piano Online" class="logo-img"></a>
             <div class="nav-links">
                 <a href="/en/" class="active">Home</a>
-                <a href="/en/tutorials.html">Tutorials</a>
-                <a href="/en/#practice-start">Practice</a>
-                <a href="/en/about.html">About</a>
+                <a href="/en/songs/" data-song-library-link="true">Songs</a>
+                <a href="/en/tutorials.html">Learn</a>
+                <a href="#practice-start">Piano</a>
                 <div class="lang-switcher">
                     <button class="lang-switcher-btn" aria-expanded="false" aria-haspopup="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
@@ -112,184 +88,128 @@
         </div>
     </nav>
 
-    <section class="hero hero-home">
-        <div class="hero-container hero-home-container">
-            <div class="hero-home-copy">
-                <div class="hero-eyebrow">Free Virtual Piano</div>
-                <h1>Play piano online with your computer keyboard</h1>
-                <p class="hero-subtitle">Open your browser and start playing instantly. Practice songs with note prompts, try rhythm game mode, or enter full screen for focused piano practice.</p>
-                <div class="hero-proof-list"><span>Free to use</span><span>No signup</span><span>Keyboard friendly</span></div>
-                <div class="hero-cta">
-                    <button type="button" id="hero-start-fullscreen" class="btn primary hero-btn">Start Playing</button>
-                    <a class="btn secondary hero-btn" href="#quick-start">How it works</a>
-                </div>
-            </div>
-            <div class="hero-home-visual" aria-hidden="true">
-                <div class="hero-visual-card">
-                    <div class="hero-visual-top"><span class="hero-dot"></span><span class="hero-dot"></span><span class="hero-dot"></span></div>
-                    <div class="hero-visual-screen">
-                        <div class="hero-screen-label">Keyboard mapping</div>
-                        <div class="hero-screen-row"><span class="hero-keycaps">A S D F G</span><span class="hero-arrow">→</span><span class="hero-notes">C D E F G</span></div>
-                        <div class="hero-screen-highlight">Press A to hear your first piano note</div>
+    <main>
+        <section class="hero hero-home">
+            <div class="hero-container hero-home-container">
+                <div class="hero-home-copy">
+                    <div class="hero-eyebrow">Free online piano</div>
+                    <h1>Play the music you love, right from home.</h1>
+                    <p class="hero-subtitle">Turn your computer keyboard into a piano. Learn songs with simple prompts and play whenever inspiration arrives.</p>
+                    <p class="hero-trust-line">Free · No signup · Play instantly</p>
+                    <div class="hero-cta">
+                        <button type="button" id="hero-start-fullscreen" class="btn primary hero-btn">Start playing</button>
+                        <a class="hero-text-link" href="/en/songs/">Explore songs <span aria-hidden="true">→</span></a>
                     </div>
-                    <div class="hero-mini-keys"><span></span><span></span><span></span><span></span><span></span><span class="black"></span><span class="black"></span><span class="black"></span></div>
                 </div>
-            </div>
-        </div>
-    </section>
 
-    <section id="quick-start" class="quick-start-band">
-        <div class="container quick-start-grid">
-            <div class="quick-start-card"><div class="quick-step">01</div><h3>Open and play</h3><p>No app, download, or expensive equipment required. The piano loads directly in your browser.</p></div>
-            <div class="quick-start-card"><div class="quick-step">02</div><h3>Practice with prompts</h3><p>Pick a song and follow the next-key hint, progress, and error feedback.</p></div>
-            <div class="quick-start-card"><div class="quick-step">03</div><h3>Use game mode</h3><p>Falling notes turn practice into a rhythm game so beginners can stay motivated.</p></div>
-        </div>
-    </section>
-
-    <section id="practice-start" class="practice-section homepage-practice" style="padding-top: 20px;" tabindex="-1">
-        <div class="container">
-            <div class="section-intro">
-                <div class="section-kicker">Try it now</div>
-                <h2>Play a virtual piano before you start formal lessons</h2>
-                <p>Use the online piano below to test notes freely or choose a simple song for guided practice.</p>
-            </div>
-            <div class="piano-container" style="min-height: 240px; max-width: 1200px; margin: 0 auto 30px auto;">
-                <div id="note-drop-zone" class="note-drop-zone" style="display: none;">
-                    <div class="drop-lines">
-                        <div class="drop-line" data-note="C"></div><div class="drop-line" data-note="C#"></div><div class="drop-line" data-note="D"></div><div class="drop-line" data-note="D#"></div><div class="drop-line" data-note="E"></div><div class="drop-line" data-note="F"></div><div class="drop-line" data-note="F#"></div><div class="drop-line" data-note="G"></div><div class="drop-line" data-note="G#"></div><div class="drop-line" data-note="A"></div><div class="drop-line" data-note="A#"></div><div class="drop-line" data-note="B"></div>
-                    </div>
-                    <div id="falling-notes" class="falling-notes"></div>
-                </div>
-                <div class="piano-brand-fullscreen" style="display: none;"><div class="brand-plaque"><img src="/images/logo.svg" alt="Piano Online Logo" style="height: 34px;"><span class="brand-plaque-copy">PIANO ONLINE</span></div></div>
-                <div class="keys"></div>
-                <style>.piano-container{background:linear-gradient(to bottom,#1A1A1A,#2A2A2A);border-radius:24px;padding:var(--spacing-lg);margin-bottom:var(--spacing-xl);box-shadow:0 20px 40px rgba(0,0,0,.2);overflow:hidden}.keys{min-height:180px;background:linear-gradient(to bottom,#1A1A1A,#2A2A2A)}</style>
-            </div>
-
-            <div class="practice-layout">
-                <div class="practice-controls-panel">
-                    <div class="practice-controls">
-                        <div class="control-row" style="display: flex; gap: var(--spacing-md); align-items: center; flex-wrap: wrap;">
-                            <div class="sustain-control" data-tooltip="Make notes ring longer, like a real sustain pedal."><label class="switch"><input type="checkbox" id="sustain-toggle"><span class="slider round"></span></label><span>Sustain 🎵</span></div>
-                            <div class="sustain-control" data-tooltip="Show computer keyboard labels on piano keys."><label class="switch"><input type="checkbox" id="labels-toggle" checked><span class="slider round"></span></label><span>Key labels 🔠</span></div>
-                            <div id="midi-status" class="midi-status offline" data-tooltip="Connect a MIDI keyboard to play directly." style="font-size: 0.9em; padding: 4px 8px; border-radius: 4px; background: rgba(0,0,0,0.05); display: flex; align-items: center; gap: 4px;"><span class="status-dot" style="width: 8px; height: 8px; border-radius: 50%; background: #ccc; display: inline-block;"></span><span class="status-text">MIDI not connected</span></div>
+                <div class="hero-home-visual" aria-hidden="true">
+                    <div class="hero-visual-card hero-stage-card">
+                        <div class="hero-visual-top"><span class="hero-dot"></span><span class="hero-dot"></span><span class="hero-dot"></span></div>
+                        <div class="hero-visual-screen">
+                            <div class="hero-stage-kicker">Now playing</div>
+                            <div class="hero-stage-title">Your first melody</div>
+                            <div class="hero-screen-row"><span class="hero-keycaps">A S D F G</span><span class="hero-arrow">→</span><span class="hero-notes">C D E F G</span></div>
+                            <div class="hero-screen-highlight">Press A to begin</div>
                         </div>
-                        <div class="song-select-container">
-                            <select id="song-select" class="song-select">
-                                <option value="">Choose a song...</option>
-                                <!-- Easy -->
-                                <option value="happy-birthday">🎂 Happy Birthday (easy)</option>
-                                <option value="twinkle">⭐ Twinkle Twinkle Little Star (easy)</option>
-                                <option value="mary-lamb">� Mary Had a Little Lamb (easy)</option>
-                                <option value="london-bridge">🌉 London Bridge (easy)</option>
-                                <option value="row-boat">� Row Row Row Your Boat (easy)</option>
-                                <!-- Medium -->
-                                <option value="ode-to-joy">😊 Ode to Joy - Beethoven (medium)</option>
-                                <option value="jingle-bells">🔔 Jingle Bells (medium)</option>
-                                <option value="amazing-grace">🙏 Amazing Grace (medium)</option>
-                                <option value="silent-night">🌙 Silent Night (medium)</option>
-                                <option value="auld-lang-syne">🎉 Auld Lang Syne (medium)</option>
-                                <!-- Hard -->
-                                <option value="fur-elise">💝 Für Elise - Beethoven (hard)</option>
-                                <option value="canon">🎼 Canon in D - Pachelbel (hard)</option>
-                                <option value="moonlight">🌕 Moonlight Sonata - Beethoven (hard)</option>
-                                <!-- Advanced -->
-                                <option value="river-flows">🌊 River Flows in You - Yiruma (advanced)</option>
-                            </select>
-                        </div>
-                        <div class="practice-buttons">
-                            <button id="start-practice" class="btn primary" data-tooltip="Choose a song and follow keyboard prompts.">✨ Guided Practice</button>
-                            <button id="stop-practice" class="btn danger" style="display: none;">Stop Practice</button>
-                            <button id="start-rhythm-game" class="btn secondary" data-tooltip="Catch falling notes by pressing the right keys.">🎮 Rhythm Game</button>
-                            <button id="stop-rhythm-game" class="btn danger" style="display: none;">End Game</button>
-                            <button id="toggle-fullscreen" class="btn secondary" data-tooltip="Enter full screen for a more immersive piano.">⛶ Full Screen</button>
-                        </div>
-                    </div>
-                    <div id="game-instructions" class="game-instructions" style="display: none;">
-                        <h3>🎮 Rhythm Game Rules</h3>
-                        <p>Notes fall from the top. Press the matching piano key when a note reaches the hit zone.</p>
-                        <div class="key-mapping"><div class="key-map-item"><span class="key">A</span> → C</div><div class="key-map-item"><span class="key">S</span> → D</div><div class="key-map-item"><span class="key">D</span> → E</div><div class="key-map-item"><span class="key">F</span> → F</div><div class="key-map-item"><span class="key">G</span> → G</div><div class="key-map-item"><span class="key">H</span> → A</div><div class="key-map-item"><span class="key">J</span> → B</div><div class="key-map-item"><span class="key">K</span> → high C</div></div>
-                        <p><strong>Goal:</strong> hit as many notes as possible, build combos, and keep your lives.</p>
+                        <div class="hero-mini-keys"><span></span><span></span><span></span><span></span><span></span><span class="black"></span><span class="black"></span><span class="black"></span></div>
+                        <div class="hero-stage-status"><span></span>Ready · No setup required</div>
                     </div>
                 </div>
-                <div class="practice-status-panel">
-                    <div id="key-hint" class="key-hint" style="display: none;"><div class="hint-text">Next key</div><div class="hint-key"></div><div class="hint-note"></div></div>
-                    <div id="practice-stats" class="stats-panel" style="display: none;"><div class="stat-item"><span id="correct-notes">Correct: 0</span></div><div class="stat-item"><span id="wrong-notes">Wrong: 0</span></div><div class="stat-item"><span id="progress">Progress: 0%</span></div></div>
-                    <div id="game-stats" class="game-stats-panel" style="display: none;"><div class="game-stat-item"><span id="game-score">Score: 0</span></div><div class="game-stat-item"><span id="game-combo">Combo: 0</span></div><div class="game-stat-item"><span id="game-lives">Lives: 3</span></div></div>
+            </div>
+        </section>
+
+        <section id="quick-start" class="quick-start-band">
+            <div class="container quick-start-grid">
+                <div class="quick-start-card"><div class="quick-step">01</div><h3>Open and play</h3><p>No download or expensive equipment. Your piano is ready in the browser.</p></div>
+                <div class="quick-start-card"><div class="quick-step">02</div><h3>Choose a melody</h3><p>Start with familiar beginner songs and simple computer-key prompts.</p></div>
+                <div class="quick-start-card"><div class="quick-step">03</div><h3>Make it yours</h3><p>Practice freely, enter full screen, or challenge yourself with rhythm mode.</p></div>
+            </div>
+        </section>
+
+        <section id="practice-start" class="practice-section homepage-practice" tabindex="-1">
+            <div class="container">
+                <div class="section-intro">
+                    <div class="section-kicker">Your private piano stage</div>
+                    <h2>Press a key. Hear the room come alive.</h2>
+                    <p>Play freely or choose a song and follow the next-key prompts one note at a time.</p>
+                </div>
+                <div class="piano-container">
+                    <div id="note-drop-zone" class="note-drop-zone" style="display:none;"><div class="drop-lines"><div class="drop-line" data-note="C"></div><div class="drop-line" data-note="C#"></div><div class="drop-line" data-note="D"></div><div class="drop-line" data-note="D#"></div><div class="drop-line" data-note="E"></div><div class="drop-line" data-note="F"></div><div class="drop-line" data-note="F#"></div><div class="drop-line" data-note="G"></div><div class="drop-line" data-note="G#"></div><div class="drop-line" data-note="A"></div><div class="drop-line" data-note="A#"></div><div class="drop-line" data-note="B"></div></div><div id="falling-notes" class="falling-notes"></div></div>
+                    <div class="piano-brand-fullscreen" style="display:none;"><div class="brand-plaque"><img src="/images/logo.svg" alt="Piano Online" style="height:34px;"><span class="brand-plaque-copy">PIANO ONLINE</span></div></div>
+                    <div class="keys"></div>
+                </div>
+
+                <div class="practice-layout">
+                    <div class="practice-controls-panel">
+                        <div class="practice-controls">
+                            <div class="control-row">
+                                <div class="sustain-control"><label class="switch"><input type="checkbox" id="sustain-toggle"><span class="slider round"></span></label><span>Sustain</span></div>
+                                <div class="sustain-control"><label class="switch"><input type="checkbox" id="labels-toggle" checked><span class="slider round"></span></label><span>Key labels</span></div>
+                                <div id="midi-status" class="midi-status offline"><span class="status-dot"></span><span class="status-text">MIDI not connected</span></div>
+                            </div>
+                            <div class="song-select-container">
+                                <select id="song-select" class="song-select">
+                                    <option value="">Choose a song...</option>
+                                    <option value="happy-birthday">Happy Birthday</option>
+                                    <option value="twinkle">Twinkle Twinkle Little Star</option>
+                                    <option value="mary-lamb">Mary Had a Little Lamb</option>
+                                    <option value="london-bridge">London Bridge</option>
+                                    <option value="row-boat">Row Row Row Your Boat</option>
+                                    <option value="ode-to-joy">Ode to Joy</option>
+                                    <option value="jingle-bells">Jingle Bells</option>
+                                    <option value="amazing-grace">Amazing Grace</option>
+                                    <option value="silent-night">Silent Night</option>
+                                    <option value="auld-lang-syne">Auld Lang Syne</option>
+                                    <option value="fur-elise">Für Elise</option>
+                                    <option value="canon">Canon in D</option>
+                                    <option value="moonlight">Moonlight Sonata</option>
+                                    <option value="river-flows">River Flows in You</option>
+                                </select>
+                            </div>
+                            <div class="practice-buttons">
+                                <button id="start-practice" class="btn primary">Guided practice</button>
+                                <button id="stop-practice" class="btn danger" style="display:none;">Stop practice</button>
+                                <button id="start-rhythm-game" class="btn secondary">Rhythm mode</button>
+                                <button id="stop-rhythm-game" class="btn danger" style="display:none;">End game</button>
+                                <button id="toggle-fullscreen" class="btn secondary">Full screen</button>
+                            </div>
+                        </div>
+                        <div id="game-instructions" class="game-instructions" style="display:none;"><h3>Rhythm mode</h3><p>Press the matching piano key when each falling note reaches the hit zone.</p></div>
+                    </div>
+                    <div class="practice-status-panel">
+                        <div id="key-hint" class="key-hint" style="display:none;"><div class="hint-text">Next key</div><div class="hint-key"></div><div class="hint-note"></div></div>
+                        <div id="practice-stats" class="stats-panel" style="display:none;"><div class="stat-item"><span id="correct-notes">Correct: 0</span></div><div class="stat-item"><span id="wrong-notes">Wrong: 0</span></div><div class="stat-item"><span id="progress">Progress: 0%</span></div></div>
+                        <div id="game-stats" class="game-stats-panel" style="display:none;"><div class="game-stat-item"><span id="game-score">Score: 0</span></div><div class="game-stat-item"><span id="game-combo">Combo: 0</span></div><div class="game-stat-item"><span id="game-lives">Lives: 3</span></div></div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <section id="features" class="features">
-        <div class="container">
-            <h2>Why use Piano Online?</h2>
-            <div class="features-grid">
-                <div class="feature-card"><div class="feature-icon">🎹</div><h3>Realistic piano sound</h3><p>Play clear piano notes directly in the browser with low latency.</p></div>
-                <div class="feature-card"><div class="feature-icon">⌨️</div><h3>Computer keyboard support</h3><p>Every visible key can show its matching computer keyboard label.</p></div>
-                <div class="feature-card"><div class="feature-icon">🎼</div><h3>Beginner song library</h3><p>Practice classics such as Happy Birthday, Twinkle Twinkle Little Star, Ode to Joy, and Jingle Bells.</p></div>
-                <div class="feature-card"><div class="feature-icon">🎮</div><h3>Rhythm game mode</h3><p>Falling notes make online piano practice more interactive and motivating.</p></div>
-                <div class="feature-card"><div class="feature-icon">🔌</div><h3>MIDI ready</h3><p>Connect a compatible MIDI keyboard in supported browsers for a more natural playing experience.</p></div>
-                <div class="feature-card"><div class="feature-icon">🚀</div><h3>No download</h3><p>Use it on desktop or tablet browsers without installing software.</p></div>
+        <section class="features homepage-feature-section">
+            <div class="container">
+                <div class="section-intro centered"><div class="section-kicker">Made for everyday music</div><h2>Everything you need to start playing</h2></div>
+                <div class="features-grid">
+                    <div class="feature-card"><div class="feature-icon">⌨️</div><h3>Play with your keyboard</h3><p>Clear computer-key labels help you start without learning notation first.</p></div>
+                    <div class="feature-card"><div class="feature-icon">🎼</div><h3>Learn familiar songs</h3><p>Follow guided prompts and finish a complete melody one note at a time.</p></div>
+                    <div class="feature-card"><div class="feature-icon">🎧</div><h3>Practice in your own space</h3><p>Play quietly at home, enter full screen, and return whenever inspiration arrives.</p></div>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <section class="learning-guide">
-        <div class="container">
-            <h2>Beginner piano learning guide</h2>
-            <div class="guide-content">
-                <div class="guide-section"><h3>Start with keyboard layout</h3><p>Learn where C, D, E, F, G, A, and B sit on the virtual piano. Play slowly and focus on clean note changes.</p></div>
-                <div class="guide-section"><h3>Practice short melodies</h3><p>Simple songs build timing, finger confidence, and memory before you move to longer pieces.</p></div>
-                <div class="guide-section"><h3>Use rhythm mode carefully</h3><p>Play at a relaxed speed first. Accuracy matters more than speed when you are just starting.</p></div>
-            </div>
-        </div>
-    </section>
+        <section class="homepage-final-cta"><div class="container"><p class="section-kicker">Your music is closer than you think</p><h2>Start with one note today.</h2><a class="btn primary" href="#practice-start">Open the piano</a></div></section>
+    </main>
 
-    <section id="faq" class="faq">
-        <div class="container">
-            <h2>Frequently asked questions</h2>
-            <div class="faq-grid">
-                <div class="faq-item"><h3>Do I need a real piano?</h3><p>No. You can start with your computer keyboard or touch screen. A MIDI keyboard is optional.</p></div>
-                <div class="faq-item"><h3>Is this online piano free?</h3><p>Yes. The virtual piano and beginner practice tools are free to use in your browser.</p></div>
-                <div class="faq-item"><h3>Can beginners use it?</h3><p>Yes. Choose an easy song and follow the next-key prompts to build confidence step by step.</p></div>
-                <div class="faq-item"><h3>Does it support MIDI keyboards?</h3><p>Yes, supported browsers can detect connected MIDI keyboards and let you play directly.</p></div>
-                <div class="faq-item"><h3>What keywords is this page for?</h3><p>This page is designed for people searching for virtual piano, online piano, piano simulator, and play piano online.</p></div>
-                <div class="faq-item"><h3>Can I use it on mobile?</h3><p>The piano supports touch interaction, but a desktop or tablet screen gives a better playing experience.</p></div>
-            </div>
-        </div>
-    </section>
+    <footer class="footer"><div class="container"><div class="footer-content"><p>&copy; 2026 Piano Online.</p><div class="footer-links"><a href="/en/songs/">Songs</a><a href="/en/tutorials.html">Learn</a><a href="/" hreflang="zh-CN">中文</a></div></div></div></footer>
 
-    <footer class="footer">
-        <div class="container"><div class="footer-content"><p>&copy; 2024 Piano Online. All rights reserved.</p><div class="footer-links"><a href="/" hreflang="zh-CN">Chinese version</a><a href="/en/tutorials.html">Tutorials</a><a href="/en/#practice-start">Practice</a></div></div></div>
-    </footer>
-
-    <script type="application/ld+json">
-    {"@context":"https://schema.org","@type":"WebApplication","name":"Piano Online","alternateName":"Virtual Piano Online","url":"https://pianoonline.cc/en/","description":"Free virtual piano and online piano simulator for computer keyboard practice.","applicationCategory":"EducationalApplication","operatingSystem":"Web Browser","inLanguage":"en-US","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"provider":{"@type":"Organization","name":"Piano Online","url":"https://pianoonline.cc"}}
-    </script>
-    <script type="application/ld+json">
-    {"@context":"https://schema.org","@type":"Course","name":"Online Piano Practice for Beginners","description":"Beginner-friendly online piano practice with virtual keyboard, guided songs, rhythm game mode, and basic piano learning tips.","provider":{"@type":"Organization","name":"Piano Online","sameAs":"https://pianoonline.cc"},"educationalLevel":"Beginner","inLanguage":"en-US","availableLanguage":["en-US","zh-CN"],"hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"PT2H"}}
-    </script>
-    <script type="application/ld+json">
-    {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Do I need a real piano?","acceptedAnswer":{"@type":"Answer","text":"No. You can start with your computer keyboard or touch screen. A MIDI keyboard is optional."}},{"@type":"Question","name":"Is this online piano free?","acceptedAnswer":{"@type":"Answer","text":"Yes. The virtual piano and beginner practice tools are free to use in your browser."}},{"@type":"Question","name":"Can beginners use it?","acceptedAnswer":{"@type":"Answer","text":"Yes. Choose an easy song and follow the next-key prompts to build confidence step by step."}},{"@type":"Question","name":"Does it support MIDI keyboards?","acceptedAnswer":{"@type":"Answer","text":"Yes, supported browsers can detect connected MIDI keyboards and let you play directly."}}]}
-    </script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Piano Online","url":"https://pianoonline.cc/en/","description":"Free virtual piano for playing songs with a computer keyboard.","applicationCategory":"MusicApplication","operatingSystem":"Web Browser","inLanguage":"en-US","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
     <script>
-    // Language switcher dropdown
-    document.addEventListener('DOMContentLoaded', () => {
-        const switcher = document.querySelector('.lang-switcher');
-        const btn = document.querySelector('.lang-switcher-btn');
-        if (switcher && btn) {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                switcher.classList.toggle('open');
-                btn.setAttribute('aria-expanded', switcher.classList.contains('open'));
-            });
-            document.addEventListener('click', () => {
-                switcher.classList.remove('open');
-                btn.setAttribute('aria-expanded', 'false');
-            });
-        }
-    });
+        document.addEventListener('DOMContentLoaded', () => {
+            const switcher = document.querySelector('.lang-switcher');
+            const btn = document.querySelector('.lang-switcher-btn');
+            if (!switcher || !btn) return;
+            btn.addEventListener('click', (event) => { event.stopPropagation(); switcher.classList.toggle('open'); btn.setAttribute('aria-expanded', switcher.classList.contains('open')); });
+            document.addEventListener('click', () => { switcher.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); });
+        });
     </script>
 </body>
-
 </html>
