@@ -1,4 +1,5 @@
 import { getSongById } from '../data/song-library.mjs';
+import { initializeScoreViewer } from './score-viewer.js';
 
 const songId = document.body.dataset.songId;
 const song = getSongById(songId);
@@ -66,6 +67,8 @@ function initializeSongPage() {
             attributeFilter: ['style', 'class']
         });
     }
+
+    initializeScoreViewer(songId, { locale: document.documentElement.lang?.startsWith('zh') ? 'zh' : 'en' });
 
     if (typeof window.gtag === 'function') {
         window.gtag('event', 'song_page_view', { song_id: songId });
