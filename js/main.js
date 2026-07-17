@@ -5,16 +5,19 @@ import { RhythmGame } from './rhythm-game.js';
 import { Tutorial } from './tutorial.js';
 import { initializeSongDiscovery } from './song-discovery.js';
 import { populateSongSelects } from './song-select-options.js';
+import { initializeGuidedHomepage } from './guided-homepage.js';
 import { installAudioRuntime } from './audio-runtime.mjs';
 
 document.addEventListener('DOMContentLoaded', async () => {
   let recorder = null;
   let cleanupAudioRuntime = null;
   let piano = null;
+  let practiceMode = null;
 
   try {
     initializeSongDiscovery();
     populateSongSelects();
+    initializeGuidedHomepage();
 
     const hasPiano = Boolean(document.querySelector('.keys'));
     if (!hasPiano) return;
@@ -24,7 +27,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     cleanupAudioRuntime = installAudioRuntime(piano);
 
     if (document.getElementById('song-select') && document.getElementById('start-practice')) {
-      new PracticeMode(piano);
+      practiceMode = new PracticeMode(piano);
+      window.pianoPracticeMode = practiceMode;
     }
 
     if (document.getElementById('start-recording')) {
