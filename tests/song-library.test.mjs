@@ -27,10 +27,10 @@ test('every public song has usable bilingual metadata and notes', () => {
   }
 });
 
-test('copyright-restricted modern songs stay out of the public library', () => {
+test('songs requiring rights review stay out of the public library', () => {
   assert.equal(songs['river-flows'].copyrightRestricted, true);
-  assert.equal(songs['butterfly-lovers'].copyrightRestricted, true);
   assert.ok(!ids.includes('river-flows'));
+  assert.equal(songs['butterfly-lovers'].seoEnabled, false);
   assert.ok(!ids.includes('butterfly-lovers'));
 });
 
