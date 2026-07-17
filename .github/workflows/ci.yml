@@ -25,8 +25,38 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run tests
-        run: npm test
+      - name: Generate song pages
+        run: npm run generate:songs
+
+      - name: Check JavaScript syntax
+        run: |
+          node --check js/main.js
+          node --check js/guided-homepage.js
+          node --check js/guided-entry-bindings.js
+          node --check js/song-discovery.js
+          node --check js/song-page.js
+          node --check js/score-viewer.js
+          node --check js/concert-hall-ui.js
+          node --check js/piano-audio.js
+          node --check js/audio-runtime.mjs
+          node --check data/song-scores.mjs
+          node --check scripts/render-song-pages.mjs
+          node --check scripts/build-site.mjs
+
+      - name: Test audio
+        run: npm run test:audio
+
+      - name: Test homepage
+        run: npm run test:home
+
+      - name: Test secondary pages
+        run: npm run test:secondary
+
+      - name: Test song library
+        run: npm run test:songs
+
+      - name: Test score data
+        run: npm run test:score
 
       - name: Build static site
         run: npm run build
