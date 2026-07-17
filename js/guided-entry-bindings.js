@@ -11,6 +11,11 @@ function completeFirstVisitTutorial() {
         // Continue even when storage is unavailable.
     }
 
+    if (typeof window.pianoTutorial?.complete === 'function') {
+        window.pianoTutorial.complete();
+        return;
+    }
+
     const overlay = document.getElementById('tutorial-overlay');
     if (overlay) overlay.style.display = 'none';
 }
