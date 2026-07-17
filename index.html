@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>在线钢琴 — 在家随时进入你的音乐厅 | Piano Online</title>
-    <meta name="description" content="把电脑键盘变成在线钢琴。无需下载和注册，随时弹奏、学习入门歌曲，并通过按键提示开始练习。">
+    <title>在线钢琴 — 跟着按键提示弹完第一首歌 | Piano Online</title>
+    <meta name="description" content="无需识谱和注册，跟着电脑按键提示弹完《生日快乐》等入门歌曲，也可以自由弹奏在线钢琴。">
     <meta name="keywords" content="在线钢琴,虚拟钢琴,网页钢琴,电脑键盘弹钢琴,钢琴歌曲,钢琴练习">
     <meta name="author" content="Piano Online">
     <meta name="robots" content="index,follow">
@@ -15,14 +15,14 @@
     <link rel="alternate" hreflang="x-default" href="https://pianoonline.cc/en/">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://pianoonline.cc/">
-    <meta property="og:title" content="把家，变成你的音乐厅">
-    <meta property="og:description" content="打开网页，用电脑键盘随时开始弹奏。">
+    <meta property="og:title" content="不用识谱，跟着提示弹完第一首歌">
+    <meta property="og:description" content="页面会逐个提示下一个电脑按键，第一次来也能弹完整首歌。">
     <meta property="og:image" content="https://pianoonline.cc/images/og-image.jpg">
     <meta property="og:site_name" content="Piano Online">
     <meta property="og:locale" content="zh_CN">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="在线钢琴">
-    <meta name="twitter:description" content="在家随时进入你的私人音乐厅。">
+    <meta name="twitter:description" content="跟着按键提示，弹完你的第一首歌。">
     <meta name="twitter:image" content="https://pianoonline.cc/images/og-image.jpg">
     <link rel="preconnect" href="https://www.googletagmanager.com">
     <link rel="preconnect" href="https://pagead2.googlesyndication.com">
@@ -31,7 +31,8 @@
     <link rel="stylesheet" href="/css/homepage-detail-fixes.css?v=20260711.5">
     <link rel="stylesheet" href="/css/song-pages.css?v=20260711.5">
     <link rel="stylesheet" href="/css/concert-hero.css?v=20260711.5">
-    <script type="module" src="/js/main.js?v=20260711.5"></script>
+    <link rel="stylesheet" href="/css/guided-homepage.css?v=20260717.1" data-guided-homepage-styles>
+    <script type="module" src="/js/main.js?v=20260717.1"></script>
     <script type="text/javascript">(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","tznlxi8oyi");</script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-EYGD99YB4Y"></script>
     <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-EYGD99YB4Y');</script>
@@ -40,7 +41,14 @@
 </head>
 <body class="homepage-premium">
     <div id="tutorial-overlay" class="tutorial-overlay" style="display:none;">
-        <div class="tutorial-content"><h2>欢迎来到在线钢琴</h2><p>现在就可以用电脑键盘开始弹奏。</p><div class="tutorial-key-demo">A</div><p>按下 A 键，听听你的第一个音符。</p><div class="tutorial-buttons"><button class="tutorial-skip" id="tutorial-skip">跳过</button><button class="tutorial-start" id="tutorial-start">开始弹奏</button></div></div>
+        <div class="tutorial-content guided-tutorial-content">
+            <span class="guided-tutorial-badge">第一次来？</span>
+            <h2>先跟着提示，弹完你的第一首歌</h2>
+            <p class="guided-tutorial-description">不用识谱。页面会逐个告诉你下一步该按哪个电脑键。</p>
+            <div class="guided-tutorial-steps" aria-label="三个步骤"><span><b>1</b>选一首歌</span><span><b>2</b>点击开始</span><span><b>3</b>跟着亮键弹</span></div>
+            <div class="guided-tutorial-song"><strong>推荐：《生日快乐》</strong><span>约 1 分钟 · 熟悉旋律 · 适合第一次体验</span></div>
+            <div class="tutorial-buttons guided-tutorial-buttons"><button class="tutorial-start" id="tutorial-start" data-guided-song="happy-birthday" data-entry-source="first-visit-modal">开始第一首歌</button><button class="tutorial-skip" id="tutorial-skip" data-free-play="true" data-entry-source="first-visit-modal">我先自由弹</button></div>
+        </div>
     </div>
     <nav class="nav-bar">
         <div class="nav-container">
@@ -55,35 +63,41 @@
         <section class="hero hero-home hero-concert">
             <div class="hero-container hero-home-container">
                 <div class="hero-home-copy">
-                    <div class="hero-eyebrow">Piano Online · 私人音乐厅</div>
-                    <h1>把家，变成你的<span class="hero-accent">音乐厅。</span></h1>
-                    <p class="hero-subtitle">把电脑键盘变成钢琴。无需准备昂贵设备，跟着简单提示学习熟悉的旋律，在灵感来的那一刻，随时开始演奏。</p>
-                    <p class="hero-trust-line"><span>免费使用</span><span>无需注册</span><span>打开即弹</span></p>
-                    <div class="hero-cta"><button type="button" id="hero-start-fullscreen" class="btn primary hero-btn">立即开始弹</button><a class="hero-text-link" href="/songs/">挑一首歌开始 <span aria-hidden="true">→</span></a></div>
+                    <div class="hero-eyebrow">不会识谱也能开始</div>
+                    <h1>跟着按键提示，弹完你的<span class="hero-accent">第一首歌。</span></h1>
+                    <p class="hero-subtitle">选择一首熟悉的旋律，页面会高亮下一个电脑按键。你只需要跟着按，就能一步步弹完整首歌。</p>
+                    <p class="hero-trust-line"><span>免费使用</span><span>无需注册</span><span>逐键提示</span></p>
+                    <div class="hero-cta"><button type="button" id="hero-start-fullscreen" class="btn primary hero-btn" data-guided-song="happy-birthday" data-entry-source="hero-primary">跟着《生日快乐》弹</button><a class="hero-text-link" href="#practice-start" data-free-play="true" data-entry-source="hero-secondary">我想自由弹奏 <span aria-hidden="true">→</span></a></div>
+                    <p class="hero-guided-note">新手推荐：先体验提示练习，再探索自由弹奏和节奏模式。</p>
                 </div>
                 <div class="hero-home-visual" aria-hidden="true">
                     <div class="concert-stage-card">
-                        <div class="concert-stage-top"><span class="stage-live">私人演奏模式</span><span>PIANO ONLINE</span></div>
-                        <div class="concert-display">
-                            <div class="concert-now-playing">正在演奏</div><div class="concert-song-title">你的第一段旋律</div>
-                            <div class="concert-mapping"><span class="computer-keys">A S D F G</span><span class="mapping-arrow">→</span><span>C D E F G</span></div>
-                            <div class="concert-prompt"><span>按下第一个琴键</span><kbd>A</kbd></div><div class="concert-progress"><span></span></div>
-                        </div>
+                        <div class="concert-stage-top"><span class="stage-live">提示练习模式</span><span>PIANO ONLINE</span></div>
+                        <div class="concert-display"><div class="concert-now-playing">新手第一首歌</div><div class="concert-song-title">生日快乐</div><div class="concert-mapping"><span class="computer-keys">A S D F G</span><span class="mapping-arrow">→</span><span>C D E F G</span></div><div class="concert-prompt"><span>下一步按</span><kbd>A</kbd></div><div class="concert-progress"><span></span></div></div>
                         <div class="concert-keyboard"><div class="concert-white-keys"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><span class="concert-black-key k1"></span><span class="concert-black-key k2"></span><span class="concert-black-key k3"></span><span class="concert-black-key k4"></span><span class="concert-black-key k5"></span></div>
-                        <div class="concert-stage-footer"><span class="ready-state">已就绪 · 无需设置</span><span>在家随时演奏</span></div>
+                        <div class="concert-stage-footer"><span class="ready-state">已选好歌曲 · 点击即学</span><span>不用识谱</span></div>
                     </div>
                 </div>
             </div>
         </section>
-        <section id="quick-start" class="quick-start-band"><div class="container quick-start-grid"><div class="quick-start-card"><div class="quick-step">01</div><h3>打开就能弹</h3><p>无需下载，也不用准备昂贵设备，浏览器里就是你的钢琴。</p></div><div class="quick-start-card"><div class="quick-step">02</div><h3>挑一首熟悉的歌</h3><p>从简单旋律开始，跟着电脑按键提示，一步步弹完整首曲子。</p></div><div class="quick-start-card"><div class="quick-step">03</div><h3>进入自己的节奏</h3><p>自由弹奏、全屏沉浸，或用节奏模式挑战自己的反应。</p></div></div></section>
+        <section id="quick-start" class="quick-start-band"><div class="container quick-start-grid"><div class="quick-start-card"><div class="quick-step">01</div><h3>先选一首熟悉的歌</h3><p>第一次已经为你准备好《生日快乐》，无需自己摸索功能。</p></div><div class="quick-start-card"><div class="quick-step">02</div><h3>看清下一个按键</h3><p>页面会显示 A、S、D 等电脑按键，并高亮对应琴键。</p></div><div class="quick-start-card"><div class="quick-step">03</div><h3>跟着提示弹完整首</h3><p>按对后自动进入下一个音，弹错也能继续，不会卡住。</p></div></div></section>
         <section class="song-library-section"><div class="container"><div class="song-library-heading"><div><div class="section-kicker">从一首歌开始</div><h2>适合新手的热门歌曲</h2><p>查看按键字母，直接进入提示练习。</p></div><a class="song-library-all" href="/songs/">查看全部歌曲</a></div><div class="song-card-grid"><a class="song-card" href="/songs/happy-birthday/"><span class="song-card-level">简单</span><h3>生日快乐</h3><p>熟悉旋律，适合第一次练习</p><span class="song-card-action">开始学习 →</span></a><a class="song-card" href="/songs/twinkle-twinkle-little-star/"><span class="song-card-level">简单</span><h3>小星星</h3><p>节奏清晰，适合新手入门</p><span class="song-card-action">开始学习 →</span></a><a class="song-card" href="/songs/ode-to-joy/"><span class="song-card-level">中等</span><h3>欢乐颂</h3><p>练习连贯旋律和稳定节拍</p><span class="song-card-action">开始学习 →</span></a></div></div></section>
-        <section id="practice-start" class="practice-section homepage-practice" tabindex="-1"><div class="container"><div class="section-intro"><div class="section-kicker">你的私人钢琴舞台</div><h2>按下一个键，让房间里响起音乐。</h2><p>你可以自由试弹，也可以选择一首歌，跟着下一个按键提示慢慢练习。</p></div><div class="piano-container"><div id="note-drop-zone" class="note-drop-zone" style="display:none;"><div class="drop-lines"><div class="drop-line" data-note="C"></div><div class="drop-line" data-note="C#"></div><div class="drop-line" data-note="D"></div><div class="drop-line" data-note="D#"></div><div class="drop-line" data-note="E"></div><div class="drop-line" data-note="F"></div><div class="drop-line" data-note="F#"></div><div class="drop-line" data-note="G"></div><div class="drop-line" data-note="G#"></div><div class="drop-line" data-note="A"></div><div class="drop-line" data-note="A#"></div><div class="drop-line" data-note="B"></div></div><div id="falling-notes" class="falling-notes"></div></div><div class="piano-brand-fullscreen" style="display:none;"><div class="brand-plaque"><img src="/images/logo.svg" alt="钢琴在线" style="height:34px;"><span class="brand-plaque-copy">PIANO ONLINE</span></div></div><div class="keys"></div></div>
-            <div class="practice-layout"><div class="practice-controls-panel"><div class="practice-controls"><div class="control-row"><div class="sustain-control"><label class="switch"><input type="checkbox" id="sustain-toggle"><span class="slider round"></span></label><span>延音</span></div><div class="sustain-control"><label class="switch"><input type="checkbox" id="labels-toggle" checked><span class="slider round"></span></label><span>按键提示</span></div><div id="midi-status" class="midi-status offline"><span class="status-dot"></span><span class="status-text">MIDI 未连接</span></div></div><div class="song-select-container"><select id="song-select" class="song-select"><option value="">选择一首歌曲...</option><option value="happy-birthday">生日快乐</option><option value="twinkle">小星星</option><option value="two-tigers">两只老虎</option><option value="mary-lamb">玛丽有只小羊羔</option><option value="london-bridge">伦敦大桥</option><option value="row-boat">划船歌</option><option value="ode-to-joy">欢乐颂</option><option value="jingle-bells">铃儿响叮当</option><option value="amazing-grace">奇异恩典</option><option value="silent-night">平安夜</option><option value="auld-lang-syne">友谊地久天长</option><option value="jasmine">茉莉花</option><option value="fur-elise">致爱丽丝</option><option value="moonlight">月光奏鸣曲</option><option value="butterfly-lovers">梁祝</option><option value="canon">卡农</option><option value="river-flows">你的心河</option></select></div><div class="practice-buttons"><button id="start-practice" class="btn primary">跟着提示弹</button><button id="stop-practice" class="btn danger" style="display:none;">停止练习</button><button id="start-rhythm-game" class="btn secondary">节奏模式</button><button id="stop-rhythm-game" class="btn danger" style="display:none;">结束游戏</button><button id="toggle-fullscreen" class="btn secondary">全屏演奏</button></div></div><div id="game-instructions" class="game-instructions" style="display:none;"><h3>节奏模式</h3><p>音符到达命中区域时，按下对应琴键。</p><div class="key-mapping"></div></div></div><div class="practice-status-panel"><div id="key-hint" class="key-hint" style="display:none;"><div class="hint-text">下一个键</div><div class="hint-key"></div><div class="hint-note"></div></div><div id="practice-stats" class="stats-panel" style="display:none;"><div class="stat-item"><span id="correct-notes">正确: 0</span></div><div class="stat-item"><span id="wrong-notes">错误: 0</span></div><div class="stat-item"><span id="progress">进度: 0%</span></div></div><div id="game-stats" class="game-stats-panel" style="display:none;"><div class="game-stat-item"><span id="game-score">分数: 0</span></div><div class="game-stat-item"><span id="game-combo">连击: 0</span></div><div class="game-stat-item"><span id="game-lives">生命: 3</span></div></div></div></div></div></section>
-        <section class="features"><div class="container"><h2>随时开始，不必等到拥有一架钢琴</h2><div class="features-grid"><div class="feature-card"><div class="feature-icon">🎹</div><h3>打开即弹</h3><p>无需下载和注册，进入网页即可用电脑键盘演奏。</p></div><div class="feature-card"><div class="feature-icon">🎼</div><h3>跟着提示学歌</h3><p>选择熟悉的旋律，根据下一个按键提示逐步完成练习。</p></div><div class="feature-card"><div class="feature-icon">✨</div><h3>沉浸式演奏</h3><p>进入全屏，减少干扰，在自己的空间里享受弹奏。</p></div></div></div></section>
-        <section class="home-final-cta"><div class="container"><h2>音乐不该离你太远。</h2><p>现在按下第一个键，让旋律从家里开始。</p><a class="btn primary" href="#practice-start">开始弹奏</a></div></section>
+        <section id="practice-start" class="practice-section homepage-practice" tabindex="-1">
+            <div class="container">
+                <div class="section-intro"><div class="section-kicker">先完成第一首歌</div><h2>不要只试几个琴键，跟着提示弹完整首。</h2><p>系统会告诉你下一个按哪个电脑键。按对后自动进入下一个音，直到完成整首曲子。</p></div>
+                <div class="guided-start-card"><div class="guided-start-copy"><span class="guided-start-kicker">新手推荐 · 约 1 分钟</span><h3>第一次先弹《生日快乐》</h3><p>歌曲已经选好。点击开始后，右侧会显示下一个电脑按键，钢琴上也会高亮对应琴键。</p></div><div class="guided-start-actions"><button type="button" class="btn primary" data-guided-song="happy-birthday" data-entry-source="practice-recommendation">立即跟弹《生日快乐》</button><button type="button" class="btn secondary" data-free-play="true" data-entry-source="practice-recommendation">先自由弹奏</button></div><div class="guided-start-steps"><div><span>1</span><strong>选一首歌</strong><small>已经为你选好《生日快乐》</small></div><div><span>2</span><strong>点击开始</strong><small>页面会显示下一个电脑按键</small></div><div><span>3</span><strong>跟着亮键弹</strong><small>按对后自动进入下一个音</small></div></div></div>
+                <div class="piano-container"><div id="note-drop-zone" class="note-drop-zone" style="display:none;"><div class="drop-lines"><div class="drop-line" data-note="C"></div><div class="drop-line" data-note="C#"></div><div class="drop-line" data-note="D"></div><div class="drop-line" data-note="D#"></div><div class="drop-line" data-note="E"></div><div class="drop-line" data-note="F"></div><div class="drop-line" data-note="F#"></div><div class="drop-line" data-note="G"></div><div class="drop-line" data-note="G#"></div><div class="drop-line" data-note="A"></div><div class="drop-line" data-note="A#"></div><div class="drop-line" data-note="B"></div></div><div id="falling-notes" class="falling-notes"></div></div><div class="piano-brand-fullscreen" style="display:none;"><div class="brand-plaque"><img src="/images/logo.svg" alt="钢琴在线" style="height:34px;"><span class="brand-plaque-copy">PIANO ONLINE</span></div></div><div class="keys"></div></div>
+                <div class="practice-layout">
+                    <div class="practice-controls-panel"><div class="practice-controls" data-guided-ready="true"><div class="song-select-container"><div class="practice-path-header"><span>1</span><div><strong>第 1 步：选择要练习的歌曲</strong><small>第一次建议从《生日快乐》开始</small></div></div><select id="song-select" class="song-select"><option value="">选择一首歌曲...</option><option value="happy-birthday" selected>生日快乐</option><option value="twinkle">小星星</option><option value="two-tigers">两只老虎</option><option value="mary-lamb">玛丽有只小羊羔</option><option value="london-bridge">伦敦大桥</option><option value="row-boat">划船歌</option><option value="ode-to-joy">欢乐颂</option><option value="jingle-bells">铃儿响叮当</option><option value="amazing-grace">奇异恩典</option><option value="silent-night">平安夜</option><option value="auld-lang-syne">友谊地久天长</option><option value="jasmine">茉莉花</option><option value="fur-elise">致爱丽丝</option><option value="moonlight">月光奏鸣曲</option><option value="butterfly-lovers">梁祝</option><option value="canon">卡农</option><option value="river-flows">你的心河</option></select></div><div class="practice-primary-actions"><button id="start-practice" class="btn primary">第 2 步：开始跟弹</button><button id="stop-practice" class="btn danger" style="display:none;">停止练习</button></div><details class="practice-more-options"><summary>自由弹奏与更多玩法</summary><div class="practice-more-options-body"><div class="control-row"><div class="sustain-control"><label class="switch"><input type="checkbox" id="sustain-toggle"><span class="slider round"></span></label><span>延音</span></div><div class="sustain-control"><label class="switch"><input type="checkbox" id="labels-toggle" checked><span class="slider round"></span></label><span>按键提示</span></div><div id="midi-status" class="midi-status offline"><span class="status-dot"></span><span class="status-text">MIDI 未连接</span></div></div><div class="practice-buttons practice-secondary-buttons"><button id="start-rhythm-game" class="btn secondary">节奏模式</button><button id="stop-rhythm-game" class="btn danger" style="display:none;">结束游戏</button><button id="toggle-fullscreen" class="btn secondary">全屏演奏</button></div></div></details></div><div id="game-instructions" class="game-instructions" style="display:none;"><h3>节奏模式</h3><p>音符到达命中区域时，按下对应琴键。</p><div class="key-mapping"></div></div></div>
+                    <div class="practice-status-panel"><div class="practice-empty-state" data-practice-empty-state="true"><span class="practice-empty-icon" aria-hidden="true">🎵</span><strong>歌曲已经选好</strong><p>点击“开始跟弹”，这里会显示下一个要按的电脑键。</p><small data-selected-song-label>当前歌曲：生日快乐</small></div><div id="key-hint" class="key-hint" style="display:none;"><div class="hint-text">下一个键</div><div class="hint-key"></div><div class="hint-note"></div></div><div id="practice-stats" class="stats-panel" style="display:none;"><div class="stat-item"><span id="correct-notes">正确: 0</span></div><div class="stat-item"><span id="wrong-notes">错误: 0</span></div><div class="stat-item"><span id="progress">进度: 0%</span></div></div><div id="game-stats" class="game-stats-panel" style="display:none;"><div class="game-stat-item"><span id="game-score">分数: 0</span></div><div class="game-stat-item"><span id="game-combo">连击: 0</span></div><div class="game-stat-item"><span id="game-lives">生命: 3</span></div></div></div>
+                </div>
+            </div>
+        </section>
+        <section class="features"><div class="container"><h2>先学会一首，再探索更多玩法</h2><div class="features-grid"><div class="feature-card"><div class="feature-icon">🎼</div><h3>逐键提示学歌</h3><p>选择熟悉旋律，根据下一个电脑按键提示逐步完成练习。</p></div><div class="feature-card"><div class="feature-icon">🎹</div><h3>自由弹奏</h3><p>熟悉键盘后，可以随时自由演奏，不受歌曲步骤限制。</p></div><div class="feature-card"><div class="feature-icon">✨</div><h3>节奏与全屏</h3><p>进阶玩法收进“更多玩法”，需要时再打开，不干扰第一次体验。</p></div></div></div></section>
+        <section class="home-final-cta"><div class="container"><h2>第一次，不妨先弹完一首歌。</h2><p>不用识谱，跟着页面提示按下每一个键。</p><button type="button" class="btn primary" data-guided-song="happy-birthday" data-entry-source="final-cta">开始《生日快乐》</button></div></section>
     </main>
     <footer class="footer"><div class="container"><div class="footer-content"><p>&copy; 2026 Piano Online</p><div class="footer-links"><a href="/songs/">曲库</a><a href="/tutorials.html">学习</a><a href="/en/" hreflang="en">English</a></div></div></div></footer>
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Piano Online","alternateName":"在线钢琴","url":"https://pianoonline.cc/","description":"用电脑键盘在线弹钢琴，并通过按键提示练习入门歌曲。","applicationCategory":"MusicApplication","operatingSystem":"Web Browser","inLanguage":"zh-CN","offers":{"@type":"Offer","price":"0","priceCurrency":"CNY"}}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Piano Online","alternateName":"在线钢琴","url":"https://pianoonline.cc/","description":"用电脑键盘在线弹钢琴，并通过逐键提示练习入门歌曲。","applicationCategory":"MusicApplication","operatingSystem":"Web Browser","inLanguage":"zh-CN","offers":{"@type":"Offer","price":"0","priceCurrency":"CNY"}}</script>
     <script>document.addEventListener('DOMContentLoaded',()=>{const switcher=document.querySelector('.lang-switcher');const button=document.querySelector('.lang-switcher-btn');if(!switcher||!button)return;button.addEventListener('click',event=>{event.stopPropagation();switcher.classList.toggle('open');button.setAttribute('aria-expanded',switcher.classList.contains('open'));});document.addEventListener('click',()=>{switcher.classList.remove('open');button.setAttribute('aria-expanded','false');});});</script>
 </body>
 </html>

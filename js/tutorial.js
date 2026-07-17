@@ -7,31 +7,23 @@ export class Tutorial {
     }
 
     init() {
-        // 如果用户已经看过教程,不显示
-        if (this.hasSeenTutorial) {
-            return;
-        }
+        if (this.hasSeenTutorial) return;
 
-        // 延迟显示教程,给页面加载时间
-        setTimeout(() => {
+        window.setTimeout(() => {
             this.show();
-        }, 1000);
+        }, 700);
 
         this.setupEventListeners();
     }
 
     show() {
         const overlay = document.getElementById('tutorial-overlay');
-        if (overlay) {
-            overlay.style.display = 'flex';
-        }
+        if (overlay) overlay.style.display = 'flex';
     }
 
     hide() {
         const overlay = document.getElementById('tutorial-overlay');
-        if (overlay) {
-            overlay.style.display = 'none';
-        }
+        if (overlay) overlay.style.display = 'none';
     }
 
     complete() {
@@ -41,46 +33,17 @@ export class Tutorial {
     }
 
     setupEventListeners() {
-        // 跳过按钮
-        const skipButton = document.getElementById('tutorial-skip');
-        if (skipButton) {
-            skipButton.addEventListener('click', () => {
-                this.complete();
-            });
-        }
+        const freePlayButton = document.getElementById('tutorial-skip');
+        freePlayButton?.addEventListener('click', () => {
+            this.complete();
+        });
 
-        // 开始体验按钮
-        const startButton = document.getElementById('tutorial-start');
-        if (startButton) {
-            startButton.addEventListener('click', () => {
-                this.complete();
-            });
-        }
-
-        // 监听键盘按下 A 键
-        const handleKeyPress = (e) => {
-            if (e.key.toLowerCase() === 'a' && !this.hasSeenTutorial) {
-                // 用户按下了 A 键,显示成功提示
-                const keyDemo = document.querySelector('.tutorial-key-demo');
-                if (keyDemo) {
-                    keyDemo.style.background = 'linear-gradient(135deg, #4CAF50, #45a049)';
-                    keyDemo.textContent = '✓ 太棒了!';
-
-                    // 2秒后自动关闭教程
-                    setTimeout(() => {
-                        this.complete();
-                    }, 2000);
-                }
-
-                // 移除监听器,避免重复触发
-                document.removeEventListener('keydown', handleKeyPress);
-            }
-        };
-
-        document.addEventListener('keydown', handleKeyPress);
+        const guidedStartButton = document.getElementById('tutorial-start');
+        guidedStartButton?.addEventListener('click', () => {
+            this.complete();
+        });
     }
 
-    // 提供一个方法让用户可以重新显示教程
     static resetTutorial() {
         localStorage.removeItem('piano-tutorial-completed');
         window.location.reload();

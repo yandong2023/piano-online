@@ -1,0 +1,94 @@
+name: Piano Online CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          show-progress: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --silent
+
+      - name: Generate song pages
+        run: npm run generate:songs
+
+      - name: Check JavaScript syntax
+        run: |
+          node --check js/main.js
+          node --check js/guided-homepage.js
+          node --check js/guided-entry-bindings.js
+          node --check js/song-discovery.js
+          node --check js/song-page.js
+          node --check js/score-viewer.js
+          node --check js/concert-hall-ui.js
+          node --check js/piano-audio.js
+          node --check js/audio-runtime.mjs
+          node --check data/song-scores.mjs
+          node --check scripts/render-song-pages.mjs
+          node --check scripts/build-site.mjs
+
+      - name: Test audio
+        run: npm run test:audio
+
+      - name: Test homepage
+        run: npm run test:home
+
+      - name: Test song library secondary pages
+        run: node --test --test-name-pattern="songs/index.html" tests/secondary-pages.test.mjs
+
+      - name: Test tutorial secondary pages
+        run: node --test --test-name-pattern="tutorials.html" tests/secondary-pages.test.mjs
+
+      - name: Test about secondary pages
+        run: node --test --test-name-pattern="about.html" tests/secondary-pages.test.mjs
+
+      - name: Test practice secondary page
+        run: node --test --test-name-pattern="practice.html|practice page preserves" tests/secondary-pages.test.mjs
+
+      - name: Test song detail CSS
+        run: node --test --test-name-pattern="song detail CSS" tests/secondary-pages.test.mjs
+
+      - name: Test public song count
+        run: node --test --test-name-pattern="classic library" tests/song-library.test.mjs
+
+      - name: Test unique song identifiers
+        run: node --test --test-name-pattern="unique" tests/song-library.test.mjs
+
+      - name: Test bilingual song metadata
+        run: node --test --test-name-pattern="bilingual" tests/song-library.test.mjs
+
+      - name: Test copyright exclusions
+        run: node --test --test-name-pattern="copyright" tests/song-library.test.mjs
+
+      - name: Test generated song library pages
+        run: node --test --test-name-pattern="representative|expanded catalog" tests/song-library.test.mjs
+
+      - name: Test generated song practice pages
+        run: node --test --test-name-pattern="working practice|score-ready|friendly fallback" tests/song-library.test.mjs
+
+      - name: Test song library styles
+        run: node --test --test-name-pattern="premium song library stylesheet|song interaction stylesheet" tests/song-library.test.mjs
+
+      - name: Test score data
+        run: npm run test:score
+
+      - name: Build static site
+        run: npm run build

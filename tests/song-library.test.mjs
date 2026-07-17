@@ -7,7 +7,7 @@ import { publicSongs, songs } from '../data/song-library.mjs';
 const ids = publicSongs.map((song) => song.id);
 const slugs = publicSongs.map((song) => song.slug);
 
- test('classic library includes at least 35 public songs', () => {
+test('classic library includes at least 35 public songs', () => {
   assert.ok(publicSongs.length >= 35, `expected at least 35 songs, received ${publicSongs.length}`);
 });
 
@@ -27,10 +27,10 @@ test('every public song has usable bilingual metadata and notes', () => {
   }
 });
 
-test('copyright-restricted modern songs stay out of the public library', () => {
+test('songs requiring rights review stay out of the public library', () => {
   assert.equal(songs['river-flows'].copyrightRestricted, true);
-  assert.equal(songs['butterfly-lovers'].copyrightRestricted, true);
   assert.ok(!ids.includes('river-flows'));
+  assert.equal(songs['butterfly-lovers'].seoEnabled, false);
   assert.ok(!ids.includes('butterfly-lovers'));
 });
 
@@ -44,10 +44,11 @@ test('generator creates representative Chinese and English pages', () => {
 test('generated library pages expose the expanded catalog and premium theme', async () => {
   const zh = await readFile('songs/index.html', 'utf8');
   const en = await readFile('en/songs/index.html', 'utf8');
+  const escapedCount = String(publicSongs.length).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-  assert.match(zh, /35 首歌曲/);
+  assert.match(zh, new RegExp(`${escapedCount} 首歌曲`));
   assert.match(zh, /G大调小步舞曲/);
-  assert.match(en, /35 songs/);
+  assert.match(en, new RegExp(`${escapedCount} songs`));
   assert.match(en, /Eine kleine Nachtmusik/);
 
   for (const html of [zh, en]) {
