@@ -6,6 +6,7 @@ import { Tutorial } from './tutorial.js';
 import { initializeSongDiscovery } from './song-discovery.js';
 import { populateSongSelects } from './song-select-options.js';
 import { initializeGuidedHomepage } from './guided-homepage.js';
+import { initializeGuidedEntryBindings } from './guided-entry-bindings.js';
 import { installAudioRuntime } from './audio-runtime.mjs';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -29,6 +30,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (document.getElementById('song-select') && document.getElementById('start-practice')) {
       practiceMode = new PracticeMode(piano);
       window.pianoPracticeMode = practiceMode;
+      initializeGuidedEntryBindings();
     }
 
     if (document.getElementById('start-recording')) {
