@@ -1,0 +1,76 @@
+function track(eventName, params = {}) {
+    if (typeof window.gtag === 'function') {
+        window.gtag('event', eventName, params);
+    }
+}
+
+function hideTutorialOverlay() {
+    const overlay = document.getElementById('tutorial-overlay');
+    if (overlay) overlay.style.display = 'none';
+}
+
+function scrollToPractice() {
+    document.querySelector('.practice-section')?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+    });
+}
+
+export function initializeGuidedEntryBindings() {
+    const select = document.getElementById('song-select');
+    const startButton = document.getElementById('start-practice');
+    const section = document.querySelector('.practice-section');
+
+    if (!select || !startButton || !section) return;
+
+    if (select.value) {
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    const updateSelectedSongLabel = () => {
+        const label = document.querySelector('[data-selected-song-label]');
+        if (!label) return;
+        const prefix = document.documentElement.lang?.toLowerCase().startsWith('en')
+            ? 'Selected song: '
+            : '当前歌曲：';
+        label.textContent = `${prefix}${select.selectedOptions?.[0]?.textContent || ''}`;
+    };
+
+    select.addEventListener('change', updateSelectedSongLabel);
+    updateSelectedSongLabel();
+
+    document.querySelectorAll('[data-guided-song]').forEach((entry) => {
+        if (entry.dataset.guidedEntryBound === 'true') return;
+        entry.dataset.guidedEntryBound = 'true';
+
+        entry.addEventListener('click', (event) => {
+            event.preventDefault();
+            const songId = entry.dataset.guidedSong;
+            const optionExists = Array.from(select.options).some((option) => option.value === songId);
+            if (!songId || !optionExists) return;
+
+            select.value = songId;
+            select.dispatchEvent(new Event('change', { bubbles: true }));
+            hideTutorialOverlay();
+            scrollToPractice();
+
+            track('guided_song_entry', {
+                song_id: songId,
+                source: entry.dataset.entrySource || 'unknown'
+            });
+
+            window.setTimeout(() => {
+                startButton.click();
+                section.classList.add('practice-active');
+            }, 360);
+        });
+    });
+
+    document.addEventListener('piano:practice-start', () => {
+        section.classList.add('practice-active');
+    });
+
+    document.addEventListener('piano:practice-stop', () => {
+        section.classList.remove('practice-active');
+    });
+}
