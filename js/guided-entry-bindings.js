@@ -20,8 +20,13 @@ export function initializeGuidedEntryBindings() {
     const select = document.getElementById('song-select');
     const startButton = document.getElementById('start-practice');
     const section = document.querySelector('.practice-section');
+    const isEnglish = document.documentElement.lang?.toLowerCase().startsWith('en');
 
     if (!select || !startButton || !section) return;
+
+    startButton.textContent = isEnglish
+        ? 'Step 2: Start guided practice'
+        : '第 2 步：开始跟弹';
 
     if (select.value) {
         select.dispatchEvent(new Event('change', { bubbles: true }));
@@ -30,9 +35,7 @@ export function initializeGuidedEntryBindings() {
     const updateSelectedSongLabel = () => {
         const label = document.querySelector('[data-selected-song-label]');
         if (!label) return;
-        const prefix = document.documentElement.lang?.toLowerCase().startsWith('en')
-            ? 'Selected song: '
-            : '当前歌曲：';
+        const prefix = isEnglish ? 'Selected song: ' : '当前歌曲：';
         label.textContent = `${prefix}${select.selectedOptions?.[0]?.textContent || ''}`;
     };
 
