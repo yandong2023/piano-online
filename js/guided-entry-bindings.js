@@ -28,6 +28,8 @@ function scrollToPractice() {
 }
 
 export function initializeGuidedEntryBindings() {
+    if (!document.querySelector('.hero-home')) return;
+
     const select = document.getElementById('song-select');
     const startButton = document.getElementById('start-practice');
     const section = document.querySelector('.practice-section');
