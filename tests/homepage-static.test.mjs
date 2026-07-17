@@ -5,20 +5,22 @@ import test from 'node:test';
 const pages = [
   {
     path: 'index.html',
-    titleStart: '把家，变成你的',
-    titleAccent: '音乐厅。',
+    titleStart: '跟着按键提示，弹完你的',
+    titleAccent: '第一首歌。',
+    guidedLabel: '跟着《生日快乐》弹',
     songsHref: '/songs/'
   },
   {
     path: 'en/index.html',
-    titleStart: 'Turn your home into a',
-    titleAccent: 'concert hall.',
+    titleStart: 'Follow the key prompts and finish your',
+    titleAccent: 'first song.',
+    guidedLabel: 'Play Happy Birthday with prompts',
     songsHref: '/en/songs/'
   }
 ];
 
 for (const page of pages) {
-  test(`${page.path} renders one stable premium first paint`, async () => {
+  test(`${page.path} renders one stable guided first paint`, async () => {
     const html = await readFile(page.path, 'utf8');
 
     assert.match(html, /<body class="homepage-premium">/);
@@ -26,11 +28,16 @@ for (const page of pages) {
     assert.match(html, /href="\/css\/homepage-detail-fixes\.css\?v=[^"]+"/);
     assert.match(html, /href="\/css\/song-pages\.css\?v=[^"]+"/);
     assert.match(html, /href="\/css\/concert-hero\.css\?v=[^"]+"/);
-    assert.match(html, /src="\/js\/main\.js\?v=[^"]+"/);
+    assert.match(html, /href="\/css\/guided-homepage\.css\?v=[^"]+"/);
+    assert.match(html, /src="\/js\/main\.js\?v=20260717\.1"/);
     assert.match(html, /<section class="hero hero-home hero-concert">/);
     assert.ok(html.includes(page.titleStart));
     assert.ok(html.includes(`<span class="hero-accent">${page.titleAccent}</span>`));
+    assert.ok(html.includes(page.guidedLabel));
+    assert.ok(html.includes('data-guided-song="happy-birthday"'));
     assert.ok(html.includes(`href="${page.songsHref}" data-song-library-link="true"`));
+    assert.ok(html.includes('data-guided-ready="true"'));
+    assert.ok(html.includes('practice-more-options'));
 
     for (const requiredId of ['hero-start-fullscreen', 'song-select', 'sustain-toggle', 'labels-toggle', 'start-practice', 'start-rhythm-game', 'toggle-fullscreen']) {
       assert.ok(html.includes(`id="${requiredId}"`), `${page.path} is missing #${requiredId}`);
