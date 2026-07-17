@@ -4,7 +4,13 @@ function track(eventName, params = {}) {
     }
 }
 
-function hideTutorialOverlay() {
+function completeFirstVisitTutorial() {
+    try {
+        localStorage.setItem('piano-tutorial-completed', 'true');
+    } catch {
+        // Continue even when storage is unavailable.
+    }
+
     const overlay = document.getElementById('tutorial-overlay');
     if (overlay) overlay.style.display = 'none';
 }
@@ -54,7 +60,7 @@ export function initializeGuidedEntryBindings() {
 
             select.value = songId;
             select.dispatchEvent(new Event('change', { bubbles: true }));
-            hideTutorialOverlay();
+            completeFirstVisitTutorial();
             scrollToPractice();
 
             track('guided_song_entry', {
@@ -66,6 +72,14 @@ export function initializeGuidedEntryBindings() {
                 startButton.click();
                 section.classList.add('practice-active');
             }, 360);
+        });
+    });
+
+    document.querySelectorAll('[data-free-play]').forEach((entry) => {
+        if (entry.dataset.freePlayCompletionBound === 'true') return;
+        entry.dataset.freePlayCompletionBound = 'true';
+        entry.addEventListener('click', () => {
+            completeFirstVisitTutorial();
         });
     });
 
