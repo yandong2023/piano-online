@@ -66,8 +66,17 @@ jobs:
       - name: Test song detail CSS
         run: node --test --test-name-pattern="song detail CSS" tests/secondary-pages.test.mjs
 
-      - name: Test song catalog metadata
-        run: node --test --test-name-pattern="classic library|unique|bilingual|copyright" tests/song-library.test.mjs
+      - name: Test public song count
+        run: node --test --test-name-pattern="classic library" tests/song-library.test.mjs
+
+      - name: Test unique song identifiers
+        run: node --test --test-name-pattern="unique" tests/song-library.test.mjs
+
+      - name: Test bilingual song metadata
+        run: node --test --test-name-pattern="bilingual" tests/song-library.test.mjs
+
+      - name: Test copyright exclusions
+        run: node --test --test-name-pattern="copyright" tests/song-library.test.mjs
 
       - name: Test generated song library pages
         run: node --test --test-name-pattern="representative|expanded catalog" tests/song-library.test.mjs
