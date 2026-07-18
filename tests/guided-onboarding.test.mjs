@@ -13,13 +13,28 @@ test('homepage promotes a guided first song instead of only free play', async ()
   assert.match(source, /自由弹奏与更多玩法/);
 });
 
-test('guided entry selects the song and starts practice', async () => {
+test('guided entry selects the song, enters focus mode and starts practice', async () => {
   const source = await readFile('js/guided-entry-bindings.js', 'utf8');
 
   assert.match(source, /select\.dispatchEvent\(new Event\('change'/);
+  assert.match(source, /requestFullscreen/);
+  assert.match(source, /guided-focus-fallback/);
   assert.match(source, /startButton\.click\(\)/);
   assert.match(source, /guided_song_entry/);
+  assert.match(source, /guided_fullscreen_result/);
   assert.match(source, /Step 2: Start guided practice/);
+});
+
+test('focused practice keeps the prompt and keyboard in one viewport', async () => {
+  const css = await readFile('css/guided-practice-fullscreen.css', 'utf8');
+
+  assert.match(css, /practice-section\.guided-focus-active/);
+  assert.match(css, /grid-template-rows:/);
+  assert.match(css, /\.practice-status-panel/);
+  assert.match(css, /\.piano-container/);
+  assert.match(css, /\.hint-key/);
+  assert.match(css, /guided-focus-toolbar/);
+  assert.match(css, /guided-visible-fullscreen/);
 });
 
 test('main initializes guided UX before the user starts playing', async () => {
