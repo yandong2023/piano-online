@@ -1,0 +1,383 @@
+/* Focused guided-practice stage: prompt above, piano below, no page distractions. */
+
+body.guided-focus-lock {
+    overflow: hidden !important;
+}
+
+body.homepage-premium .practice-primary-actions {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: stretch;
+}
+
+body.homepage-premium .practice-primary-actions .guided-visible-fullscreen {
+    display: inline-flex;
+    min-width: 138px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(18, 24, 38, 0.14);
+    background: rgba(255, 255, 255, 0.88);
+    color: #172033;
+    box-shadow: none;
+}
+
+.guided-focus-toolbar {
+    display: none;
+}
+
+.practice-section.guided-focus-fallback {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 10000 !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+}
+
+.practice-section.guided-focus-active {
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    background:
+        radial-gradient(circle at 50% 5%, rgba(244, 199, 107, 0.09), transparent 26%),
+        linear-gradient(180deg, #0b1020 0%, #050811 100%) !important;
+    color: #fff;
+    --white-key-height: clamp(190px, 40dvh, 350px);
+    --black-key-height: clamp(118px, 25dvh, 218px);
+}
+
+.practice-section.guided-focus-active > .container {
+    display: grid !important;
+    grid-template-rows: auto minmax(126px, 0.32fr) minmax(250px, 0.68fr);
+    gap: 12px;
+    width: 100% !important;
+    max-width: none !important;
+    height: 100% !important;
+    padding: 12px 16px 16px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    overflow: hidden;
+}
+
+.practice-section.guided-focus-active .section-intro,
+.practice-section.guided-focus-active .guided-start-card,
+.practice-section.guided-focus-active .practice-controls-panel,
+.practice-section.guided-focus-active .practice-empty-state,
+.practice-section.guided-focus-active .game-instructions,
+.practice-section.guided-focus-active .game-stats-panel,
+.practice-section.guided-focus-active .piano-brand-fullscreen {
+    display: none !important;
+}
+
+.practice-section.guided-focus-active .guided-focus-toolbar {
+    grid-row: 1;
+    display: grid;
+    grid-template-columns: minmax(180px, auto) minmax(0, 1fr) auto;
+    gap: 16px;
+    align-items: center;
+    min-height: 58px;
+    padding: 8px 10px 8px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.055);
+    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+.guided-focus-song {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.guided-focus-song span {
+    color: #f4c76b;
+    font-size: 0.7rem;
+    font-weight: 850;
+    letter-spacing: 0.13em;
+}
+
+.guided-focus-song strong {
+    overflow: hidden;
+    color: #fff;
+    font-size: 1.08rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.guided-focus-help {
+    overflow: hidden;
+    color: rgba(241, 245, 249, 0.68);
+    font-size: 0.9rem;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.guided-focus-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.guided-focus-actions button {
+    min-height: 40px;
+    padding: 0 15px;
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 750;
+    cursor: pointer;
+}
+
+.guided-focus-actions .guided-focus-stop {
+    color: #ffd6d1;
+    border-color: rgba(255, 103, 92, 0.26);
+    background: rgba(255, 80, 67, 0.12);
+}
+
+.practice-section.guided-focus-active .practice-layout {
+    grid-row: 2;
+    display: block !important;
+    min-height: 0;
+    margin: 0 !important;
+}
+
+.practice-section.guided-focus-active .practice-status-panel {
+    display: grid !important;
+    grid-template-columns: minmax(230px, 0.72fr) minmax(330px, 1.28fr);
+    gap: 12px;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+.practice-section.guided-focus-active .key-hint,
+.practice-section.guided-focus-active .stats-panel {
+    display: flex !important;
+    min-height: 0;
+    margin: 0 !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 22px !important;
+    background:
+        radial-gradient(circle at top, rgba(244, 199, 107, 0.14), transparent 52%),
+        linear-gradient(180deg, #141c30 0%, #0d1425 100%) !important;
+    box-shadow: 0 16px 38px rgba(0, 0, 0, 0.25) !important;
+}
+
+.practice-section.guided-focus-active .key-hint {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 12px 18px !important;
+}
+
+.practice-section.guided-focus-active .hint-text {
+    color: rgba(241, 245, 249, 0.68) !important;
+    font-size: clamp(0.82rem, 1.4vw, 1rem);
+    font-weight: 700;
+}
+
+.practice-section.guided-focus-active .hint-key {
+    min-width: 96px;
+    padding: 2px 22px !important;
+    border-radius: 18px !important;
+    background: rgba(244, 199, 107, 0.14) !important;
+    color: #f4c76b !important;
+    font-size: clamp(3rem, 7.2dvh, 5.2rem) !important;
+    line-height: 1.05;
+    text-align: center;
+}
+
+.practice-section.guided-focus-active .hint-note {
+    color: rgba(241, 245, 249, 0.78) !important;
+    font-size: clamp(0.95rem, 1.8vw, 1.2rem) !important;
+}
+
+.practice-section.guided-focus-active .stats-panel {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 10px;
+    padding: 12px !important;
+}
+
+.practice-section.guided-focus-active .stat-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.045);
+}
+
+.practice-section.guided-focus-active .stat-item span {
+    color: rgba(255, 255, 255, 0.84) !important;
+    font-size: clamp(0.86rem, 1.5vw, 1.02rem);
+    text-align: center;
+}
+
+.practice-section.guided-focus-active .piano-container {
+    grid-row: 3;
+    display: flex;
+    min-height: 0;
+    flex-direction: column;
+    justify-content: flex-end;
+    margin: 0 !important;
+    padding: 12px 18px 14px !important;
+    border: 1px solid rgba(255, 255, 255, 0.09) !important;
+    border-radius: 24px !important;
+    background: linear-gradient(180deg, #171717 0%, #050505 100%) !important;
+    box-shadow: 0 18px 46px rgba(0, 0, 0, 0.34) !important;
+    overflow: hidden !important;
+}
+
+.practice-section.guided-focus-active .keys {
+    width: 100%;
+    height: var(--white-key-height) !important;
+    min-height: 0;
+    padding: 0 4px !important;
+}
+
+.practice-section.guided-focus-active .key.white {
+    height: var(--white-key-height) !important;
+}
+
+.practice-section.guided-focus-active .key.black {
+    height: var(--black-key-height) !important;
+}
+
+.practice-section.guided-focus-active .key.current {
+    box-shadow:
+        inset 0 -12px 30px rgba(244, 199, 107, 0.34),
+        0 0 26px rgba(244, 199, 107, 0.46) !important;
+}
+
+@media (max-height: 700px) {
+    .practice-section.guided-focus-active {
+        --white-key-height: clamp(165px, 34dvh, 238px);
+        --black-key-height: clamp(102px, 21dvh, 148px);
+    }
+
+    .practice-section.guided-focus-active > .container {
+        grid-template-rows: auto minmax(102px, 0.31fr) minmax(210px, 0.69fr);
+        gap: 8px;
+        padding: 8px 12px 12px !important;
+    }
+
+    .practice-section.guided-focus-active .guided-focus-toolbar {
+        min-height: 48px;
+        padding: 5px 8px 5px 12px;
+    }
+
+    .practice-section.guided-focus-active .hint-key {
+        font-size: clamp(2.6rem, 6.2dvh, 4rem) !important;
+    }
+}
+
+@media (max-width: 760px) {
+    body.homepage-premium .practice-primary-actions {
+        grid-template-columns: 1fr;
+    }
+
+    body.homepage-premium .practice-primary-actions .guided-visible-fullscreen {
+        width: 100%;
+    }
+
+    .practice-section.guided-focus-active {
+        --white-key-width: clamp(15px, 4.15vw, 28px);
+        --black-key-width: clamp(10px, 2.65vw, 18px);
+        --white-key-height: clamp(172px, 36dvh, 270px);
+        --black-key-height: clamp(105px, 22dvh, 168px);
+    }
+
+    .practice-section.guided-focus-active > .container {
+        grid-template-rows: auto minmax(118px, 0.36fr) minmax(220px, 0.64fr);
+        padding: 8px 8px 10px !important;
+    }
+
+    .practice-section.guided-focus-active .guided-focus-toolbar {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 8px;
+    }
+
+    .guided-focus-help {
+        display: none;
+    }
+
+    .guided-focus-actions .guided-focus-stop {
+        display: none;
+    }
+
+    .guided-focus-actions button {
+        min-height: 36px;
+        padding: 0 11px;
+        font-size: 0.78rem;
+    }
+
+    .practice-section.guided-focus-active .practice-status-panel {
+        grid-template-columns: minmax(132px, 0.78fr) minmax(0, 1.22fr);
+        gap: 8px;
+    }
+
+    .practice-section.guided-focus-active .stats-panel {
+        grid-template-columns: 1fr;
+        gap: 5px;
+        padding: 7px !important;
+    }
+
+    .practice-section.guided-focus-active .stat-item {
+        padding: 4px 6px;
+        border-radius: 10px;
+    }
+
+    .practice-section.guided-focus-active .stat-item span {
+        font-size: 0.72rem;
+    }
+
+    .practice-section.guided-focus-active .piano-container {
+        padding: 8px 5px 10px !important;
+        border-radius: 18px !important;
+    }
+
+    .practice-section.guided-focus-active .keys {
+        padding: 0 !important;
+        gap: 0 !important;
+    }
+}
+
+@media (max-width: 520px) and (orientation: portrait) {
+    .practice-section.guided-focus-active {
+        --white-key-height: clamp(150px, 32dvh, 220px);
+        --black-key-height: clamp(92px, 20dvh, 136px);
+    }
+
+    .practice-section.guided-focus-active > .container {
+        grid-template-rows: auto minmax(112px, 0.4fr) minmax(190px, 0.6fr);
+    }
+
+    .guided-focus-song span {
+        display: none;
+    }
+
+    .guided-focus-song strong {
+        font-size: 0.9rem;
+    }
+
+    .practice-section.guided-focus-active .hint-key {
+        min-width: 70px;
+        padding: 2px 12px !important;
+        font-size: clamp(2.6rem, 7dvh, 3.8rem) !important;
+    }
+}
