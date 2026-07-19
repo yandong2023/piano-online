@@ -27,6 +27,30 @@
       ]
     },
     {
+      "source": "/articles/guides/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/en/articles/guides/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/tutorials.html",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/en/tutorials.html",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, must-revalidate" }
+      ]
+    },
+    {
       "source": "/js/main.js",
       "headers": [
         { "key": "Cache-Control", "value": "no-cache, must-revalidate" }
@@ -76,6 +100,12 @@
     },
     {
       "source": "/css/secondary-pages.css",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/css/tutorial-guide.css",
       "headers": [
         { "key": "Cache-Control", "value": "no-cache, must-revalidate" }
       ]
