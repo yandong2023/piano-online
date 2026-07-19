@@ -15,7 +15,15 @@
     "amazing-grace",
     "silent-night",
     "auld-lang-syne",
-    "moonlight"
+    "moonlight",
+    "bach-prelude-c-major",
+    "chopin-prelude-e-minor",
+    "mozart-k545",
+    "william-tell-overture",
+    "offenbach-can-can",
+    "bizet-habanera",
+    "sugar-plum-fairy",
+    "schubert-serenade"
   ],
   "requiresRightsReview": ["river-flows"]
 }

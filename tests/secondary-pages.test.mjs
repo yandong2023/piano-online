@@ -5,8 +5,8 @@ import test from 'node:test';
 const premiumPages = [
   { path: 'songs/index.html', classes: ['song-library-theme'], stylesheet: '/css/song-pages.css' },
   { path: 'en/songs/index.html', classes: ['song-library-theme'], stylesheet: '/css/song-pages.css' },
-  { path: 'tutorials.html', classes: ['secondary-page', 'tutorials-page'], stylesheet: '/css/secondary-pages.css' },
-  { path: 'en/tutorials.html', classes: ['secondary-page', 'tutorials-page'], stylesheet: '/css/secondary-pages.css' },
+  { path: 'tutorials.html', classes: ['secondary-page', 'tutorial-library-page'], stylesheet: '/css/secondary-pages.css' },
+  { path: 'en/tutorials.html', classes: ['secondary-page', 'tutorial-library-page'], stylesheet: '/css/secondary-pages.css' },
   { path: 'about.html', classes: ['secondary-page', 'about-page'], stylesheet: '/css/secondary-pages.css' },
   { path: 'en/about.html', classes: ['secondary-page', 'about-page'], stylesheet: '/css/secondary-pages.css' },
   { path: 'practice.html', classes: ['secondary-page', 'practice-page'], stylesheet: '/css/secondary-pages.css' }
