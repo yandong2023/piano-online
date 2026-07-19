@@ -27,8 +27,8 @@ jobs:
       - name: Install dependencies
         run: npm ci --silent
 
-      - name: Generate song pages
-        run: npm run generate:songs
+      - name: Generate content pages and sitemaps
+        run: npm run generate:content
 
       - name: Check JavaScript syntax
         run: |
@@ -42,7 +42,11 @@ jobs:
           node --check js/piano-audio.js
           node --check js/audio-runtime.mjs
           node --check data/song-scores.mjs
+          node --check data/song-library.mjs
+          node --check data/tutorial-library.mjs
           node --check scripts/render-song-pages.mjs
+          node --check scripts/render-tutorial-pages.mjs
+          node --check scripts/render-sitemaps.mjs
           node --check scripts/build-site.mjs
 
       - name: Test audio
@@ -75,8 +79,8 @@ jobs:
       - name: Test bilingual song metadata
         run: node --test --test-name-pattern="bilingual" tests/song-library.test.mjs
 
-      - name: Test copyright exclusions
-        run: node --test --test-name-pattern="copyright" tests/song-library.test.mjs
+      - name: Test rights exclusions
+        run: node --test --test-name-pattern="rights review" tests/song-library.test.mjs
 
       - name: Test generated song library pages
         run: node --test --test-name-pattern="representative|expanded catalog" tests/song-library.test.mjs
@@ -86,6 +90,9 @@ jobs:
 
       - name: Test song library styles
         run: node --test --test-name-pattern="premium song library stylesheet|song interaction stylesheet" tests/song-library.test.mjs
+
+      - name: Test tutorial library and sitemaps
+        run: npm run test:tutorials
 
       - name: Test score data
         run: npm run test:score
