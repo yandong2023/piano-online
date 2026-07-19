@@ -72,7 +72,7 @@ const additions = {
   "symphony-five": {
     "slug": "beethoven-symphony-no-5", "title": { "zh": "命运交响曲主题", "en": "Beethoven Symphony No. 5 Theme" }, "difficulty": 2, "tempo": 108, "keySignature": "C Minor", "estimatedMinutes": 4, "category": "classical", "featured": false, "seoEnabled": true, "composer": "Ludwig van Beethoven",
     "description": { "zh": "在线学习《命运交响曲主题》的简化钢琴旋律，支持电脑按键提示和分段练习。", "en": "Learn a simplified piano melody of Beethoven Symphony No. 5 Theme with interactive keyboard prompts." },
-    "notes": ["G4","G4","G4","Eb4","F4","F4","F4","D4","G4","G4","G4","Eb4","Ab4","Ab4","Ab4","G4","Eb5","Eb5","D5","C5","Bb4","Bb4","Ab4","G4"]
+    "notes": ["G4","G4","G4","D#4","F4","F4","F4","D4","G4","G4","G4","D#4","G#4","G#4","G#4","G4","D#5","D#5","D5","C5","A#4","A#4","G#4","G4"]
   },
   "eine-kleine": {
     "slug": "eine-kleine-nachtmusik", "title": { "zh": "小夜曲", "en": "Eine kleine Nachtmusik" }, "difficulty": 3, "tempo": 126, "keySignature": "G Major", "estimatedMinutes": 5, "category": "classical", "featured": true, "seoEnabled": true, "composer": "Wolfgang Amadeus Mozart",
@@ -113,6 +113,46 @@ const additions = {
     "slug": "gymnopedie-no-1", "title": { "zh": "第一号裸体歌舞", "en": "Gymnopédie No. 1" }, "difficulty": 3, "tempo": 72, "keySignature": "D Major", "estimatedMinutes": 5, "category": "classical", "featured": false, "seoEnabled": true, "composer": "Erik Satie",
     "description": { "zh": "在线学习《第一号裸体歌舞》的简化钢琴旋律，支持电脑按键提示和分段练习。", "en": "Learn a simplified piano melody of Gymnopédie No. 1 with interactive keyboard prompts." },
     "notes": ["D5","F#5","E5","D5","C#5","B4","A4","B4","C#5","D5","A4","B4","C#5","D5","E5","F#5","E5","D5","C#5","B4"]
+  },
+  "bach-prelude-c-major": {
+    "slug": "bach-prelude-in-c-major", "title": { "zh": "巴赫C大调前奏曲", "en": "Bach Prelude in C Major" }, "difficulty": 3, "tempo": 76, "keySignature": "C Major", "estimatedMinutes": 6, "category": "classical", "featured": true, "seoEnabled": true, "composer": "Johann Sebastian Bach",
+    "description": { "zh": "在线练习巴赫《C大调前奏曲》的简化分解和弦主题，适合学习均匀触键与和声进行。", "en": "Practice a simplified arpeggiated theme from Bach's Prelude in C Major for even touch and harmonic movement." },
+    "notes": ["C4","E4","G4","C5","E5","G4","C5","E5","C4","E4","G4","C5","E5","G4","C5","E5","D4","F4","A4","D5","F5","A4","D5","F5","B3","D4","G4","D5","F5","G4","D5","F5"]
+  },
+  "chopin-prelude-e-minor": {
+    "slug": "chopin-prelude-e-minor", "title": { "zh": "肖邦E小调前奏曲", "en": "Chopin Prelude in E Minor" }, "difficulty": 3, "tempo": 64, "keySignature": "E Minor", "estimatedMinutes": 6, "category": "classical", "featured": false, "seoEnabled": true, "composer": "Frédéric Chopin",
+    "description": { "zh": "在线练习肖邦《E小调前奏曲》简化旋律，重点体会下行线条、呼吸与慢速控制。", "en": "Practice a simplified melodic line from Chopin's Prelude in E Minor, focusing on descent, breathing and slow control." },
+    "notes": ["B4","C5","B4","A4","G4","F#4","E4","D#4","E4","G4","F#4","E4","D4","C4","B3","E4","F#4","G4","A4","G4","F#4","E4","D#4","E4"]
+  },
+  "mozart-k545": {
+    "slug": "mozart-sonata-k545", "title": { "zh": "莫扎特C大调奏鸣曲K.545", "en": "Mozart Sonata K.545" }, "difficulty": 3, "tempo": 112, "keySignature": "C Major", "estimatedMinutes": 6, "category": "classical", "featured": true, "seoEnabled": true, "composer": "Wolfgang Amadeus Mozart",
+    "description": { "zh": "在线学习莫扎特C大调奏鸣曲K.545第一乐章的简化主题，练习清晰分句与均匀音阶。", "en": "Learn a simplified theme from the first movement of Mozart's Sonata K.545 and practise clear phrasing and even scales." },
+    "notes": ["C5","E5","G5","B4","C5","D5","C5","B4","A4","G4","F4","E4","D4","C4","E4","G4","C5","E5","D5","C5","B4","A4","G4","F4","E4"]
+  },
+  "william-tell-overture": {
+    "slug": "william-tell-overture", "title": { "zh": "威廉·退尔序曲", "en": "William Tell Overture" }, "difficulty": 3, "tempo": 132, "keySignature": "E Major", "estimatedMinutes": 5, "category": "classical", "featured": true, "seoEnabled": true, "composer": "Gioachino Rossini",
+    "description": { "zh": "在线练习《威廉·退尔序曲》终曲的简化主题，适合训练重复音、跳进与稳定速度。", "en": "Practice a simplified finale theme from the William Tell Overture for repeated notes, leaps and steady tempo." },
+    "notes": ["E4","E4","E4","G#4","B4","E5","B4","G#4","E4","F#4","G#4","A4","B4","B4","A4","G#4","F#4","E4","B4","B4","B4","C#5","D#5","E5","D#5","C#5","B4"]
+  },
+  "offenbach-can-can": {
+    "slug": "offenbach-can-can", "title": { "zh": "奥芬巴赫康康舞曲", "en": "Offenbach Can-Can" }, "difficulty": 2, "tempo": 124, "keySignature": "C Major", "estimatedMinutes": 5, "category": "classical", "featured": true, "seoEnabled": true, "composer": "Jacques Offenbach",
+    "description": { "zh": "在线练习奥芬巴赫《康康舞曲》的简化主题，学习快速级进、重复节奏与轻快触键。", "en": "Practice a simplified Can-Can theme by Offenbach with quick steps, repeated rhythm and light articulation." },
+    "notes": ["A4","A4","B4","C5","D5","C5","B4","A4","G4","G4","A4","B4","C5","B4","A4","G4","F4","F4","G4","A4","B4","A4","G4","F4","E4","G4","C5"]
+  },
+  "bizet-habanera": {
+    "slug": "bizet-habanera", "title": { "zh": "比才《哈巴涅拉》", "en": "Bizet Habanera" }, "difficulty": 3, "tempo": 88, "keySignature": "D Minor", "estimatedMinutes": 5, "category": "classical", "featured": false, "seoEnabled": true, "composer": "Georges Bizet",
+    "description": { "zh": "在线练习歌剧《卡门》中《哈巴涅拉》的简化旋律，感受半音下行与稳定舞曲节奏。", "en": "Practice a simplified Habanera melody from Carmen and explore chromatic descent with a steady dance pulse." },
+    "notes": ["D4","D4","D4","C#4","D4","E4","F4","E4","D4","C#4","B3","C#4","D4","D4","F4","A4","G4","F4","E4","D4","C#4","D4"]
+  },
+  "sugar-plum-fairy": {
+    "slug": "dance-of-the-sugar-plum-fairy", "title": { "zh": "糖梅仙子之舞", "en": "Dance of the Sugar Plum Fairy" }, "difficulty": 3, "tempo": 96, "keySignature": "E Minor", "estimatedMinutes": 5, "category": "classical", "featured": false, "seoEnabled": true, "composer": "Pyotr Ilyich Tchaikovsky",
+    "description": { "zh": "在线练习柴可夫斯基《糖梅仙子之舞》的简化主题，训练轻巧触键、半音与神秘音色。", "en": "Practice a simplified Dance of the Sugar Plum Fairy theme with light touch, chromatic motion and a mysterious character." },
+    "notes": ["E5","D#5","E5","B4","C5","A4","B4","G4","A4","F#4","G4","E4","F#4","D#4","E4","B3","E4","G4","F#4","E4","D#4","E4"]
+  },
+  "schubert-serenade": {
+    "slug": "schubert-serenade", "title": { "zh": "舒伯特小夜曲", "en": "Schubert Serenade" }, "difficulty": 3, "tempo": 76, "keySignature": "D Minor", "estimatedMinutes": 6, "category": "classical", "featured": false, "seoEnabled": true, "composer": "Franz Schubert",
+    "description": { "zh": "在线练习舒伯特《小夜曲》的简化旋律，学习歌唱性连奏、乐句呼吸与慢速控制。", "en": "Practice a simplified Schubert Serenade melody and develop singing legato, phrase breathing and slow control." },
+    "notes": ["D4","E4","D4","B3","D4","E4","D4","B3","F#4","E4","D4","C#4","D4","A4","G4","F#4","E4","D4","C#4","B3","A3","D4"]
   }
 };
 
