@@ -62,11 +62,17 @@ function setDocumentFocusLock(enabled) {
     document.body.classList.toggle('guided-focus-lock', enabled);
 }
 
+function setAdFreePractice(enabled) {
+    document.documentElement.classList.toggle('piano-ad-free-mode', enabled);
+    document.body.classList.toggle('piano-ad-free-mode', enabled);
+}
+
 function clearFallbackFocus(section) {
     section.classList.remove('guided-focus-fallback');
     if (!getFullscreenElement()) {
         section.classList.remove('guided-focus-active');
         setDocumentFocusLock(false);
+        setAdFreePractice(false);
     }
 }
 
@@ -87,6 +93,7 @@ async function enterGuidedFocus(section, source) {
     }
 
     section.classList.add('guided-focus-active');
+    setAdFreePractice(true);
 
     try {
         await requestFullscreen(section);
@@ -225,8 +232,10 @@ export function initializeGuidedEntryBindings() {
 
     const syncFullscreenState = () => {
         const active = getFullscreenElement() === section;
-        section.classList.toggle('guided-focus-active', active || section.classList.contains('guided-focus-fallback'));
-        if (!active && !section.classList.contains('guided-focus-fallback')) {
+        const fallbackActive = section.classList.contains('guided-focus-fallback');
+        section.classList.toggle('guided-focus-active', active || fallbackActive);
+        setAdFreePractice(active || fallbackActive);
+        if (!active && !fallbackActive) {
             setDocumentFocusLock(false);
         }
         if (fullscreenButton) {

@@ -89,7 +89,7 @@ function sharedHead({ locale, title, description, canonical, alternate, type = '
 <link rel="stylesheet" href="/css/tutorial-guide.css?v=${ASSET_VERSION}">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-EYGD99YB4Y"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-EYGD99YB4Y');</script>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4423187689700927" crossorigin="anonymous"></script>`;
+`;
 }
 
 function renderExample(example, locale) {

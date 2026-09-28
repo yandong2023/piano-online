@@ -22,6 +22,7 @@ test('guided entry selects the song, enters focus mode and starts practice', asy
   assert.match(source, /startButton\.click\(\)/);
   assert.match(source, /guided_song_entry/);
   assert.match(source, /guided_fullscreen_result/);
+  assert.match(source, /piano-ad-free-mode/);
   assert.match(source, /Step 2: Start guided practice/);
 });
 
@@ -29,6 +30,7 @@ test('focused practice keeps the prompt and keyboard in one viewport', async () 
   const css = await readFile('css/guided-practice-fullscreen.css', 'utf8');
 
   assert.match(css, /practice-section\.guided-focus-active/);
+  assert.match(css, /piano-ad-free-mode/);
   assert.match(css, /grid-template-rows:/);
   assert.match(css, /\.practice-status-panel/);
   assert.match(css, /\.piano-container/);

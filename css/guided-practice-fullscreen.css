@@ -381,3 +381,14 @@ body.homepage-premium .practice-primary-actions .guided-visible-fullscreen {
         font-size: clamp(2.6rem, 7dvh, 3.8rem) !important;
     }
 }
+
+
+/* Homepage ads stay out of immersive piano practice. */
+html.piano-ad-free-mode ins.adsbygoogle,
+html.piano-ad-free-mode .google-auto-placed,
+html.piano-ad-free-mode iframe[id^="google_ads_iframe"],
+html.piano-ad-free-mode iframe[name^="google_ads_iframe"],
+html.piano-ad-free-mode [id^="aswift_"] {
+    display: none !important;
+    visibility: hidden !important;
+}

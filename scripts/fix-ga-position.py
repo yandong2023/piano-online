@@ -25,8 +25,7 @@ ga_block = """<!-- Google tag (gtag.js) -->
 
       gtag('config', 'G-EYGD99YB4Y');
     </script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4423187689700927"
-    crossorigin="anonymous"></script>
+    
     <meta name="google-site-verification" content="Fii3zK2l54f0uFP7RPwdn7BEqB4OjC2jc_07JxSs1uI" />"""
 
 # 匹配 </head> 之后、<body> 之前的 GA 代码块（允许各种空白和缩进）
@@ -40,8 +39,6 @@ ga_pattern = re.compile(
     r"gtag\('js',\s*new Date\(\)\);\s*"
     r"gtag\('config',\s*'G-EYGD99YB4Y'\);\s*"
     r'</script>\s*'
-    r'<script\s+async\s+src="https://pagead2\.googlesyndication\.com/pagead/js/adsbygoogle\.js\?client=ca-pub-4423187689700927"\s*'
-    r'crossorigin="anonymous"></script>\s*'
     r'<meta\s+name="google-site-verification"\s+content="Fii3zK2l54f0uFP7RPwdn7BEqB4OjC2jc_07JxSs1uI"\s*/?>\s*'
     r'<body>',
     re.DOTALL
