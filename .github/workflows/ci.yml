@@ -43,6 +43,8 @@ jobs:
           node --check js/audio-runtime.mjs
           node --check data/song-scores.mjs
           node --check data/song-library.mjs
+          node --check data/song-expansion.mjs
+          node --check data/zh-hant.mjs
           node --check data/tutorial-library.mjs
           node --check scripts/render-song-pages.mjs
           node --check scripts/render-tutorial-pages.mjs

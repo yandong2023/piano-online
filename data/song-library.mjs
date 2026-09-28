@@ -1,4 +1,5 @@
 import { songs as baseSongs, calculateScore } from './song-catalog.mjs';
+import { seoExpansionSongs } from './song-expansion.mjs';
 
 const overrides = {
   "two-tigers": { "seoEnabled": true, "featured": true, "composer": "Traditional French" },
@@ -157,7 +158,7 @@ const additions = {
 };
 
 export const songs = Object.fromEntries(
-  Object.entries({ ...baseSongs, ...additions }).map(([id, song]) => [id, { ...song, ...(overrides[id] || {}) }])
+  Object.entries({ ...baseSongs, ...additions, ...seoExpansionSongs }).map(([id, song]) => [id, { ...song, ...(overrides[id] || {}) }])
 );
 
 export const songList = Object.entries(songs).map(([id, song]) => ({ id, ...song }));

@@ -7,7 +7,7 @@ import { tutorialArticles } from '../data/tutorial-library.mjs';
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = path.resolve(HERE, '..');
 const BASE_URL = 'https://pianoonline.cc';
-const LASTMOD = '2026-07-18';
+const LASTMOD = '2026-09-28';
 
 const legacyTutorialSlugs = [
   'piano-basics',
@@ -38,6 +38,15 @@ function bilingualUrl(zhPath, enPath, { priority = '0.8', changefreq = 'monthly'
   ];
 }
 
+function trilingualUrl(zhPath, enPath, zhHantPath, { priority = '0.8', changefreq = 'monthly', lastmod = LASTMOD } = {}) {
+  const zh = `${BASE_URL}${zhPath}`;
+  const en = `${BASE_URL}${enPath}`;
+  const zhHant = `${BASE_URL}${zhHantPath}`;
+  const alternates = `<xhtml:link rel="alternate" hreflang="zh-CN" href="${esc(zh)}"/><xhtml:link rel="alternate" hreflang="en" href="${esc(en)}"/><xhtml:link rel="alternate" hreflang="zh-Hant" href="${esc(zhHant)}"/><xhtml:link rel="alternate" hreflang="x-default" href="${esc(en)}"/>`;
+  const row = (loc) => `<url><loc>${esc(loc)}</loc>${alternates}<lastmod>${lastmod}</lastmod><changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`;
+  return [row(zh), row(en), row(zhHant)];
+}
+
 function singleUrl(pathname, { priority = '0.6', changefreq = 'monthly', lastmod = LASTMOD } = {}) {
   return `<url><loc>${esc(`${BASE_URL}${pathname}`)}</loc><lastmod>${lastmod}</lastmod><changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`;
 }
@@ -48,8 +57,13 @@ function xmlDocument(urls) {
 
 export async function generateSitemaps(root = PROJECT_ROOT) {
   const songUrls = [
-    ...bilingualUrl('/songs/', '/en/songs/', { priority: '0.9', changefreq: 'weekly' }),
-    ...publicSongs.flatMap((song) => bilingualUrl(`/songs/${song.slug}/`, `/en/songs/${song.slug}/`, { priority: song.featured ? '0.85' : '0.75', changefreq: 'monthly' }))
+    ...trilingualUrl('/songs/', '/en/songs/', '/zh-hant/songs/', { priority: '0.9', changefreq: 'weekly' }),
+    ...publicSongs.flatMap((song) => trilingualUrl(
+      `/songs/${song.slug}/`,
+      `/en/songs/${song.slug}/`,
+      `/zh-hant/songs/${song.slug}/`,
+      { priority: song.featured ? '0.85' : '0.75', changefreq: 'monthly' }
+    ))
   ];
 
   const tutorialUrls = [

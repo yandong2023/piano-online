@@ -3,6 +3,7 @@ import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { publicSongs } from '../data/song-library.mjs';
 import { hasScoreForSong } from '../data/song-scores.mjs';
+import { toTraditionalHtml } from '../data/zh-hant.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = path.resolve(HERE, '..');
@@ -22,6 +23,28 @@ const categoryLabels = {
   zh: { beginner: '入门歌曲', kids: '童谣与儿歌', traditional: '传统旋律', holiday: '节日歌曲', classical: '古典名曲', ragtime: '拉格泰姆' },
   en: { beginner: 'First songs', kids: 'Nursery & children’s songs', traditional: 'Traditional melodies', holiday: 'Holiday songs', classical: 'Classical essentials', ragtime: 'Ragtime' }
 };
+
+function renderTraditional(html) {
+  let output = toTraditionalHtml(html)
+    .replace('<html lang="zh-CN">', '<html lang="zh-Hant">')
+    .replaceAll('https://pianoonline.cc/songs/', 'https://pianoonline.cc/zh-hant/songs/')
+    .replaceAll('href="/songs/', 'href="/zh-hant/songs/');
+
+  output = output.replace('hreflang="zh-CN"', 'hreflang="zh-Hant"');
+  const selfAlternate = output.match(/<link rel="alternate" hreflang="zh-Hant" href="([^"]+)">/);
+  if (selfAlternate) {
+    const simplified = selfAlternate[1].replace('/zh-hant/songs/', '/songs/');
+    output = output.replace(
+      selfAlternate[0],
+      selfAlternate[0] + '\n<link rel="alternate" hreflang="zh-CN" href="' + simplified + '">'
+    );
+  }
+
+  return output.replace(
+    '<a href="/en/songs/">English</a></div>',
+    '<a href="/en/songs/">English</a><a href="/songs/">簡體</a></div>'
+  );
+}
 
 function esc(value = '') {
   return String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
@@ -150,30 +173,39 @@ function renderSong(song, locale) {
 function renderSitemap() {
   const urls = publicSongs.flatMap((song) => [
     `  <url><loc>https://pianoonline.cc/songs/${song.slug}/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>`,
-    `  <url><loc>https://pianoonline.cc/en/songs/${song.slug}/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>`
+    `  <url><loc>https://pianoonline.cc/en/songs/${song.slug}/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>`,
+    `  <url><loc>https://pianoonline.cc/zh-hant/songs/${song.slug}/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>`
   ]);
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url><loc>https://pianoonline.cc/songs/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>\n  <url><loc>https://pianoonline.cc/en/songs/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>\n${urls.join('\n')}\n</urlset>`;
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url><loc>https://pianoonline.cc/songs/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>\n  <url><loc>https://pianoonline.cc/en/songs/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>\n  <url><loc>https://pianoonline.cc/zh-hant/songs/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>\n${urls.join('\n')}\n</urlset>`;
 }
 
 export async function generateSongSite(rootDir = PROJECT_ROOT) {
   const zhLibraryDir = path.join(rootDir, 'songs');
   const enLibraryDir = path.join(rootDir, 'en', 'songs');
+  const zhHantLibraryDir = path.join(rootDir, 'zh-hant', 'songs');
   await mkdir(zhLibraryDir, { recursive: true });
   await mkdir(enLibraryDir, { recursive: true });
-  await writeFile(path.join(zhLibraryDir, 'index.html'), renderLibrary('zh'), 'utf8');
+  await mkdir(zhHantLibraryDir, { recursive: true });
+  const zhLibraryHtml = renderLibrary('zh');
+  await writeFile(path.join(zhLibraryDir, 'index.html'), zhLibraryHtml, 'utf8');
   await writeFile(path.join(enLibraryDir, 'index.html'), renderLibrary('en'), 'utf8');
+  await writeFile(path.join(zhHantLibraryDir, 'index.html'), renderTraditional(zhLibraryHtml), 'utf8');
 
   for (const song of publicSongs) {
     const zhDir = path.join(zhLibraryDir, song.slug);
     const enDir = path.join(enLibraryDir, song.slug);
+    const zhHantDir = path.join(zhHantLibraryDir, song.slug);
     await mkdir(zhDir, { recursive: true });
     await mkdir(enDir, { recursive: true });
-    await writeFile(path.join(zhDir, 'index.html'), renderSong(song, 'zh'), 'utf8');
+    await mkdir(zhHantDir, { recursive: true });
+    const zhSongHtml = renderSong(song, 'zh');
+    await writeFile(path.join(zhDir, 'index.html'), zhSongHtml, 'utf8');
     await writeFile(path.join(enDir, 'index.html'), renderSong(song, 'en'), 'utf8');
+    await writeFile(path.join(zhHantDir, 'index.html'), renderTraditional(zhSongHtml), 'utf8');
   }
 
   await writeFile(path.join(rootDir, 'sitemap-songs.xml'), renderSitemap(), 'utf8');
-  return { count: publicSongs.length, pages: publicSongs.length * 2 + 2 };
+  return { count: publicSongs.length, pages: publicSongs.length * 3 + 3 };
 }
 
 const directRun = process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href;

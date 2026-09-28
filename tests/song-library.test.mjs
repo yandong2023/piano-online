@@ -7,8 +7,8 @@ import { publicSongs, songs } from '../data/song-library.mjs';
 const ids = publicSongs.map((song) => song.id);
 const slugs = publicSongs.map((song) => song.slug);
 
-test('classic library includes at least 35 public songs', () => {
-  assert.ok(publicSongs.length >= 35, `expected at least 35 songs, received ${publicSongs.length}`);
+test('classic library includes at least 100 public songs', () => {
+  assert.ok(publicSongs.length >= 100, `expected at least 100 songs, received ${publicSongs.length}`);
 });
 
 test('public song ids and slugs are unique', () => {
@@ -90,6 +90,18 @@ test('songs without score data keep the friendly fallback', async () => {
   const en = await readFile('en/songs/turkish-march/index.html', 'utf8');
   assert.match(zh, /data-score-ready="false"/);
   assert.match(en, /data-score-ready="false"/);
+});
+
+test('generator creates Traditional Chinese song pages with reciprocal hreflang', async () => {
+  const library = await readFile('zh-hant/songs/index.html', 'utf8');
+  const song = await readFile('zh-hant/songs/happy-birthday/index.html', 'utf8');
+
+  assert.match(library, /<html lang="zh-Hant">/);
+  assert.match(library, new RegExp(`${publicSongs.length} 首歌曲`));
+  assert.match(song, /生日快樂/);
+  assert.match(song, /hreflang="zh-Hant"/);
+  assert.match(song, /hreflang="zh-CN"/);
+  assert.match(song, /href="\/songs\/">簡體/);
 });
 
 test('premium song library stylesheet defines readable dark cards', async () => {
