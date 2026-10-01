@@ -49,8 +49,6 @@ function syncStatusPanel() {
 
 function initializeSongPage() {
     syncSelectedSong();
-    window.setTimeout(syncSelectedSong, 100);
-    window.setTimeout(syncSelectedSong, 500);
 
     document.querySelectorAll('[data-start-song]').forEach((button) => {
         button.addEventListener('click', startGuidedPractice);
@@ -75,7 +73,9 @@ function initializeSongPage() {
     }
 }
 
-if (document.readyState === 'loading') {
+if (document.querySelector('[data-studio]') && !window.pianoPracticeMode) {
+    document.addEventListener('piano:ready', initializeSongPage, { once: true });
+} else if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initializeSongPage, { once: true });
 } else {
     initializeSongPage();

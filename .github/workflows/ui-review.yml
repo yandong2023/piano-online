@@ -3,7 +3,7 @@ on:
   push:
     branches: [design/piano-studio]
   pull_request:
-    paths: ['piano.html', 'index.html', 'en/**', 'css/**', 'js/**', 'scripts/**', '.github/workflows/ui-review.yml']
+    paths: ['piano.html', 'index.html', 'en/**', 'css/**', 'js/**', 'scripts/**', 'tests/**', 'package.json', '.github/workflows/ui-review.yml']
 permissions:
   contents: read
 concurrency:
@@ -20,6 +20,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Run static tests and build the actual deployment output
+        run: |
+          npm ci --silent
+          npm test
+          npm run build
       - name: Prepare browser and source snapshot
         run: |
           mkdir -p /tmp/piano-browser ui-artifacts
@@ -28,31 +33,12 @@ jobs:
           npm init -y > /dev/null
           npm install playwright@1.56.1 --silent
           npx playwright install --with-deps chromium
-      - name: Inspect desktop and mobile pages
+      - name: Inspect desktop and mobile pages and exercise piano controls
+        env:
+          PLAYWRIGHT_MODULE: /tmp/piano-browser/node_modules/playwright/index.mjs
         run: |
-          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/piano-server.log 2>&1 &
-          node --input-type=module <<'JS'
-          import { chromium } from '/tmp/piano-browser/node_modules/playwright/index.mjs';
-          import fs from 'node:fs';
-          const browser = await chromium.launch();
-          const report = [];
-          for (const viewport of [{width:1440,height:1000},{width:390,height:844}]) {
-            const context = await browser.newContext({viewport, reducedMotion:'reduce'});
-            await context.route(/googlesyndication|googletagmanager|clarity\.ms|google-analytics/, route => route.abort());
-            for (const [name,path] of [['home','/'],['piano','/piano.html'],['songs','/songs/'],['song','/songs/happy-birthday/'],['learn','/tutorials.html']]) {
-              const page = await context.newPage();
-              const errors=[]; page.on('pageerror',e=>errors.push(e.message));
-              const response=await page.goto('http://127.0.0.1:4173'+path,{waitUntil:'networkidle'});
-              await page.screenshot({path:`ui-artifacts/${name}-${viewport.width}.png`,fullPage:true});
-              report.push({name,viewport,status:response.status(),errors,layout:await page.evaluate(()=>({width:innerWidth,scrollWidth:document.documentElement.scrollWidth,title:document.title,body:document.body.innerText.slice(0,3000)}))});
-              await page.close();
-            }
-            await context.close();
-          }
-          fs.writeFileSync('ui-artifacts/report.json',JSON.stringify(report,null,2));
-          console.log(JSON.stringify(report,null,2));
-          await browser.close();
-          JS
+          python3 -m http.server 4173 --bind 127.0.0.1 --directory dist > /tmp/piano-server.log 2>&1 &
+          node scripts/ui-smoke.mjs
       - name: Upload review artifacts
         if: always()
         uses: actions/upload-artifact@v4
