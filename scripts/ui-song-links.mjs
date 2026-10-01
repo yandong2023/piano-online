@@ -11,9 +11,10 @@ try {
   for(const path of ['/songs/happy-birthday/','/en/songs/happy-birthday/','/zh-hant/songs/happy-birthday/']) {
     await page.goto(base+path,{waitUntil:'networkidle'});
     await page.waitForFunction(()=>!!window.pianoStudio);
-    await page.locator('a[href="#keyboard-notes"]').tap();
-    assert.equal(await page.locator('#keyboard-notes').isVisible(),true);
+    await page.locator('[data-view-keys]').tap();
+    await page.locator('#keyboard-notes').waitFor({state:'visible'});
     assert.equal(await page.evaluate(()=>location.hash),'#keyboard-notes');
+    assert.equal(await page.evaluate(()=>location.pathname),path);
     await page.locator('[data-start-song]').tap();
     assert.equal(await page.evaluate(()=>window.pianoStudio.practice.isPlaying),true);
     assert.equal(await page.evaluate(()=>document.activeElement.id),'practice-start');
@@ -28,9 +29,9 @@ try {
   });
   assert.equal(points.length,2);
   await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:points});
-  assert.equal(await page.locator('.key.active').count(),2);
+  await page.waitForFunction(()=>document.querySelectorAll('.key.active').length===2);
   await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
-  assert.equal(await page.locator('.key.active').count(),0);
+  await page.waitForFunction(()=>document.querySelectorAll('.key.active').length===0);
   report.checks.push({name:'two simultaneous touch contacts release without stuck notes',pass:true});
   await context.close();
 } catch(error) {

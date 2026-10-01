@@ -27,13 +27,17 @@ function initializeKeyPreview() {
     const preview = document.getElementById('keyboard-notes');
     if (!preview) return;
     const reveal = () => {
-        // The compact mobile layout hides this preview until it is requested.
         preview.style.display = 'block';
         preview.tabIndex = -1;
         preview.focus({ preventScroll: true });
     };
     document.querySelectorAll('a[href="#keyboard-notes"]').forEach(link => {
-        // Keep native hash navigation and its browser-history behavior.
+        // Legacy song HTML has a root <base>. Resolve this anchor against the
+        // actual song URL so normal clicks and opening a new tab stay on this song.
+        const target = new URL(location.href);
+        target.hash = 'keyboard-notes';
+        link.href = target.href;
+        link.dataset.viewKeys = '';
         link.addEventListener('click', reveal);
     });
     if (location.hash === '#keyboard-notes') {
