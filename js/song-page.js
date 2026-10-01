@@ -3,11 +3,11 @@ import { initializeScoreViewer } from './score-viewer.js';
 
 const songId = document.body.dataset.songId;
 const song = getSongById(songId);
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 function syncSelectedSong() {
     const select = document.getElementById('song-select');
     if (!song || !select) return false;
-
     select.value = songId;
     select.dispatchEvent(new Event('change', { bubbles: true }));
     return true;
@@ -16,61 +16,52 @@ function syncSelectedSong() {
 function startGuidedPractice() {
     const practiceSection = document.getElementById('practice-start');
     const startButton = document.getElementById('start-practice');
-
-    practiceSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    practiceSection?.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
     syncSelectedSong();
+    if (startButton && !startButton.disabled) startButton.click();
+    practiceSection?.focus({ preventScroll: true });
+    if (typeof window.gtag === 'function') window.gtag('event', 'song_page_start', { song_id: songId });
+}
 
-    window.setTimeout(() => {
-        syncSelectedSong();
-
-        if (startButton && !startButton.disabled) {
-            startButton.click();
-        } else {
-            startButton?.focus();
-        }
-    }, 420);
-
-    if (typeof window.gtag === 'function') {
-        window.gtag('event', 'song_page_start', { song_id: songId });
+function initializeKeyPreview() {
+    const preview = document.getElementById('keyboard-notes');
+    if (!preview) return;
+    const reveal = () => {
+        // The compact mobile layout hides this preview until it is requested.
+        preview.style.display = 'block';
+        preview.tabIndex = -1;
+        preview.focus({ preventScroll: true });
+    };
+    document.querySelectorAll('a[href="#keyboard-notes"]').forEach(link => {
+        // Keep native hash navigation and its browser-history behavior.
+        link.addEventListener('click', reveal);
+    });
+    if (location.hash === '#keyboard-notes') {
+        reveal();
+        requestAnimationFrame(() => preview.scrollIntoView({ block: 'start' }));
     }
 }
 
 function syncStatusPanel() {
     const panel = document.querySelector('.song-practice-shell .practice-status-panel');
     if (!panel) return;
-
-    const active = Array.from(panel.children).some((element) => {
-        return window.getComputedStyle(element).display !== 'none';
-    });
-
+    const active = Array.from(panel.children).some(element => window.getComputedStyle(element).display !== 'none');
     panel.classList.toggle('is-active', active);
     panel.closest('.practice-layout')?.classList.toggle('has-active-status', active);
 }
 
 function initializeSongPage() {
     syncSelectedSong();
-
-    document.querySelectorAll('[data-start-song]').forEach((button) => {
-        button.addEventListener('click', startGuidedPractice);
-    });
-
+    initializeKeyPreview();
+    document.querySelectorAll('[data-start-song]').forEach(button => button.addEventListener('click', startGuidedPractice));
     const panel = document.querySelector('.song-practice-shell .practice-status-panel');
     if (panel) {
         syncStatusPanel();
         const observer = new MutationObserver(syncStatusPanel);
-        observer.observe(panel, {
-            attributes: true,
-            childList: true,
-            subtree: true,
-            attributeFilter: ['style', 'class']
-        });
+        observer.observe(panel, { attributes: true, childList: true, subtree: true, attributeFilter: ['style', 'class'] });
     }
-
     initializeScoreViewer(songId, { locale: document.documentElement.lang?.startsWith('zh') ? 'zh' : 'en' });
-
-    if (typeof window.gtag === 'function') {
-        window.gtag('event', 'song_page_view', { song_id: songId });
-    }
+    if (typeof window.gtag === 'function') window.gtag('event', 'song_page_view', { song_id: songId });
 }
 
 if (document.querySelector('[data-studio]') && !window.pianoPracticeMode) {

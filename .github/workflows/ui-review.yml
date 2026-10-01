@@ -39,6 +39,7 @@ jobs:
         run: |
           python3 -m http.server 4173 --bind 127.0.0.1 --directory dist > /tmp/piano-server.log 2>&1 &
           node scripts/ui-smoke.mjs
+          node scripts/ui-song-links.mjs
       - name: Upload review artifacts
         if: always()
         uses: actions/upload-artifact@v4
