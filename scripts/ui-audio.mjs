@@ -53,6 +53,7 @@ async function strike(page,note,method) {
  assert.equal(result.note,note,'wrong note mapped');
  assert.equal(result.starts.length,1,'one and only one attack per input');
  assert.ok(result.peak>0.0001,`no output signal (${result.peak})`);
+ assert.ok(result.peak<0.1,`unexpected single-note volume spike (${result.peak})`);
  assert.equal(result.held,0,'released input stuck held');
  return {peak:result.peak,source:result.starts[0].type};
 }

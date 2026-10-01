@@ -135,8 +135,8 @@ class PianoAudio {
     }
   }
 
-  trackVoice(note, source, voiceGain, startedAt) {
-    const voice = { source, gainNode: voiceGain, startedAt, released: false };
+  trackVoice(note, source, voiceGain, startedAt, level) {
+    const voice = { source, gainNode: voiceGain, startedAt, level, released: false };
     const voices = this.activeVoices.get(note) || new Set();
     voices.add(voice);
     this.activeVoices.set(note, voices);
@@ -156,10 +156,12 @@ class PianoAudio {
     const startedAt = this.context.currentTime;
     source.buffer = this.buffers.get(sampleNote);
     source.playbackRate.value = playbackRateForNote(note, sampleNote);
-    voiceGain.gain.setValueAtTime(Math.min(1, Math.max(0.08, Number(velocity) || 0.9)), startedAt);
+    const level = Math.min(1, Math.max(0.08, Number(velocity) || 0.9));
+    voiceGain.gain.value = level;
+    voiceGain.gain.setValueAtTime(level, startedAt);
     source.connect(voiceGain);
     voiceGain.connect(this.gainNode);
-    this.trackVoice(note, source, voiceGain, startedAt);
+    this.trackVoice(note, source, voiceGain, startedAt, level);
   }
 
   playOscillatorFallback(note, velocity = 0.7) {
@@ -168,13 +170,14 @@ class PianoAudio {
     const startedAt = this.context.currentTime;
     // Conservative fallback level: do not blast the user when a sample is missing.
     const level = Math.min(1, Math.max(0.08, Number(velocity) || 0.7)) * 0.07;
+    voiceGain.gain.value = level;
     oscillator.type = 'triangle';
     oscillator.frequency.value = midiToFrequency(noteToMidi(note));
     voiceGain.gain.setValueAtTime(level, startedAt);
     voiceGain.gain.exponentialRampToValueAtTime(0.0001, startedAt + 1.4);
     oscillator.connect(voiceGain);
     voiceGain.connect(this.gainNode);
-    this.trackVoice(note, oscillator, voiceGain, startedAt);
+    this.trackVoice(note, oscillator, voiceGain, startedAt, level);
     oscillator.stop(startedAt + 1.45);
   }
 
@@ -196,7 +199,9 @@ class PianoAudio {
       voice.released = true;
       const releaseAt = Math.max(now, voice.startedAt + minimumAttack);
       const gain = voice.gainNode.gain;
-      const current = Math.max(0.0001, gain.value || 0.0001);
+      // Before the first rendering quantum, AudioParam.value can still be its
+      // default (1). Never turn a quiet fallback into a full-scale attack.
+      const current = Math.min(voice.level, Math.max(0.0001, gain.value || 0.0001));
       gain.cancelScheduledValues(now);
       gain.setValueAtTime(current, now);
       gain.setValueAtTime(current, releaseAt);
