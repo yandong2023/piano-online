@@ -10,7 +10,7 @@
     "generate:sitemaps": "node scripts/render-sitemaps.mjs",
     "generate:content": "npm run generate:studio && npm run generate:songs && npm run generate:tutorials && npm run generate:sitemaps",
     "build": "node scripts/build-site.mjs",
-    "test:audio": "node --test tests/audio-note-utils.test.mjs",
+    "test:audio": "node --test tests/audio-note-utils.test.mjs tests/audio-playback.test.mjs tests/keyboard-input.test.mjs",
     "test:home": "node --test tests/homepage-static.test.mjs tests/guided-onboarding.test.mjs",
     "test:secondary": "node --test tests/secondary-pages.test.mjs",
     "test:songs": "node --test tests/song-library.test.mjs",

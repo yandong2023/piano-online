@@ -1,0 +1,69 @@
+name: Piano audio regression
+on:
+  pull_request:
+    paths: ['js/**', 'tests/**', 'scripts/ui-audio.mjs', 'vercel.json', '.github/workflows/audio-regression.yml']
+  push:
+    branches: [main]
+    paths: ['js/**', 'tests/**', 'scripts/ui-audio.mjs', 'vercel.json', '.github/workflows/audio-regression.yml']
+permissions:
+  contents: read
+concurrency:
+  group: piano-audio-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  audio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Audio unit regressions and build
+        run: |
+          npm run test:audio
+          npm run build
+      - name: Prepare browser
+        run: |
+          mkdir -p /tmp/piano-audio-browser
+          cd /tmp/piano-audio-browser
+          npm init -y > /dev/null
+          npm install playwright@1.56.1 --silent
+          npx playwright install --with-deps chromium
+      - name: Verify exact production audio files before live tests
+        if: github.event_name == 'push'
+        run: |
+          python3 -u <<'PY'
+          import pathlib, urllib.request, time
+          paths = ['js/piano-audio.js', 'js/studio.js', 'js/keyboard-input.mjs']
+          for attempt in range(18):
+              try:
+                  for path in paths:
+                      request = urllib.request.Request('https://pianoonline.cc/'+path, headers={'Cache-Control':'no-cache'})
+                      with urllib.request.urlopen(request, timeout=15) as response:
+                          assert response.status == 200 and response.read() == pathlib.Path(path).read_bytes(), path
+                  print('PASS: production audio files match this commit exactly.')
+                  break
+              except Exception as error:
+                  if attempt == 17: raise
+                  print('Deployment not yet ready:', error)
+                  time.sleep(10)
+          PY
+      - name: Test all 37 notes through real audio output
+        env:
+          PLAYWRIGHT_MODULE: /tmp/piano-audio-browser/node_modules/playwright/index.mjs
+          PIANO_TEST_URL: ${{ github.event_name == 'push' && 'https://pianoonline.cc' || 'http://127.0.0.1:4173' }}
+        run: |
+          if [ "$PIANO_TEST_URL" = 'http://127.0.0.1:4173' ]; then
+            python3 -m http.server 4173 --bind 127.0.0.1 --directory dist > /tmp/piano-audio-server.log 2>&1 &
+          fi
+          node scripts/ui-audio.mjs
+      - name: Upload signal test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: piano-audio-report
+          path: ui-artifacts/audio-report.json
+          retention-days: 7

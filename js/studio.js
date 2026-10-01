@@ -1,3 +1,4 @@
+import { keyboardNote, keyboardIdentity } from './keyboard-input.mjs';
 import { Piano } from './piano.js';
 import { PracticeMode } from './practice-mode.js';
 import { RhythmGame } from './rhythm-game.js';
@@ -52,6 +53,8 @@ class StudioPiano extends Piano {
       const key = event.target.closest('.key');
       if (!key || (event.pointerType === 'mouse' && event.button !== 0)) return;
       event.preventDefault();
+      // Leave a previously focused select/range input before physical playing.
+      root.focus({ preventScroll: true });
       key.setPointerCapture?.(event.pointerId);
       this.pointers.set(event.pointerId, key.dataset.note);
       hold(key.dataset.note);
@@ -74,17 +77,20 @@ class StudioPiano extends Piano {
     root.addEventListener('lostpointercapture', releasePointer);
     document.addEventListener('keydown', (event) => {
       if (event.repeat || event.ctrlKey || event.metaKey || event.altKey) return;
+      const identity = keyboardIdentity(event);
+      if (this.keyboardHeld.has(identity)) return;
       const pianoKey = event.target instanceof Element && event.target.closest('.key');
       const note = pianoKey && ['Enter', 'Space'].includes(event.code)
-        ? pianoKey.dataset.note : (!isFormControl(event.target) || pianoKey) && this.keyMap[event.key.toLowerCase()];
-      if (note) { event.preventDefault(); this.keyboardHeld.set(event.code, note); hold(note); }
+        ? pianoKey.dataset.note : (!isFormControl(event.target) || pianoKey) && keyboardNote(event, this.keyMap);
+      if (note) { event.preventDefault(); this.keyboardHeld.set(identity, note); hold(note); }
       else if (event.code === 'Space' && !isFormControl(event.target) && !event.target.closest?.('button,a,summary')) {
         event.preventDefault(); this.spaceSustain = true; this.applySustain();
       }
     });
     document.addEventListener('keyup', (event) => {
-      const note = this.keyboardHeld.get(event.code);
-      if (note) { release(note); this.keyboardHeld.delete(event.code); }
+      const identity = keyboardIdentity(event);
+      const note = this.keyboardHeld.get(identity);
+      if (note) { release(note); this.keyboardHeld.delete(identity); }
       if (event.code === 'Space' && this.spaceSustain) { this.spaceSustain = false; this.applySustain(); }
     });
     window.addEventListener('blur', () => this.releaseAll());
@@ -119,6 +125,7 @@ class StudioPiano extends Piano {
     this.midiSustain = false;
     this.audio.setSustain(false);
     [...this.audio.pressedNotes].forEach((note) => this.releaseKey(note));
+    this.audio.stopAll();
     this.pointers.clear(); this.keyboardHeld.clear(); this.noteHolders.clear();
     this.applySustain();
   }
