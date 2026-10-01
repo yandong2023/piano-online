@@ -1,0 +1,49 @@
+name: Piano UI Review
+on:
+  push:
+    branches: [design/piano-studio]
+  pull_request:
+    paths: ['piano.html', 'index.html', 'en/**', 'css/**', 'js/**', 'scripts/**', 'tests/**', 'package.json', '.github/workflows/ui-review.yml']
+permissions:
+  contents: read
+concurrency:
+  group: piano-ui-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  browser-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run static tests and build the actual deployment output
+        run: |
+          npm ci --silent
+          npm test
+          npm run build
+      - name: Prepare browser and source snapshot
+        run: |
+          mkdir -p /tmp/piano-browser ui-artifacts
+          git archive --format=zip HEAD > ui-artifacts/source.zip
+          cd /tmp/piano-browser
+          npm init -y > /dev/null
+          npm install playwright@1.56.1 --silent
+          npx playwright install --with-deps chromium
+      - name: Inspect desktop and mobile pages and exercise piano controls
+        env:
+          PLAYWRIGHT_MODULE: /tmp/piano-browser/node_modules/playwright/index.mjs
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 --directory dist > /tmp/piano-server.log 2>&1 &
+          node scripts/ui-smoke.mjs
+          node scripts/ui-song-links.mjs
+      - name: Upload review artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: piano-ui-review
+          path: ui-artifacts/
+          retention-days: 7

@@ -4,11 +4,11 @@
   "description": "Interactive bilingual virtual piano and song-learning website.",
   "main": "piano.js",
   "scripts": {
-    "start": "http-server -p 8000 -c-1",
+    "start": "npm run build && http-server dist -p 8000 -c-1",
     "generate:songs": "node scripts/generate-song-pages.mjs",
     "generate:tutorials": "node scripts/render-tutorial-pages.mjs",
     "generate:sitemaps": "node scripts/render-sitemaps.mjs",
-    "generate:content": "npm run generate:songs && npm run generate:tutorials && npm run generate:sitemaps",
+    "generate:content": "npm run generate:studio && npm run generate:songs && npm run generate:tutorials && npm run generate:sitemaps",
     "build": "node scripts/build-site.mjs",
     "test:audio": "node --test tests/audio-note-utils.test.mjs",
     "test:home": "node --test tests/homepage-static.test.mjs tests/guided-onboarding.test.mjs",
@@ -16,12 +16,11 @@
     "test:songs": "node --test tests/song-library.test.mjs",
     "test:tutorials": "node --test tests/tutorial-library.test.mjs",
     "test:score": "node --test tests/score-data.test.mjs",
-    "test": "npm run generate:content && node --check js/main.js && node --check js/guided-homepage.js && node --check js/guided-entry-bindings.js && node --check js/song-discovery.js && node --check js/song-page.js && node --check js/score-viewer.js && node --check js/concert-hall-ui.js && node --check js/piano-audio.js && node --check js/audio-runtime.mjs && node --check data/song-scores.mjs && node --check data/song-library.mjs && node --check data/song-expansion.mjs && node --check data/zh-hant.mjs && node --check data/tutorial-library.mjs && node --check scripts/render-song-pages.mjs && node --check scripts/render-tutorial-pages.mjs && node --check scripts/render-sitemaps.mjs && node --check scripts/build-site.mjs && npm run test:audio && npm run test:home && npm run test:secondary && npm run test:songs && npm run test:tutorials && npm run test:score"
+    "test": "npm run generate:content && node --check js/studio.js && node --check js/library-browser.js && node --check scripts/studio-pages.mjs && node --check js/main.js && node --check js/guided-homepage.js && node --check js/guided-entry-bindings.js && node --check js/song-discovery.js && node --check js/song-page.js && node --check js/score-viewer.js && node --check js/concert-hall-ui.js && node --check js/piano-audio.js && node --check js/audio-runtime.mjs && node --check data/song-scores.mjs && node --check data/song-library.mjs && node --check data/song-expansion.mjs && node --check data/zh-hant.mjs && node --check data/tutorial-library.mjs && node --check scripts/render-song-pages.mjs && node --check scripts/render-tutorial-pages.mjs && node --check scripts/render-sitemaps.mjs && node --check scripts/build-site.mjs && npm run test:audio && npm run test:home && npm run test:secondary && npm run test:songs && npm run test:tutorials && npm run test:score",
+    "generate:studio": "node --input-type=module -e \"import { generateStudioPages } from './scripts/studio-pages.mjs'; await generateStudioPages(process.cwd());\""
   },
   "keywords": ["virtual piano", "online piano", "piano songs", "piano tutorials"],
   "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "http-server": "^14.1.1"
-  }
+  "devDependencies": {"http-server": "^14.1.1"}
 }

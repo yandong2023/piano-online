@@ -1,3 +1,4 @@
+import { generateStudioPages } from './studio-pages.mjs';
 import { cp, mkdir, readdir, rm } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -7,7 +8,7 @@ import { generateSitemaps } from './render-sitemaps.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
-const excluded = new Set(['.git', 'node_modules', 'dist']);
+const excluded = new Set(['.git', '.github', '.claude', 'node_modules', 'dist', 'ui-artifacts']);
 
 await rm(DIST, { recursive: true, force: true });
 await mkdir(DIST, { recursive: true });
@@ -17,6 +18,7 @@ for (const entry of await readdir(ROOT, { withFileTypes: true })) {
   await cp(path.join(ROOT, entry.name), path.join(DIST, entry.name), { recursive: true });
 }
 
+await generateStudioPages(DIST);
 const songs = await generateSongSite(DIST);
 const tutorials = await generateTutorialSite(DIST);
 const sitemaps = await generateSitemaps(DIST);
