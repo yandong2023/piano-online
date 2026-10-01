@@ -1,0 +1,92 @@
+name: Production domain smoke check
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: piano-production-smoke
+  cancel-in-progress: true
+
+jobs:
+  production-http:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verify live pages and deployed studio assets
+        run: |
+          python3 -u <<'PY'
+          import concurrent.futures
+          import datetime
+          import hashlib
+          import json
+          import os
+          import pathlib
+          import re
+          import time
+          import urllib.request
+
+          origin = 'https://pianoonline.cc'
+          routes = {
+              '/': ['data-studio', '/css/studio.css', '/js/studio.js'],
+              '/piano.html': ['data-studio', '/css/studio.css', '/js/studio.js'],
+              '/en/': ['data-studio', '/css/studio.css', '/js/studio.js'],
+              '/en/piano.html': ['data-studio', '/css/studio.css', '/js/studio.js'],
+              '/songs/': ['library-search', '/css/studio.css'],
+              '/songs/happy-birthday/': ['data-studio', '/js/studio.js'],
+              '/tutorials.html': ['/css/studio.css'],
+              '/js/studio.js': [],
+              '/css/studio.css': [],
+          }
+          def probe(item):
+              route, markers = item
+              try:
+                  request = urllib.request.Request(origin + route, headers={
+                      'Cache-Control': 'no-cache',
+                      'User-Agent': 'PianoOnline-Production-Verification/1.0'
+                  })
+                  with urllib.request.urlopen(request, timeout=15) as response:
+                      data = response.read()
+                      body = data.decode('utf-8')
+                      final_url = response.geturl()
+                      missing = [marker for marker in markers if marker not in body]
+                      matches_source = True
+                      if route in ('/js/studio.js', '/css/studio.css'):
+                          matches_source = data == pathlib.Path(route.lstrip('/')).read_bytes()
+                      heading = re.search(r'<h1[^>]*>(.*?)</h1>', body, re.S)
+                      return {'path': route, 'status': response.status, 'url': final_url,
+                              'pass': response.status == 200 and not missing and matches_source,
+                              'missing': missing, 'asset_matches_source': matches_source,
+                              'h1': heading.group(1) if heading else None,
+                              'cache': response.headers.get('x-vercel-cache'),
+                              'sha256': hashlib.sha256(data).hexdigest()}
+              except Exception as error:
+                  return {'path': route, 'pass': False, 'error': str(error)}
+
+          results = []
+          for attempt in range(1, 10):
+              with concurrent.futures.ThreadPoolExecutor(max_workers=9) as executor:
+                  results = list(executor.map(probe, routes.items()))
+              print(json.dumps({'attempt': attempt, 'checked_at': datetime.datetime.now(datetime.timezone.utc).isoformat(), 'results': results}, ensure_ascii=False), flush=True)
+              if all(result['pass'] for result in results):
+                  break
+              if attempt < 9:
+                  time.sleep(10)
+          passed = all(result['pass'] for result in results)
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
+              summary.write('## Production domain verification\n\n')
+              summary.write('Commit: `' + os.environ['GITHUB_SHA'] + '`\n\n')
+              summary.write('| Route | HTTP | New studio verified |\n|---|---|---|\n')
+              for result in results:
+                  summary.write('| ' + result['path'] + ' | ' + str(result.get('status', 'error')) + ' | ' + ('PASS' if result['pass'] else 'FAIL') + ' |\n')
+          if not passed:
+              raise SystemExit('Production domain has not served all expected studio pages/assets. Check deployment aliases, build output and cache.')
+          print('PASS: All 9 production routes/assets verified; JavaScript and CSS match this commit exactly.', flush=True)
+          PY
