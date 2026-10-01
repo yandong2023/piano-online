@@ -36,18 +36,31 @@ jobs:
         if: github.event_name == 'push'
         run: |
           python3 -u <<'PY'
-          import pathlib, urllib.request, time
+          import pathlib, urllib.request, urllib.error, time, hashlib
           paths = ['js/piano-audio.js', 'js/studio.js', 'js/keyboard-input.mjs']
-          for attempt in range(18):
+          for attempt in range(12):
               try:
                   for path in paths:
-                      request = urllib.request.Request('https://pianoonline.cc/'+path, headers={'Cache-Control':'no-cache'})
+                      # Use the same explicit first-party probe identity as the
+                      # existing successful production-smoke workflow.
+                      request = urllib.request.Request('https://pianoonline.cc/'+path, headers={
+                          'Cache-Control': 'no-cache',
+                          'User-Agent': 'PianoOnline-Production-Verification/1.0',
+                      })
                       with urllib.request.urlopen(request, timeout=15) as response:
-                          assert response.status == 200 and response.read() == pathlib.Path(path).read_bytes(), path
+                          received = response.read()
+                          expected = pathlib.Path(path).read_bytes()
+                          print(path, response.status, 'sha256='+hashlib.sha256(received).hexdigest())
+                          assert response.status == 200 and received == expected, path
                   print('PASS: production audio files match this commit exactly.')
                   break
+              except urllib.error.HTTPError as error:
+                  print('Production probe HTTP failure:', error.url, error.code)
+                  if error.code in (401, 403) or attempt == 11:
+                      raise
+                  time.sleep(10)
               except Exception as error:
-                  if attempt == 17: raise
+                  if attempt == 11: raise
                   print('Deployment not yet ready:', error)
                   time.sleep(10)
           PY
