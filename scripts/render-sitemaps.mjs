@@ -7,7 +7,7 @@ import { tutorialArticles } from '../data/tutorial-library.mjs';
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = path.resolve(HERE, '..');
 const BASE_URL = 'https://pianoonline.cc';
-const LASTMOD = '2026-09-28';
+const LASTMOD = '2026-10-12';
 
 const legacyTutorialSlugs = [
   'piano-basics',
