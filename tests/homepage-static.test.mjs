@@ -13,9 +13,15 @@ for (const locale of ['zh','en']) for (const home of [true,false]) {
     assert.ok(html.indexOf('data-studio') < html.indexOf('class="studio-discover"'));
     assert.doesNotMatch(html, /tutorial-overlay|88键|88 keys|src="piano\.js"/);
     assert.match(html, /37/);
-    assert.match(html, /rel="canonical"/);
-    assert.match(html, /hreflang="en"/);
-    assert.match(html, /hreflang="zh-CN"/);
+    const homeUrl = `https://pianoonline.cc${locale === 'zh' ? '' : '/en'}/`;
+    assert.ok(html.includes(`<link rel="canonical" href="${homeUrl}">`));
+    if (home) {
+      assert.match(html, /hreflang="en"/);
+      assert.match(html, /hreflang="zh-CN"/);
+    } else {
+      assert.ok(!html.includes('hreflang='), 'piano pages must not emit hreflang alternates');
+      assert.ok(html.includes(`<meta property="og:url" content="${homeUrl}">`));
+    }
     assert.equal(html.includes('adsbygoogle.js'), home);
     assert.equal((html.match(/<h1>/g)||[]).length,1);
   });

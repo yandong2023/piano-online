@@ -104,6 +104,51 @@ test('generator creates Traditional Chinese song pages with reciprocal hreflang'
   assert.match(song, /href="\/songs\/">簡體/);
 });
 
+test('song and library pages in all variants emit one canonical and exactly four hreflang alternates', async () => {
+  const cases = [
+    ['songs/happy-birthday/index.html', 'songs/happy-birthday/', ['BreadcrumbList', 'MusicComposition']],
+    ['en/songs/happy-birthday/index.html', 'en/songs/happy-birthday/', ['BreadcrumbList', 'MusicComposition']],
+    ['zh-hant/songs/happy-birthday/index.html', 'zh-hant/songs/happy-birthday/', ['BreadcrumbList', 'MusicComposition']],
+    ['songs/index.html', 'songs/', ['CollectionPage', 'ItemList']],
+    ['en/songs/index.html', 'en/songs/', ['CollectionPage', 'ItemList']],
+    ['zh-hant/songs/index.html', 'zh-hant/songs/', ['CollectionPage', 'ItemList']]
+  ];
+  for (const [file, relPath, expectedTypes] of cases) {
+    const html = await readFile(file, 'utf8');
+    const zhPath = relPath.replace(/^(en|zh-hant)\//, '');
+    const canonicals = html.match(/<link rel="canonical" href="[^"]+">/g) || [];
+    assert.deepEqual(canonicals, [`<link rel="canonical" href="https://pianoonline.cc/${relPath}">`], `${file} canonical`);
+    const alternates = html.match(/<link rel="alternate" hreflang="[^"]+" href="[^"]+">/g) || [];
+    assert.deepEqual(alternates, [
+      `<link rel="alternate" hreflang="zh-CN" href="https://pianoonline.cc/${zhPath}">`,
+      `<link rel="alternate" hreflang="en" href="https://pianoonline.cc/en/${zhPath}">`,
+      `<link rel="alternate" hreflang="zh-Hant" href="https://pianoonline.cc/zh-hant/${zhPath}">`,
+      `<link rel="alternate" hreflang="x-default" href="https://pianoonline.cc/en/${zhPath}">`
+    ], `${file} alternates`);
+    const blocks = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => JSON.parse(m[1]));
+    assert.ok(blocks.length >= 1, `${file} missing ld+json`);
+    const types = [];
+    const walk = (node) => {
+      if (!node || typeof node !== 'object') return;
+      if (node['@type']) types.push(node['@type']);
+      for (const value of Object.values(node)) {
+        if (value && typeof value === 'object') Array.isArray(value) ? value.forEach(walk) : walk(value);
+      }
+    };
+    blocks.forEach(walk);
+    for (const type of expectedTypes) assert.ok(types.includes(type), `${file} missing @type ${type}`);
+  }
+});
+
+test('zh-hant fur-elise title is fully converted to traditional characters', async () => {
+  const html = await readFile('zh-hant/songs/fur-elise/index.html', 'utf8');
+  const title = html.match(/<title>([^<]*)<\/title>/)[1];
+  assert.ok(title.includes('致愛麗絲'), title);
+  assert.ok(title.includes('彈奏'), title);
+  assert.ok(!title.includes('丝'), title);
+  assert.ok(!title.includes('弹'), title);
+});
+
 test('premium song library stylesheet defines readable dark cards', async () => {
   const css = await readFile('css/song-library-fix.css', 'utf8');
   assert.match(css, /body\.premium-song-library \.song-card/);

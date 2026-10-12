@@ -28,12 +28,10 @@ function renderTraditional(html) {
     .replace('<html lang="zh-CN">', '<html lang="zh-Hant">')
     .replaceAll('https://pianoonline.cc/songs/', 'https://pianoonline.cc/zh-hant/songs/')
     .replaceAll('href="/songs/', 'href="/zh-hant/songs/');
-  output = output.replace('hreflang="zh-CN"', 'hreflang="zh-Hant"');
-  const selfAlternate = output.match(/<link rel="alternate" hreflang="zh-Hant" href="([^"]+)">/);
-  if (selfAlternate) {
-    const simplified = selfAlternate[1].replace('/zh-hant/songs/', '/songs/');
-    output = output.replace(selfAlternate[0], selfAlternate[0] + '\n<link rel="alternate" hreflang="zh-CN" href="' + simplified + '">');
-  }
+  output = output.replace(
+    /(<link rel="alternate" hreflang="zh-CN" href=")https:\/\/pianoonline\.cc\/zh-hant\/songs\//,
+    '$1https://pianoonline.cc/songs/'
+  );
   return output.replace('</div></div></nav>', '<a href="/songs/">簡體</a></div></div></nav>');
 }
 function esc(value = '') {
@@ -48,16 +46,14 @@ function songUrl(song, locale) { return locale === 'zh' ? `/songs/${song.slug}/`
 function languageUrl(song, locale) { return locale === 'zh' ? `/en/songs/${song.slug}/` : `/songs/${song.slug}/`; }
 function nav(locale, active = 'songs') { return studioNav(locale, active); }
 
-function sharedHead({ locale, title, description, canonical, alternate }) {
+function sharedHead({ locale, title, description, canonical, alternates = [], jsonLd = '' }) {
   return `<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="${canonical}">
-<link rel="alternate" hreflang="${locale === 'zh' ? 'zh-CN' : 'en'}" href="${canonical}">
-<link rel="alternate" hreflang="${locale === 'zh' ? 'en' : 'zh-CN'}" href="${alternate}">
-<link rel="alternate" hreflang="x-default" href="${locale === 'zh' ? alternate : canonical}">
+${alternates.map(([hreflang, href]) => `<link rel="alternate" hreflang="${hreflang}" href="${href}">`).join('\n')}
 <link rel="icon" href="/images/favicon.svg">
 <meta property="og:type" content="website">
 <meta property="og:title" content="${esc(title)}">
@@ -70,7 +66,20 @@ function sharedHead({ locale, title, description, canonical, alternate }) {
 <link rel="stylesheet" href="/css/song-interactions.css?v=${ASSET_VERSION}">
 <link rel="stylesheet" href="/css/score-viewer.css?v=${ASSET_VERSION}">
 <link rel="stylesheet" href="/css/studio.css?v=${STUDIO_VERSION}">
-<script type="module" src="/js/library-browser.js?v=${STUDIO_VERSION}"></script>`;
+<script type="module" src="/js/library-browser.js?v=${STUDIO_VERSION}"></script>${jsonLd}`;
+}
+function songAlternates(zhPath) {
+  const enPath = `/en${zhPath}`;
+  const zhHantPath = `/zh-hant${zhPath}`;
+  return [
+    ['zh-CN', `https://pianoonline.cc${zhPath}`],
+    ['en', `https://pianoonline.cc${enPath}`],
+    ['zh-Hant', `https://pianoonline.cc${zhHantPath}`],
+    ['x-default', `https://pianoonline.cc${enPath}`]
+  ];
+}
+function jsonLdScript(graph) {
+  return `<script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replaceAll('<', '\\u003c')}</script>`;
 }
 function card(song, locale) {
   const composer = song.composer ? `<span class="song-card-composer">${esc(song.composer)}</span>` : '';
@@ -89,8 +98,15 @@ function renderLibrary(locale) {
   const title = zh ? `在线钢琴经典曲库｜${total} 首入门、童谣与古典名曲` : `${total} Classic Piano Songs to Play Online`;
   const description = zh ? `浏览 ${total} 首可在线练习的经典钢琴曲，包括童谣、传统旋律、节日歌曲和公版古典名曲。` : `Explore ${total} playable piano classics, including beginner songs, traditional melodies, holiday music and public-domain classical themes.`;
   const canonical = zh ? 'https://pianoonline.cc/songs/' : 'https://pianoonline.cc/en/songs/';
-  const alternate = zh ? 'https://pianoonline.cc/en/songs/' : 'https://pianoonline.cc/songs/';
-  return `<!DOCTYPE html><html lang="${zh ? 'zh-CN' : 'en'}"><head>${sharedHead({ locale, title, description, canonical, alternate })}</head>
+  const jsonLd = jsonLdScript([
+    { '@type': 'CollectionPage', name: title, url: canonical, mainEntity: {
+      '@type': 'ItemList',
+      itemListElement: publicSongs.map((song, index) => ({
+        '@type': 'ListItem', position: index + 1, url: `https://pianoonline.cc${songUrl(song, locale)}`, name: localeText(song, locale)
+      }))
+    } }
+  ]);
+  return `<!DOCTYPE html><html lang="${zh ? 'zh-CN' : 'en'}"><head>${sharedHead({ locale, title, description, canonical, alternates: songAlternates('/songs/'), jsonLd })}</head>
 <body class="secondary-page song-library-theme premium-song-library">${nav(locale)}
 <main class="song-library-page song-library-main">
 <header class="song-library-hero"><div class="song-library-hero-inner"><div class="section-kicker">${zh ? '经典曲库' : 'Classic song library'}</div><h1>${zh ? '从熟悉的旋律，走进钢琴。' : 'Start with a melody you already know.'}</h1><p>${zh ? `已收录 ${total} 首可直接练习的经典曲目。按难度和类型挑一首，查看电脑按键并立即开始。` : `${total} playable classics, organized by style and difficulty. Choose a song, see the keyboard letters and begin.`}</p><div class="library-stats"><span>${total} ${zh ? '首歌曲' : 'songs'}</span><span>${zh ? '中英文页面' : 'Bilingual pages'}</span><span>${zh ? '无需注册' : 'No signup'}</span></div></div></header>
@@ -109,14 +125,22 @@ function keyboardPreview(notes) {
 function renderSong(song, locale) {
   const zh = locale === 'zh';
   const title = localeText(song, locale);
-  const pageTitle = zh ? `${title}钢琴谱与在线弹奏｜按键提示教程` : `${title} Piano Notes & Online Practice`;
+  const pageTitle = zh ? `${title}钢琴谱与在线弹奏｜按键提示教程` : (song.difficulty <= 2 ? `${title} Piano Letter Notes (Easy) – Play Online` : `${title} Piano Letter Notes – Play Online`);
   const description = song.description?.[locale] || '';
   const canonical = `https://pianoonline.cc${songUrl(song, locale)}`;
-  const alternate = `https://pianoonline.cc${languageUrl(song, locale)}`;
+  const graph = [
+    { '@type': 'BreadcrumbList', itemListElement: [
+      { '@type': 'ListItem', position: 1, name: zh ? '首页' : 'Home', item: `https://pianoonline.cc${zh ? '/' : '/en/'}` },
+      { '@type': 'ListItem', position: 2, name: zh ? '曲库' : 'Songs', item: `https://pianoonline.cc${zh ? '/songs/' : '/en/songs/'}` },
+      { '@type': 'ListItem', position: 3, name: title, item: canonical }
+    ] },
+    { '@type': 'MusicComposition', name: title, url: canonical, musicalKey: song.keySignature,
+      ...(song.composer && !song.composer.startsWith('Traditional') ? { composer: { '@type': 'Person', name: song.composer } } : {}) }
+  ];
   const rel = relatedSongs(song);
   const startLabel = zh ? '开始提示练习' : 'Start guided practice';
   const scoreReady = hasScoreForSong(song.id);
-  return `<!DOCTYPE html><html lang="${zh ? 'zh-CN' : 'en'}"><head><base href="/">${sharedHead({ locale, title: pageTitle, description, canonical, alternate })}<script type="module" src="/js/studio.js?v=${STUDIO_VERSION}"></script><script type="module" src="/js/song-page.js?v=${ASSET_VERSION}"></script></head>
+  return `<!DOCTYPE html><html lang="${zh ? 'zh-CN' : 'en'}"><head><base href="/">${sharedHead({ locale, title: pageTitle, description, canonical, alternates: songAlternates(`/songs/${song.slug}/`), jsonLd: jsonLdScript(graph) })}<script type="module" src="/js/studio.js?v=${STUDIO_VERSION}"></script><script type="module" src="/js/song-page.js?v=${ASSET_VERSION}"></script></head>
 <body class="secondary-page song-detail-page" data-song-id="${esc(song.id)}">${nav(locale)}
 <main class="song-page-main"><div class="container">
 <div class="song-breadcrumbs"><a href="${zh ? '/' : '/en/'}">${zh ? '首页' : 'Home'}</a><span>›</span><a href="${zh ? '/songs/' : '/en/songs/'}">${zh ? '曲库' : 'Songs'}</a><span>›</span><span>${esc(title)}</span></div>

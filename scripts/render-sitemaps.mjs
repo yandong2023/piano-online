@@ -74,7 +74,6 @@ export async function generateSitemaps(root = PROJECT_ROOT) {
 
   const mainUrls = [
     ...bilingualUrl('/', '/en/', { priority: '1.0', changefreq: 'daily' }),
-    singleUrl('/piano.html', { priority: '0.85', changefreq: 'weekly' }),
     singleUrl('/practice.html', { priority: '0.8', changefreq: 'weekly' }),
     ...bilingualUrl('/about.html', '/en/about.html', { priority: '0.5', changefreq: 'monthly' }),
     ...tutorialUrls,
