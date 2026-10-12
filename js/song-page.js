@@ -54,6 +54,38 @@ function syncStatusPanel() {
     panel.closest('.practice-layout')?.classList.toggle('has-active-status', active);
 }
 
+function bindLetterNotesCopy() {
+    const lang = document.documentElement.lang || '';
+    const copiedLabel = lang === 'zh-Hant' ? '已複製' : lang.startsWith('zh') ? '已复制' : 'Copied';
+    document.querySelectorAll('[data-copy-target]').forEach((button) => {
+        button.addEventListener('click', async () => {
+            const target = document.getElementById(button.dataset.copyTarget);
+            if (!target) return;
+            let copied = false;
+            if (navigator.clipboard?.writeText) {
+                try {
+                    await navigator.clipboard.writeText(target.textContent);
+                    copied = true;
+                } catch { /* fall through to the selection fallback */ }
+            }
+            if (!copied) {
+                const range = document.createRange();
+                range.selectNodeContents(target);
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+                copied = document.execCommand('copy');
+                selection.removeAllRanges();
+            }
+            if (!copied) return;
+            const original = button.textContent;
+            button.textContent = copiedLabel;
+            setTimeout(() => { button.textContent = original; }, 2000);
+            if (typeof window.gtag === 'function') window.gtag('event', 'letter_notes_copy', { song_id: songId, format: button.dataset.copyFormat });
+        });
+    });
+}
+
 function initializeSongPage() {
     syncSelectedSong();
     initializeKeyPreview();
@@ -67,6 +99,8 @@ function initializeSongPage() {
     initializeScoreViewer(songId, { locale: document.documentElement.lang?.startsWith('zh') ? 'zh' : 'en' });
     if (typeof window.gtag === 'function') window.gtag('event', 'song_page_view', { song_id: songId });
 }
+
+bindLetterNotesCopy();
 
 if (document.querySelector('[data-studio]') && !window.pianoPracticeMode) {
     document.addEventListener('piano:ready', initializeSongPage, { once: true });

@@ -611,3 +611,112 @@ body[data-song-id] .song-content-section .song-card p {
         min-width: 0;
     }
 }
+
+.song-letter-notes,
+.song-facts {
+    background: var(--studio-paper, #fffefa);
+    border: 1px solid var(--studio-line, #dedfd6);
+    border-radius: 16px;
+    padding: 28px;
+    margin-top: 28px;
+    color: var(--studio-ink, #242823);
+}
+
+.song-letter-notes h2,
+.song-facts h2 {
+    margin: 0 0 12px;
+    font-size: 23px;
+    font-weight: 630;
+    letter-spacing: -0.6px;
+    line-height: 1.4;
+}
+
+.song-letter-notes > p {
+    margin: 0;
+    max-width: 760px;
+    font-size: 14px;
+    color: var(--studio-muted, #6d7169);
+    line-height: 1.8;
+}
+
+.letter-notes-block {
+    margin-top: 20px;
+}
+
+.letter-notes-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.letter-notes-head h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--studio-ink, #242823);
+}
+
+.letter-notes-text {
+    margin: 0;
+    padding: 16px 18px;
+    background: #f4f4ec;
+    border: 1px solid var(--studio-line, #dedfd6);
+    border-radius: 14px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 17px;
+    line-height: 1.9;
+    letter-spacing: 0.5px;
+    white-space: pre-wrap;
+    word-break: normal;
+    overflow-wrap: anywhere;
+    color: var(--studio-ink, #242823);
+}
+
+.song-facts h3 {
+    margin: 20px 0 6px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--studio-ink, #242823);
+}
+
+.song-facts h3:first-of-type {
+    margin-top: 4px;
+}
+
+.song-facts p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--studio-muted, #6d7169);
+}
+
+.song-notes-more {
+    display: inline-block;
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--studio-accent, #88733f);
+    text-decoration: none;
+}
+
+.song-notes-more:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+    .song-letter-notes,
+    .song-facts {
+        padding: 20px;
+        margin-top: 20px;
+    }
+
+    .song-letter-notes h2,
+    .song-facts h2 {
+        font-size: 19px;
+    }
+
+    .letter-notes-text {
+        font-size: 15px;
+    }
+}

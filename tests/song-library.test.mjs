@@ -3,6 +3,7 @@ import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import { publicSongs, songs } from '../data/song-library.mjs';
+import { KEY_MAP, letterNoteLines, noteName } from '../scripts/render-song-pages.mjs';
 
 const ids = publicSongs.map((song) => song.id);
 const slugs = publicSongs.map((song) => song.slug);
@@ -85,11 +86,50 @@ test('second-batch songs render as score-ready in both locales', async () => {
   }
 });
 
-test('songs without score data keep the friendly fallback', async () => {
+test('songs without score data omit the score stage entirely', async () => {
   const zh = await readFile('songs/turkish-march/index.html', 'utf8');
   const en = await readFile('en/songs/turkish-march/index.html', 'utf8');
-  assert.match(zh, /data-score-ready="false"/);
-  assert.match(en, /data-score-ready="false"/);
+  for (const html of [zh, en]) {
+    assert.doesNotMatch(html, /data-score-viewer/);
+    assert.doesNotMatch(html, /coming soon/i);
+    assert.doesNotMatch(html, /正在补充/);
+  }
+  const birthday = await readFile('songs/happy-birthday/index.html', 'utf8');
+  assert.match(birthday, /data-score-ready="true"/);
+});
+
+test('letter note lines cover every note and mapped computer key of all public songs', () => {
+  for (const song of publicSongs) {
+    const { names, keys } = letterNoteLines(song);
+    assert.deepEqual(names.flat(), song.notes.map(noteName), `${song.id} names`);
+    assert.deepEqual(keys.flat(), song.notes.map((pitch) => KEY_MAP[pitch]), `${song.id} keys`);
+  }
+});
+
+test('song pages render the complete letter notes, copy buttons and melody facts', async () => {
+  const song = publicSongs.find((item) => item.id === 'fur-elise');
+  const expectedNames = song.notes.map(noteName).join(' ');
+  const expectedKeys = song.notes.map((pitch) => KEY_MAP[pitch]).join(' ');
+  for (const [file, path] of [
+    ['songs/fur-elise/index.html', '/songs/fur-elise/'],
+    ['en/songs/fur-elise/index.html', '/en/songs/fur-elise/'],
+    ['zh-hant/songs/fur-elise/index.html', '/zh-hant/songs/fur-elise/']
+  ]) {
+    const html = await readFile(file, 'utf8');
+    assert.ok(html.includes('id="letter-notes"'), file);
+    const namesText = html.match(/<pre id="letter-notes-names"[^>]*>([\s\S]*?)<\/pre>/)[1].replace(/\s+/g, ' ').trim();
+    const keysText = html.match(/<pre id="letter-notes-keys"[^>]*>([\s\S]*?)<\/pre>/)[1].replace(/\s+/g, ' ').trim();
+    assert.equal(namesText, expectedNames, `${file} note names`);
+    assert.equal(keysText, expectedKeys, `${file} computer keys`);
+    assert.equal((html.match(/data-copy-target=/g) || []).length, 2, `${file} copy buttons`);
+    assert.ok(html.includes('D#') && html.includes('G#'), `${file} black-key facts`);
+    assert.ok(html.includes(`href="${path}#letter-notes"`), `${file} letter-notes link`);
+  }
+});
+
+test('twinkle explains that the melody uses only white keys', async () => {
+  const en = await readFile('en/songs/twinkle-twinkle-little-star/index.html', 'utf8');
+  assert.match(en, /only white keys/);
 });
 
 test('generator creates Traditional Chinese song pages with reciprocal hreflang', async () => {
