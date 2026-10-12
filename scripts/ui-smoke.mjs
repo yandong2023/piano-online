@@ -24,7 +24,7 @@ async function ready(page, path) {
   if (await page.locator('[data-studio]').count()) await page.waitForFunction(() => Boolean(window.pianoStudio));
 }
 try {
-  const paths = [['home','/'],['piano','/piano.html'],['en-home','/en/'],['en-piano','/en/piano.html'],['songs','/songs/'],['song','/songs/happy-birthday/'],['en-song','/en/songs/happy-birthday/'],['hant-songs','/zh-hant/songs/'],['hant-song','/zh-hant/songs/happy-birthday/'],['learn','/tutorials.html'],['en-learn','/en/tutorials.html']];
+  const paths = [['home','/'],['piano','/piano.html'],['en-home','/en/'],['hant-home','/zh-hant/'],['en-piano','/en/piano.html'],['songs','/songs/'],['song','/songs/happy-birthday/'],['en-song','/en/songs/happy-birthday/'],['hant-songs','/zh-hant/songs/'],['hant-song','/zh-hant/songs/happy-birthday/'],['learn','/tutorials.html'],['en-learn','/en/tutorials.html']];
   for (const width of [320, 390, 768, 1440]) {
     const ctx = await context({ viewport: { width, height: width < 600 ? 844 : 1000 }, hasTouch: width < 600 });
     for (const [name, path] of paths) {

@@ -27,12 +27,18 @@ function renderTraditional(html) {
   let output = toTraditionalHtml(html)
     .replace('<html lang="zh-CN">', '<html lang="zh-Hant">')
     .replaceAll('https://pianoonline.cc/songs/', 'https://pianoonline.cc/zh-hant/songs/')
-    .replaceAll('href="/songs/', 'href="/zh-hant/songs/');
+    .replaceAll('href="/songs/', 'href="/zh-hant/songs/')
+    .replace(/<a class="studio-language" href="\/zh-hant\/[^"]*" lang="zh-Hant">繁體<\/a>/, '')
+    .replace(/(<a\b[^>]*?)href="\/"/g, '$1href="/zh-hant/"')
+    .replaceAll('href="/piano.html"', 'href="/zh-hant/"')
+    .replaceAll('"https://pianoonline.cc/"', '"https://pianoonline.cc/zh-hant/"');
   output = output.replace(
     /(<link rel="alternate" hreflang="zh-CN" href=")https:\/\/pianoonline\.cc\/zh-hant\/songs\//,
     '$1https://pianoonline.cc/songs/'
   );
-  return output.replace('</div></div></nav>', '<a href="/songs/">簡體</a></div></div></nav>');
+  return output
+    .replace('</div></div></nav>', '<a href="/songs/">簡體</a></div></div></nav>')
+    .replace('</head>', `<script type="module" src="/js/zh-hant-runtime.js?v=${STUDIO_VERSION}"></script></head>`);
 }
 function esc(value = '') {
   return String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
@@ -44,7 +50,7 @@ function difficultyLabel(level, locale) {
 }
 function songUrl(song, locale) { return locale === 'zh' ? `/songs/${song.slug}/` : `/en/songs/${song.slug}/`; }
 function languageUrl(song, locale) { return locale === 'zh' ? `/en/songs/${song.slug}/` : `/songs/${song.slug}/`; }
-function nav(locale, active = 'songs') { return studioNav(locale, active); }
+function nav(locale, active = 'songs', songSlug = '') { return studioNav(locale, active, songSlug); }
 
 function sharedHead({ locale, title, description, canonical, alternates = [], jsonLd = '' }) {
   return `<meta charset="UTF-8">
@@ -209,7 +215,7 @@ function renderSong(song, locale) {
   const startLabel = zh ? '开始提示练习' : 'Start guided practice';
   const scoreReady = hasScoreForSong(song.id);
   return `<!DOCTYPE html><html lang="${zh ? 'zh-CN' : 'en'}"><head><base href="/">${sharedHead({ locale, title: pageTitle, description, canonical, alternates: songAlternates(`/songs/${song.slug}/`), jsonLd: jsonLdScript(graph) })}<script type="module" src="/js/studio.js?v=${STUDIO_VERSION}"></script><script type="module" src="/js/song-page.js?v=${ASSET_VERSION}"></script></head>
-<body class="secondary-page song-detail-page" data-song-id="${esc(song.id)}">${nav(locale)}
+<body class="secondary-page song-detail-page" data-song-id="${esc(song.id)}">${nav(locale, 'songs', song.slug)}
 <main class="song-page-main"><div class="container">
 <div class="song-breadcrumbs"><a href="${zh ? '/' : '/en/'}">${zh ? '首页' : 'Home'}</a><span>›</span><a href="${zh ? '/songs/' : '/en/songs/'}">${zh ? '曲库' : 'Songs'}</a><span>›</span><span>${esc(title)}</span></div>
 <section class="song-hero-panel"><div class="song-hero-copy"><div class="song-eyebrow">${zh ? '互动钢琴歌曲' : 'Interactive piano song'}</div><h1>${zh ? `在线学习弹奏《${esc(title)}》` : `Learn ${esc(title)} online`}</h1><p class="song-lead">${esc(description)}</p>${song.composer ? `<p class="song-composer">${zh ? '作曲/来源' : 'Composer / source'} · ${esc(song.composer)}</p>` : ''}<div class="song-meta-grid"><div class="song-meta-item"><strong>${difficultyLabel(song.difficulty, locale)}</strong><span>${zh ? '难度' : 'Difficulty'}</span></div><div class="song-meta-item"><strong>${song.estimatedMinutes} ${zh ? '分钟' : 'min'}</strong><span>${zh ? '预计时间' : 'Estimated time'}</span></div><div class="song-meta-item"><strong>${song.notes.length}</strong><span>${zh ? '音符数量' : 'Notes'}</span></div><div class="song-meta-item"><strong>${esc(song.keySignature)}</strong><span>${zh ? '调性' : 'Key'}</span></div></div><div class="song-primary-actions"><button type="button" class="btn primary" data-start-song>${startLabel}</button><a class="btn secondary" href="${songUrl(song, locale)}#letter-notes">${zh ? '查看完整字母谱' : 'See all letter notes'}</a></div></div><aside class="song-note-preview" id="keyboard-notes"><div class="section-kicker">${zh ? `前 20 个音（共 ${song.notes.length} 个）` : `First 20 of ${song.notes.length} notes`}</div><h2>${zh ? '电脑键盘预览' : 'Computer-key preview'}</h2><div class="note-chip-list">${keyboardPreview(song.notes)}</div><a class="song-notes-more" href="${songUrl(song, locale)}#letter-notes">${zh ? `查看全部 ${song.notes.length} 个音 ↓` : `See all ${song.notes.length} notes ↓`}</a><p>${zh ? '琴键上的字母与电脑键盘对应。进入练习后，系统会逐个提示。' : 'These letters match your computer keyboard. Guided practice reveals them one at a time.'}</p></aside></section>

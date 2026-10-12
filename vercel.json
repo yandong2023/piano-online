@@ -26,6 +26,7 @@
     {"source":"/en/piano.html","headers":[{"key":"Cache-Control","value":"no-cache, must-revalidate"}]},
     {"source":"/js/piano-audio.js","headers":[{"key":"Cache-Control","value":"no-cache, must-revalidate"}]},
     {"source":"/js/studio.js","headers":[{"key":"Cache-Control","value":"no-cache, must-revalidate"}]},
+    {"source":"/js/zh-hant-runtime.js","headers":[{"key":"Cache-Control","value":"no-cache, must-revalidate"}]},
     {"source":"/js/keyboard-input.mjs","headers":[{"key":"Cache-Control","value":"no-cache, must-revalidate"}]}
   ]
 }

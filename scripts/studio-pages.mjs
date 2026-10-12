@@ -1,13 +1,18 @@
 import { mkdir, writeFile, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { publicSongs } from '../data/song-library.mjs';
+import { toTraditionalHtml } from '../data/zh-hant.mjs';
 
 export const STUDIO_VERSION = '20261001.1';
 const esc = (v = '') => String(v).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
-export function studioNav(locale = 'zh', active = 'piano') {
+export function studioNav(locale = 'zh', active = 'piano', songSlug = '') {
   const zh = locale === 'zh', base = zh ? '' : '/en';
   const destination = active === 'songs' ? '/songs/' : active === 'learn' ? '/tutorials.html' : '/piano.html';
-  return `<nav class="nav-bar" aria-label="${zh ? '主导航' : 'Main navigation'}"><div class="nav-container"><a class="studio-brand" href="${base}/" aria-label="Piano Online"><span class="brand-keys" aria-hidden="true"><i></i><i></i><i></i></span><span>Piano<span class="brand-light">Online</span><small>${zh ? '让音乐发生' : 'MAKE A LITTLE MUSIC'}</small></span></a><div class="nav-links"><a href="${base}/piano.html"${active === 'piano' ? ' class="active" aria-current="page"' : ''}>${zh ? '弹钢琴' : 'Piano'}</a><a href="${base}/songs/"${active === 'songs' ? ' class="active" aria-current="page"' : ''}>${zh ? '找首歌' : 'Songs'}</a><a href="${base}/tutorials.html"${active === 'learn' ? ' class="active" aria-current="page"' : ''}>${zh ? '学一点' : 'Learn'}</a><a class="studio-language" href="${zh ? '/en' + destination : destination}" lang="${zh ? 'en' : 'zh-CN'}">${zh ? 'EN' : '中文'}</a></div></div></nav>`;
+  const hantDestination = active === 'songs' ? `/zh-hant/songs/${songSlug ? `${songSlug}/` : ''}` : '/zh-hant/';
+  const languageLinks = zh
+    ? `<a class="studio-language" href="/en${destination}" lang="en">EN</a><a class="studio-language" href="${hantDestination}" lang="zh-Hant">繁體</a>`
+    : `<a class="studio-language" href="${destination}" lang="zh-CN">中文</a>`;
+  return `<nav class="nav-bar" aria-label="${zh ? '主导航' : 'Main navigation'}"><div class="nav-container"><a class="studio-brand" href="${base}/" aria-label="Piano Online"><span class="brand-keys" aria-hidden="true"><i></i><i></i><i></i></span><span>Piano<span class="brand-light">Online</span><small>${zh ? '让音乐发生' : 'MAKE A LITTLE MUSIC'}</small></span></a><div class="nav-links"><a href="${base}/piano.html"${active === 'piano' ? ' class="active" aria-current="page"' : ''}>${zh ? '弹钢琴' : 'Piano'}</a><a href="${base}/songs/"${active === 'songs' ? ' class="active" aria-current="page"' : ''}>${zh ? '找首歌' : 'Songs'}</a><a href="${base}/tutorials.html"${active === 'learn' ? ' class="active" aria-current="page"' : ''}>${zh ? '学一点' : 'Learn'}</a>${languageLinks}</div></div></nav>`;
 }
 
 export function studioInstrument(locale = 'zh', songId = 'happy-birthday') {
@@ -30,10 +35,9 @@ export function studioInstrument(locale = 'zh', songId = 'happy-birthday') {
 export function renderStudioPage(locale = 'zh', home = true) {
   const zh = locale === 'zh', s = (a,b) => zh ? a : b, base = zh ? '' : '/en';
   const url = `https://pianoonline.cc${base}/`;
-  const alternate = `https://pianoonline.cc${zh ? '/en' : ''}/`;
-  const title = s('在线钢琴模拟器 - 用电脑键盘免费弹钢琴，跟着提示学歌 | Piano Online', 'Virtual Piano Online: Play Free with Your Computer Keyboard');
+  const title = s('在线钢琴 · 打开就能弹，跟着提示学歌 | Piano Online', 'Virtual Piano Online: Play Free with Your Computer Keyboard');
   const description = s('免费的在线钢琴，支持鼠标、触屏和电脑键盘。37 个琴键、逐键学歌提示、音量与延音控制，无需注册。', 'Play a free online piano with your keyboard, mouse or touchscreen. 37 keys, guided songs, volume, sustain and distraction-free full screen. No signup.');
-  const hreflang = home ? `<link rel="alternate" hreflang="${zh ? 'zh-CN' : 'en'}" href="${url}"><link rel="alternate" hreflang="${zh ? 'en' : 'zh-CN'}" href="${alternate}"><link rel="alternate" hreflang="x-default" href="${zh ? alternate : url}">` : '';
+  const hreflang = home ? '<link rel="alternate" hreflang="zh-CN" href="https://pianoonline.cc/"><link rel="alternate" hreflang="en" href="https://pianoonline.cc/en/"><link rel="alternate" hreflang="zh-Hant" href="https://pianoonline.cc/zh-hant/"><link rel="alternate" hreflang="x-default" href="https://pianoonline.cc/en/">' : '';
   const jsonLd = home ? `<script type="application/ld+json">${JSON.stringify({
     '@context': 'https://schema.org',
     '@graph': [
@@ -48,12 +52,41 @@ export function renderStudioPage(locale = 'zh', home = true) {
 <section class="studio-learn"><div><p class="studio-kicker">${s('不用先会，先玩起来', 'NO EXPERIENCE NEEDED')}</p><h2>${s('第一次弹？这就够了。', 'New to piano? Start right here.')}</h2><p>${s('这里的简化旋律适合入门与休闲体验，不等同于完整钢琴编曲，也不能替代真实钢琴的力度与踏板训练。', 'These simplified melodies are for getting started, not full piano arrangements. A virtual keyboard does not replace weighted keys or pedal technique.')}</p></div><div class="studio-help"><details><summary>${s('电脑上怎么弹？', 'How do I play on a computer?')}</summary><p>${s('点击琴键，或按琴键上的大写字母。A 对应 C3，K 对应中央 C（C4），T 对应 C5。数字和部分字母对应黑键。', 'Click a key, or press its large letter. A plays C3, K plays middle C (C4), and T plays C5. Numbers and some letters play the black keys.')}</p></details><details><summary>${s('手机上琴键太多怎么办？', 'How do I play on a phone?')}</summary><p>${s('用琴键下方的左右箭头移动音区。跟弹时，会自动把下一个琴键移到可见区域。横屏有更大的弹奏空间。', 'Use the arrows below the keys to move the range. Guided mode brings the next key into view automatically. Landscape gives you more playing space.')}</p></details><details><summary>${s('没有声音，怎么检查？', 'Why can’t I hear anything?')}</summary><p>${s('先点击一次琴键以允许浏览器播放音频，再检查设备媒体音量、静音模式、蓝牙输出和页面音量。采样加载失败时会使用合成音。', 'Tap a piano key to allow browser audio. Check media volume, silent mode, Bluetooth output and the volume slider. A synthesized tone is used if samples cannot load.')}</p></details><a href="${base}/tutorials.html">${s('去看看入门教程', 'Explore beginner lessons')} →</a></div></section></main><footer class="studio-footer"><span>Piano Online <span class="brand-light">© 2026</span></span><span>${s('给日常，多一点音乐。', 'Make a little room for music.')}</span><a href="${base}/about.html">${s('关于', 'About')}</a></footer></body></html>`;
 }
 
+export function renderTraditionalHome() {
+  const url = 'https://pianoonline.cc/zh-hant/';
+  const title = '線上鋼琴琴鍵 - 免費網上鋼琴，用電腦鍵盤直接彈 | Piano Online';
+  const description = '免費的線上鋼琴琴鍵，用滑鼠、觸控或電腦鍵盤直接彈。37 個琴鍵、逐鍵學歌提示、音量與延音控制，無需註冊。';
+  let html = toTraditionalHtml(renderStudioPage('zh', true))
+    .replace('<html lang="zh-CN">', '<html lang="zh-Hant">')
+    .replaceAll('href="/songs/', 'href="/zh-hant/songs/')
+    .replace(/(<a\b[^>]*?)href="\/"/g, '$1href="/zh-hant/"')
+    .replaceAll('href="/piano.html"', 'href="/zh-hant/"')
+    .replace(/<a class="studio-language" href="\/zh-hant\/" lang="zh-Hant">繁體<\/a>/, '<a class="studio-language" href="/" lang="zh-Hant">簡體</a>')
+    .replace(/(<a class="studio-language" href=")\/en\/piano\.html(")/, '$1/en/$2')
+    .replace(/<title>[^<]*<\/title>/, `<title>${title}</title>`)
+    .replace(/<meta name="description" content="[^"]*">/, `<meta name="description" content="${description}">`)
+    .replace(/<link rel="canonical" href="[^"]*">/, `<link rel="canonical" href="${url}">`)
+    .replace(/<meta property="og:title" content="[^"]*">/, `<meta property="og:title" content="${title}">`)
+    .replace(/<meta property="og:description" content="[^"]*">/, `<meta property="og:description" content="${description}">`)
+    .replace(/<meta property="og:url" content="[^"]*">/, `<meta property="og:url" content="${url}">`)
+    .replace(/<h1>[^<]*<\/h1>/, '<h1>線上鋼琴，打開就能彈。</h1>');
+  const graph = [
+    { '@type': 'WebSite', name: 'Piano Online', url, inLanguage: 'zh-Hant' },
+    { '@type': 'WebApplication', name: 'Piano Online', url, applicationCategory: 'MusicApplication', operatingSystem: 'Web browser', isAccessibleForFree: true, offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' }, description }
+  ];
+  html = html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/,
+    `<script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replaceAll('<', '\\u003c')}</script>`);
+  return html.replace('</head>', `<script type="module" src="/js/zh-hant-runtime.js?v=${STUDIO_VERSION}"></script></head>`);
+}
+
 export async function generateStudioPages(root) {
   await mkdir(path.join(root,'en'),{recursive:true});
+  await mkdir(path.join(root,'zh-hant'),{recursive:true});
   for (const locale of ['zh','en']) for (const home of [true,false]) {
     const file = path.join(root, locale==='zh'?'':'en', home?'index.html':'piano.html');
     await writeFile(file,renderStudioPage(locale,home));
   }
+  await writeFile(path.join(root,'zh-hant','index.html'), renderTraditionalHome());
   // Apply the shared design to legacy editorial pages without changing their content/hooks.
   for (const name of ['about.html','en/about.html','practice.html']) {
     const file=path.join(root,name); let html=await readFile(file,'utf8');

@@ -1,7 +1,15 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
-import { renderStudioPage, studioInstrument } from '../scripts/studio-pages.mjs';
+import { renderStudioPage, renderTraditionalHome, studioInstrument } from '../scripts/studio-pages.mjs';
+import { toTraditionalText } from '../data/zh-hant.mjs';
+
+const HOME_ALTERNATES = [
+  '<link rel="alternate" hreflang="zh-CN" href="https://pianoonline.cc/">',
+  '<link rel="alternate" hreflang="en" href="https://pianoonline.cc/en/">',
+  '<link rel="alternate" hreflang="zh-Hant" href="https://pianoonline.cc/zh-hant/">',
+  '<link rel="alternate" hreflang="x-default" href="https://pianoonline.cc/en/">'
+];
 
 for (const locale of ['zh','en']) for (const home of [true,false]) {
   test(`${locale} ${home ? 'home' : 'piano'} has a playable first paint and accurate content`, () => {
@@ -16,16 +24,50 @@ for (const locale of ['zh','en']) for (const home of [true,false]) {
     const homeUrl = `https://pianoonline.cc${locale === 'zh' ? '' : '/en'}/`;
     assert.ok(html.includes(`<link rel="canonical" href="${homeUrl}">`));
     if (home) {
-      assert.match(html, /hreflang="en"/);
-      assert.match(html, /hreflang="zh-CN"/);
+      assert.deepEqual(html.match(/<link rel="alternate"[^>]*>/g), HOME_ALTERNATES);
     } else {
       assert.ok(!html.includes('hreflang='), 'piano pages must not emit hreflang alternates');
       assert.ok(html.includes(`<meta property="og:url" content="${homeUrl}">`));
     }
     assert.equal(html.includes('adsbygoogle.js'), home);
+    assert.ok(!html.includes('zh-hant-runtime'), 'zh/en pages must not load the traditional runtime');
     assert.equal((html.match(/<h1>/g)||[]).length,1);
   });
 }
+test('zh home keeps the original title', () => {
+  const html = renderStudioPage('zh', true);
+  assert.ok(html.includes('<title>在线钢琴 · 打开就能弹，跟着提示学歌 | Piano Online</title>'));
+  assert.ok(renderStudioPage('zh', false).includes('<title>在线钢琴 · 打开就能弹，跟着提示学歌 | Piano Online</title>'));
+});
+
+test('zh-hant home renders traditional content with correct head and nav', () => {
+  const html = renderTraditionalHome();
+  assert.match(html, /<html lang="zh-Hant">/);
+  assert.ok(html.includes('<title>線上鋼琴琴鍵 - 免費網上鋼琴，用電腦鍵盤直接彈 | Piano Online</title>'));
+  assert.ok(html.includes('<link rel="canonical" href="https://pianoonline.cc/zh-hant/">'));
+  assert.deepEqual(html.match(/<link rel="alternate"[^>]*>/g), HOME_ALTERNATES);
+  assert.equal((html.match(/<h1>/g) || []).length, 1);
+  assert.ok(html.includes('<h1>線上鋼琴，打開就能彈。</h1>'));
+  assert.ok(html.includes('adsbygoogle.js'));
+  for (const id of ['song-select','sustain-toggle','labels-toggle','start-practice','stop-practice','start-rhythm-game','toggle-fullscreen','studio-volume','keyboard-viewport']) assert.ok(html.includes(`id="${id}"`));
+  const texts = [/<title>([^<]*)<\/title>/, /<h1>([^<]*)<\/h1>/, /<meta name="description" content="([^"]*)">/]
+    .map((pattern) => html.match(pattern)[1]);
+  for (const text of texts) assert.ok(!/钢|琴键|弹/.test(text), text);
+  assert.match(html, /<a class="studio-language" href="\/"[^>]*>簡體<\/a>/);
+  assert.match(html, /<a class="studio-language" href="\/en\/"[^>]*>EN<\/a>/);
+  assert.match(html, /class="studio-song-card" href="\/zh-hant\/songs\//);
+  assert.ok(!html.includes('href="/songs/'));
+  assert.ok(!html.includes('href="/piano.html"'));
+  const ld = JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
+  assert.deepEqual(ld['@graph'].map((node) => node['@type']), ['WebSite', 'WebApplication']);
+  assert.equal(ld['@graph'][0].inLanguage, 'zh-Hant');
+  assert.ok(html.includes('/js/zh-hant-runtime.js'));
+});
+
+test('toTraditionalText converts runtime strings including 分钟 and 复制', () => {
+  assert.equal(toTraditionalText('随手按下一个音符。点击琴键 3 分钟 已复制'), '隨手按下一個音符。點擊琴鍵 3 分鐘 已複製');
+});
+
 test('instrument controls use labels, button types and live status',()=>{
   const html=studioInstrument('zh');
   assert.match(html,/for="song-select"/); assert.match(html,/for="studio-volume"/);
