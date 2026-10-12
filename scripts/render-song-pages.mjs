@@ -131,19 +131,61 @@ function keyboardPreview(notes) {
 export function noteName(pitch) {
   return String(pitch).replace(/\d+$/, '');
 }
+function pitchLines(song) {
+  const score = getScoreBySongId(song.id);
+  return score
+    ? Array.from({ length: Math.ceil(score.measures.length / 2) }, (_, index) => score.measures.slice(index * 2, index * 2 + 2).flatMap((measure) => measure.map((event) => event.pitch)))
+    : Array.from({ length: Math.ceil(song.notes.length / 8) }, (_, index) => song.notes.slice(index * 8, index * 8 + 8));
+}
 export function letterNoteLines(song) {
   for (const pitch of song.notes) {
     if (!/^[A-G]#?\d$/.test(pitch)) throw new Error(`Invalid pitch "${pitch}" in song ${song.id}`);
     if (!KEY_MAP[pitch]) throw new Error(`No computer key mapped for pitch "${pitch}" in song ${song.id}`);
   }
-  const score = getScoreBySongId(song.id);
-  const lines = score
-    ? Array.from({ length: Math.ceil(score.measures.length / 2) }, (_, index) => score.measures.slice(index * 2, index * 2 + 2).flatMap((measure) => measure.map((event) => event.pitch)))
-    : Array.from({ length: Math.ceil(song.notes.length / 8) }, (_, index) => song.notes.slice(index * 8, index * 8 + 8));
+  const lines = pitchLines(song);
   return {
     names: lines.map((line) => line.map(noteName)),
     keys: lines.map((line) => line.map((pitch) => KEY_MAP[pitch]))
   };
+}
+const JIANPU_PC = { C: 0, 'C#': 1, Db: 1, D: 2, 'D#': 3, Eb: 3, E: 4, F: 5, 'F#': 6, Gb: 6, G: 7, 'G#': 8, Ab: 8, A: 9, 'A#': 10, Bb: 10, B: 11 };
+const JIANPU_MAJOR = new Set([0, 2, 4, 5, 7, 9, 11]);
+const JIANPU_KEY_NAMES = { 0: 'C', 1: '♭D', 2: 'D', 3: '♭E', 4: 'E', 5: 'F', 6: '♭G', 7: 'G', 8: '♭A', 9: 'A', 10: '♭B', 11: 'B' };
+const JIANPU_DEGREES = { 0: '1', 2: '2', 4: '3', 5: '4', 7: '5', 9: '6', 11: '7', 1: '#1', 3: '#2', 6: '#4', 8: '#5', 10: 'b7' };
+const JIANPU_MARKS = { 1: '̇', 2: '̈', '-1': '̣', '-2': '̤' };
+export function jianpu(song) {
+  const [tonic, mode] = String(song.keySignature).split(' ');
+  let majorPC = mode === 'Major' ? JIANPU_PC[tonic] : (JIANPU_PC[tonic] + 3) % 12;
+  const midis = song.notes.map((pitch) => {
+    const [, name, octave] = pitch.match(/^([A-G]#?)(\d)$/);
+    return Number(octave) * 12 + JIANPU_PC[name];
+  });
+  const outCount = (k) => midis.filter((midi) => !JIANPU_MAJOR.has(((midi % 12) - k + 12) % 12)).length;
+  let bestKey = 0, bestOut = Infinity;
+  for (let k = 0; k < 12; k += 1) {
+    const count = outCount(k);
+    if (count < bestOut) { bestOut = count; bestKey = k; }
+  }
+  if (outCount(majorPC) - bestOut >= 4 && outCount(majorPC) / song.notes.length > 0.15) majorPC = bestKey;
+  let ref = 4, shifts = null, shifted = Infinity;
+  for (const candidate of [3, 4, 5]) {
+    const base = candidate * 12 + majorPC;
+    const candidateShifts = midis.map((midi) => Math.floor((midi - base) / 12));
+    const count = candidateShifts.filter((shift) => shift !== 0).length;
+    if (count < shifted || (count === shifted && Math.abs(candidate - 4) < Math.abs(ref - 4))) {
+      ref = candidate; shifts = candidateShifts; shifted = count;
+    }
+  }
+  let index = 0;
+  const tokens = pitchLines(song).map((line) => line.map((pitch) => {
+    const name = pitch.match(/^([A-G]#?)\d$/)[1];
+    const degree = JIANPU_DEGREES[(JIANPU_PC[name] - majorPC + 12) % 12];
+    const shift = shifts[index];
+    index += 1;
+    if (Math.abs(shift) > 2) throw new Error(`Octave shift ${shift} for pitch "${pitch}" in song ${song.id}`);
+    return degree + (JIANPU_MARKS[shift] || '');
+  }));
+  return { keyLabel: `1=${JIANPU_KEY_NAMES[majorPC]}`, tokens };
 }
 const PITCH_ORDER = { C: 0, 'C#': 1, D: 2, 'D#': 3, E: 4, F: 5, 'F#': 6, G: 7, 'G#': 8, A: 9, 'A#': 10, B: 11 };
 export function songFacts(song) {
@@ -163,23 +205,36 @@ export function songFacts(song) {
     keySignature: song.keySignature
   };
 }
+const JIANPU_MARK_SHIFTS = { '̇': 1, '̈': 2, '̣': -1, '̤': -2 };
+function jianpuSpan(token) {
+  const mark = token.slice(-1);
+  const shift = JIANPU_MARK_SHIFTS[mark] || 0;
+  return `<span class="jp" data-o="${shift}">${esc(shift ? token.slice(0, -1) : token)}</span>`;
+}
 function letterNotesSection(song, locale, title) {
   const zh = locale === 'zh';
   const { names, keys } = letterNoteLines(song);
+  const jp = zh ? jianpu(song) : null;
   const block = (id, heading, format, lines) => `<div class="letter-notes-block"><div class="letter-notes-head"><h3>${heading}</h3><button type="button" class="studio-quiet" data-copy-target="${id}" data-copy-format="${format}">${zh ? '复制' : 'Copy'}</button></div><pre id="${id}" class="letter-notes-text">${esc(lines.map((line) => line.join(' ')).join('\n'))}</pre></div>`;
+  const jianpuBlock = jp ? `<div class="letter-notes-block"><div class="letter-notes-head"><h3>数字简谱（${jp.keyLabel}）</h3><button type="button" class="studio-quiet" data-copy-target="letter-notes-jianpu" data-copy-format="jianpu">复制</button></div><pre id="letter-notes-jianpu" class="letter-notes-text jianpu-text" data-copy-text="${esc(jp.tokens.map((line) => line.join(' ')).join('\n'))}">${jp.tokens.map((line) => line.map(jianpuSpan).join(' ')).join('\n')}</pre></div>` : '';
+  const legend = zh
+    ? `${jp.keyLabel} 表示把 ${jp.keyLabel.slice(2)} 唱作 1（do）。数字上方的点是高八度，下方的点是低八度；# 升半音，b 降半音。这里只标旋律音高，不含节奏时值。字母谱里每个字母代表一个音，带 # 的是右边紧挨着的黑键。`
+    : 'Each letter is one note, read left to right. A # means the black key just to the right of that letter. Below the note names you’ll find the matching computer keys for the piano on this page.';
   return `<section class="song-letter-notes" id="letter-notes" aria-labelledby="letter-notes-title">
-<div class="section-kicker">${zh ? '完整字母谱' : 'Full letter notes'}</div>
-<h2 id="letter-notes-title">${zh ? `《${esc(title)}》钢琴字母谱` : `${esc(title)} piano letter notes`}</h2>
-<p>${zh ? '每个字母代表一个音，从左往右弹。带 # 的是该字母右边紧挨着的黑键。下方还给出了本页钢琴对应的电脑按键。' : 'Each letter is one note, read left to right. A # means the black key just to the right of that letter. Below the note names you’ll find the matching computer keys for the piano on this page.'}</p>
-${block('letter-notes-names', zh ? '音名谱' : 'Note names', 'names', names)}
+<div class="section-kicker">${zh ? '简谱 · 字母谱' : 'Full letter notes'}</div>
+<h2 id="letter-notes-title">${zh ? `《${esc(title)}》简谱与钢琴字母谱` : `${esc(title)} piano letter notes`}</h2>
+<p>${esc(legend)}</p>
+${jianpuBlock}${block('letter-notes-names', zh ? '音名谱' : 'Note names', 'names', names)}
 ${block('letter-notes-keys', zh ? '本页钢琴的电脑按键' : 'Computer keys on this piano', 'keys', keys)}
 </section>`;
 }
 function songFactsSection(song, locale, title) {
   const zh = locale === 'zh';
   const facts = songFacts(song);
+  const jp = zh ? jianpu(song) : null;
   const markMiddleC = (value) => value === 'C4' ? `${value}${zh ? '（中央 C）' : ' (middle C)'}` : value;
   const items = [
+    ...(jp ? [[`《${title}》简谱开头是什么？`, `${jp.keyLabel}，开头是 ${jp.tokens.flat().slice(0, 8).join(' ')}。`]] : []),
     [zh ? `《${title}》开头是哪几个音？` : `What are the first notes of ${title}?`,
       zh ? `开头是 ${facts.firstNotes.join(' ')}。` : `It starts with ${facts.firstNotes.join(' ')}.`],
     [zh ? `《${title}》要弹黑键吗？` : `Does ${title} use black keys?`,
@@ -199,8 +254,8 @@ ${items.map(([question, answer]) => `<h3>${esc(question)}</h3><p>${esc(answer)}<
 function renderSong(song, locale) {
   const zh = locale === 'zh';
   const title = localeText(song, locale);
-  const pageTitle = zh ? `${title}钢琴谱与在线弹奏｜按键提示教程` : (song.difficulty <= 2 ? `${title} Piano Letter Notes (Easy) – Play Online` : `${title} Piano Letter Notes – Play Online`);
-  const description = song.description?.[locale] || '';
+  const pageTitle = zh ? `${title}钢琴简谱与字母谱｜在线弹奏教程` : (song.difficulty <= 2 ? `${title} Piano Letter Notes (Easy) – Play Online` : `${title} Piano Letter Notes – Play Online`);
+  const description = zh ? `${song.description?.zh || ''}附完整数字简谱和字母谱，可一键复制。` : (song.description?.[locale] || '');
   const canonical = `https://pianoonline.cc${songUrl(song, locale)}`;
   const graph = [
     { '@type': 'BreadcrumbList', itemListElement: [

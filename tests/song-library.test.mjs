@@ -3,7 +3,7 @@ import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import { publicSongs, songs } from '../data/song-library.mjs';
-import { KEY_MAP, letterNoteLines, noteName } from '../scripts/render-song-pages.mjs';
+import { KEY_MAP, jianpu, letterNoteLines, noteName } from '../scripts/render-song-pages.mjs';
 
 const ids = publicSongs.map((song) => song.id);
 const slugs = publicSongs.map((song) => song.slug);
@@ -106,6 +106,32 @@ test('letter note lines cover every note and mapped computer key of all public s
   }
 });
 
+test('jianpu covers every note with valid degree tokens on all public songs', () => {
+  for (const song of publicSongs) {
+    const { tokens } = jianpu(song);
+    assert.equal(tokens.flat().length, song.notes.length, `${song.id} token count`);
+    for (const token of tokens.flat()) assert.match(token, /^(#|b)?[1-7][̣̤̇̈]?$/, `${song.id}: ${token}`);
+    assert.deepEqual(tokens.map((line) => line.length), letterNoteLines(song).names.map((line) => line.length), `${song.id} lines`);
+  }
+});
+
+test('jianpu key labels and openings match reference songs', () => {
+  const byId = (id) => publicSongs.find((song) => song.id === id);
+  const strip = (token) => token.replace(/[̣̤̇̈]/g, '');
+  const birthday = jianpu(byId('happy-birthday'));
+  assert.equal(birthday.keyLabel, '1=C');
+  assert.deepEqual(birthday.tokens.flat().slice(0, 6), ['5', '5', '6', '5', '1̇', '7']);
+  assert.deepEqual(jianpu(byId('twinkle')).tokens.flat().slice(0, 7), ['1', '1', '5', '5', '6', '6', '5']);
+  const elise = jianpu(byId('fur-elise'));
+  assert.equal(elise.keyLabel, '1=C');
+  const eliseStripped = elise.tokens.flat().map(strip);
+  assert.ok(eliseStripped.includes('#2') && eliseStripped.includes('#5'));
+  assert.equal(eliseStripped[0], '3');
+  assert.equal(jianpu(byId('schubert-serenade')).keyLabel, '1=D');
+  for (const song of publicSongs.filter((item) => item.keySignature === 'Gb Major')) assert.equal(jianpu(song).keyLabel, '1=♭G');
+  for (const song of publicSongs.filter((item) => item.keySignature === 'A Minor')) assert.equal(jianpu(song).keyLabel, '1=C');
+});
+
 test('song pages render the complete letter notes, copy buttons and melody facts', async () => {
   const song = publicSongs.find((item) => item.id === 'fur-elise');
   const expectedNames = song.notes.map(noteName).join(' ');
@@ -121,10 +147,25 @@ test('song pages render the complete letter notes, copy buttons and melody facts
     const keysText = html.match(/<pre id="letter-notes-keys"[^>]*>([\s\S]*?)<\/pre>/)[1].replace(/\s+/g, ' ').trim();
     assert.equal(namesText, expectedNames, `${file} note names`);
     assert.equal(keysText, expectedKeys, `${file} computer keys`);
-    assert.equal((html.match(/data-copy-target=/g) || []).length, 2, `${file} copy buttons`);
+    assert.equal((html.match(/data-copy-target=/g) || []).length, file.startsWith('en/') ? 2 : 3, `${file} copy buttons`);
     assert.ok(html.includes('D#') && html.includes('G#'), `${file} black-key facts`);
     assert.ok(html.includes(`href="${path}#letter-notes"`), `${file} letter-notes link`);
   }
+});
+
+test('jianpu notation renders on zh and zh-hant song pages but not en', async () => {
+  const song = publicSongs.find((item) => item.id === 'fur-elise');
+  const expectedCopy = jianpu(song).tokens.map((line) => line.join(' ')).join('\n');
+  const copyText = (html) => html.match(/id="letter-notes-jianpu"[^>]*data-copy-text="([\s\S]*?)"/)[1].replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+  for (const [file, titleMark] of [['songs/fur-elise/index.html', '简谱'], ['zh-hant/songs/fur-elise/index.html', '簡譜']]) {
+    const html = await readFile(file, 'utf8');
+    assert.ok(html.includes('id="letter-notes-jianpu"'), `${file} jianpu pre`);
+    assert.equal(copyText(html), expectedCopy, `${file} copy text`);
+    assert.match(html, new RegExp(`<title>[^<]*${titleMark}`), `${file} title`);
+    assert.match(html, /简谱开头是什么|簡譜開頭是什麼/, `${file} jianpu facts`);
+  }
+  const en = await readFile('en/songs/fur-elise/index.html', 'utf8');
+  assert.ok(!en.includes('letter-notes-jianpu') && !en.includes('简谱'), 'en page has no jianpu');
 });
 
 test('twinkle explains that the melody uses only white keys', async () => {

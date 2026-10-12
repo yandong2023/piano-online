@@ -62,9 +62,10 @@ function bindLetterNotesCopy() {
             const target = document.getElementById(button.dataset.copyTarget);
             if (!target) return;
             let copied = false;
+            const text = target.dataset.copyText ?? target.textContent;
             if (navigator.clipboard?.writeText) {
                 try {
-                    await navigator.clipboard.writeText(target.textContent);
+                    await navigator.clipboard.writeText(text);
                     copied = true;
                 } catch { /* fall through to the selection fallback */ }
             }

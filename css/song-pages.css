@@ -704,6 +704,49 @@ body[data-song-id] .song-content-section .song-card p {
     text-decoration: underline;
 }
 
+.letter-notes-text.jianpu-text {
+    line-height: 3;
+}
+
+.jianpu-text .jp {
+    position: relative;
+    display: inline-block;
+    line-height: 1;
+}
+
+.jianpu-text .jp[data-o="1"]::before,
+.jianpu-text .jp[data-o="2"]::before,
+.jianpu-text .jp[data-o="-1"]::after,
+.jianpu-text .jp[data-o="-2"]::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    width: 0.22em;
+    height: 0.22em;
+    margin-left: -0.11em;
+    border-radius: 50%;
+    background: currentColor;
+    pointer-events: none;
+}
+
+.jianpu-text .jp[data-o="1"]::before,
+.jianpu-text .jp[data-o="2"]::before {
+    top: -0.44em;
+}
+
+.jianpu-text .jp[data-o="2"]::before {
+    box-shadow: 0 -0.34em 0 0 currentColor;
+}
+
+.jianpu-text .jp[data-o="-1"]::after,
+.jianpu-text .jp[data-o="-2"]::after {
+    bottom: -0.44em;
+}
+
+.jianpu-text .jp[data-o="-2"]::after {
+    box-shadow: 0 0.34em 0 0 currentColor;
+}
+
 @media (max-width: 640px) {
     .song-letter-notes,
     .song-facts {
@@ -718,5 +761,9 @@ body[data-song-id] .song-content-section .song-card p {
 
     .letter-notes-text {
         font-size: 15px;
+    }
+
+    .letter-notes-text.jianpu-text {
+        line-height: 2.8;
     }
 }
