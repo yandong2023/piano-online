@@ -26,7 +26,7 @@ for (const locale of ['zh','en']) for (const home of [true,false]) {
     if (home) {
       assert.deepEqual(html.match(/<link rel="alternate"[^>]*>/g), HOME_ALTERNATES);
     } else {
-      assert.ok(!html.includes('hreflang='), 'piano pages must not emit hreflang alternates');
+      assert.ok(!html.includes('<link rel="alternate"'), 'piano pages must not emit hreflang alternates');
       assert.ok(html.includes(`<meta property="og:url" content="${homeUrl}">`));
     }
     assert.equal(html.includes('adsbygoogle.js'), home);
@@ -38,6 +38,23 @@ test('zh home keeps the original title', () => {
   const html = renderStudioPage('zh', true);
   assert.ok(html.includes('<title>在线钢琴 · 打开就能弹，跟着提示学歌 | Piano Online</title>'));
   assert.ok(renderStudioPage('zh', false).includes('<title>在线钢琴 · 打开就能弹，跟着提示学歌 | Piano Online</title>'));
+});
+
+test('zh home language menu links all locales and marks 简体中文 current', () => {
+  const html = renderStudioPage('zh', true);
+  assert.ok(!html.includes('studio-language'));
+  assert.ok(html.includes('<details class="studio-lang">'));
+  assert.ok(html.includes('<span class="studio-lang-option" lang="zh-CN" aria-current="true">简体中文</span>'));
+  assert.ok(html.includes('<a class="studio-lang-option" href="/zh-hant/" lang="zh-Hant"'));
+  assert.ok(html.includes('<a class="studio-lang-option" href="/en/" lang="en"'));
+});
+
+test('en piano page language menu links back to zh piano and zh-hant home', () => {
+  const html = renderStudioPage('en', false);
+  assert.ok(!html.includes('studio-language'));
+  assert.ok(html.includes('<a class="studio-lang-option" href="/piano.html" lang="zh-CN"'));
+  assert.ok(html.includes('<a class="studio-lang-option" href="/zh-hant/" lang="zh-Hant"'));
+  assert.ok(html.includes('<span class="studio-lang-option" lang="en" aria-current="true">English</span>'));
 });
 
 test('zh-hant home renders traditional content with correct head and nav', () => {
@@ -53,8 +70,10 @@ test('zh-hant home renders traditional content with correct head and nav', () =>
   const texts = [/<title>([^<]*)<\/title>/, /<h1>([^<]*)<\/h1>/, /<meta name="description" content="([^"]*)">/]
     .map((pattern) => html.match(pattern)[1]);
   for (const text of texts) assert.ok(!/钢|琴键|弹/.test(text), text);
-  assert.match(html, /<a class="studio-language" href="\/"[^>]*>簡體<\/a>/);
-  assert.match(html, /<a class="studio-language" href="\/en\/"[^>]*>EN<\/a>/);
+  assert.ok(html.includes('<details class="studio-lang">'));
+  assert.ok(html.includes('<a class="studio-lang-option" href="/" lang="zh-CN"'));
+  assert.ok(html.includes('<a class="studio-lang-option" href="/en/" lang="en"'));
+  assert.ok(html.includes('<span class="studio-lang-option" lang="zh-Hant" aria-current="true">繁體中文</span>'));
   assert.match(html, /class="studio-song-card" href="\/zh-hant\/songs\//);
   assert.ok(!html.includes('href="/songs/'));
   assert.ok(!html.includes('href="/piano.html"'));

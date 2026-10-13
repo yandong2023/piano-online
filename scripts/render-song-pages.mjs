@@ -1,4 +1,4 @@
-import { studioNav, studioInstrument, STUDIO_VERSION } from './studio-pages.mjs';
+import { studioNav, studioInstrument, studioLanguageMenu, STUDIO_VERSION } from './studio-pages.mjs';
 import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -23,21 +23,20 @@ const categoryLabels = {
   en: { beginner: 'First songs', kids: 'Nursery & children’s songs', traditional: 'Traditional melodies', holiday: 'Holiday songs', classical: 'Classical essentials', ragtime: 'Ragtime' }
 };
 
-function renderTraditional(html) {
+function renderTraditional(html, songSlug = '') {
   let output = toTraditionalHtml(html)
     .replace('<html lang="zh-CN">', '<html lang="zh-Hant">')
     .replaceAll('https://pianoonline.cc/songs/', 'https://pianoonline.cc/zh-hant/songs/')
     .replaceAll('href="/songs/', 'href="/zh-hant/songs/')
-    .replace(/<a class="studio-language" href="\/zh-hant\/[^"]*" lang="zh-Hant">繁體<\/a>/, '')
     .replace(/(<a\b[^>]*?)href="\/"/g, '$1href="/zh-hant/"')
     .replaceAll('href="/piano.html"', 'href="/zh-hant/"')
-    .replaceAll('"https://pianoonline.cc/"', '"https://pianoonline.cc/zh-hant/"');
+    .replaceAll('"https://pianoonline.cc/"', '"https://pianoonline.cc/zh-hant/"')
+    .replace(/<details class="studio-lang">[\s\S]*?<\/details>/, studioLanguageMenu('zh-hant', 'songs', songSlug));
   output = output.replace(
     /(<link rel="alternate" hreflang="zh-CN" href=")https:\/\/pianoonline\.cc\/zh-hant\/songs\//,
     '$1https://pianoonline.cc/songs/'
   );
   return output
-    .replace('</div></div></nav>', '<a href="/songs/">簡體</a></div></div></nav>')
     .replace('</head>', `<script type="module" src="/js/zh-hant-runtime.js?v=${STUDIO_VERSION}"></script></head>`);
 }
 function esc(value = '') {
@@ -310,7 +309,7 @@ export async function generateSongSite(rootDir = PROJECT_ROOT) {
     const zhSongHtml = renderSong(song, 'zh');
     await writeFile(path.join(zhDir, 'index.html'), zhSongHtml, 'utf8');
     await writeFile(path.join(enDir, 'index.html'), renderSong(song, 'en'), 'utf8');
-    await writeFile(path.join(zhHantDir, 'index.html'), renderTraditional(zhSongHtml), 'utf8');
+    await writeFile(path.join(zhHantDir, 'index.html'), renderTraditional(zhSongHtml, song.slug), 'utf8');
   }
   await writeFile(path.join(rootDir, 'sitemap-songs.xml'), renderSitemap(), 'utf8');
   return { count: publicSongs.length, pages: publicSongs.length * 3 + 3 };

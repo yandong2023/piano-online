@@ -5,14 +5,25 @@ import { toTraditionalHtml } from '../data/zh-hant.mjs';
 
 export const STUDIO_VERSION = '20261001.1';
 const esc = (v = '') => String(v).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
-export function studioNav(locale = 'zh', active = 'piano', songSlug = '') {
+export function studioLanguageMenu(current = 'zh', active = 'piano', songSlug = '', home = false) {
+  const song = songSlug ? `${songSlug}/` : '';
+  const page = home ? '/' : active === 'songs' ? `/songs/${song}` : active === 'learn' ? '/tutorials.html' : '/piano.html';
+  const options = [
+    ['zh', 'zh-CN', '简体中文', page],
+    ['zh-hant', 'zh-Hant', '繁體中文', active === 'songs' ? `/zh-hant/songs/${song}` : '/zh-hant/'],
+    ['en', 'en', 'English', `/en${page}`]
+  ];
+  const label = { zh: '切换语言', 'zh-hant': '切換語言', en: 'Change language' }[current];
+  const short = { zh: '中文', 'zh-hant': '繁體', en: 'EN' }[current];
+  const items = options.map(([id, lang, name, href]) => id === current
+    ? `<span class="studio-lang-option" lang="${lang}" aria-current="true">${name}</span>`
+    : `<a class="studio-lang-option" href="${href}" lang="${lang}" hreflang="${lang}">${name}</a>`).join('');
+  return `<details class="studio-lang"><summary aria-label="${label}"><span class="studio-lang-globe" aria-hidden="true"></span>${short}</summary><div class="studio-lang-menu">${items}</div></details>`;
+}
+
+export function studioNav(locale = 'zh', active = 'piano', songSlug = '', home = false) {
   const zh = locale === 'zh', base = zh ? '' : '/en';
-  const destination = active === 'songs' ? '/songs/' : active === 'learn' ? '/tutorials.html' : '/piano.html';
-  const hantDestination = active === 'songs' ? `/zh-hant/songs/${songSlug ? `${songSlug}/` : ''}` : '/zh-hant/';
-  const languageLinks = zh
-    ? `<a class="studio-language" href="/en${destination}" lang="en">EN</a><a class="studio-language" href="${hantDestination}" lang="zh-Hant">繁體</a>`
-    : `<a class="studio-language" href="${destination}" lang="zh-CN">中文</a>`;
-  return `<nav class="nav-bar" aria-label="${zh ? '主导航' : 'Main navigation'}"><div class="nav-container"><a class="studio-brand" href="${base}/" aria-label="Piano Online"><span class="brand-keys" aria-hidden="true"><i></i><i></i><i></i></span><span>Piano<span class="brand-light">Online</span><small>${zh ? '让音乐发生' : 'MAKE A LITTLE MUSIC'}</small></span></a><div class="nav-links"><a href="${base}/piano.html"${active === 'piano' ? ' class="active" aria-current="page"' : ''}>${zh ? '弹钢琴' : 'Piano'}</a><a href="${base}/songs/"${active === 'songs' ? ' class="active" aria-current="page"' : ''}>${zh ? '找首歌' : 'Songs'}</a><a href="${base}/tutorials.html"${active === 'learn' ? ' class="active" aria-current="page"' : ''}>${zh ? '学一点' : 'Learn'}</a>${languageLinks}</div></div></nav>`;
+  return `<nav class="nav-bar" aria-label="${zh ? '主导航' : 'Main navigation'}"><div class="nav-container"><a class="studio-brand" href="${base}/" aria-label="Piano Online"><span class="brand-keys" aria-hidden="true"><i></i><i></i><i></i></span><span>Piano<span class="brand-light">Online</span><small>${zh ? '让音乐发生' : 'MAKE A LITTLE MUSIC'}</small></span></a><div class="nav-links"><a href="${base}/piano.html"${active === 'piano' ? ' class="active" aria-current="page"' : ''}>${zh ? '弹钢琴' : 'Piano'}</a><a href="${base}/songs/"${active === 'songs' ? ' class="active" aria-current="page"' : ''}>${zh ? '找首歌' : 'Songs'}</a><a href="${base}/tutorials.html"${active === 'learn' ? ' class="active" aria-current="page"' : ''}>${zh ? '学一点' : 'Learn'}</a>${studioLanguageMenu(locale, active, songSlug, home)}</div></div></nav>`;
 }
 
 export function studioInstrument(locale = 'zh', songId = 'happy-birthday') {
@@ -47,7 +58,7 @@ export function renderStudioPage(locale = 'zh', home = true) {
   }).replaceAll('<', '\\u003c')}</script>` : '';
   const featured = ['happy-birthday','twinkle','ode-to-joy','jingle-bells','fur-elise','canon'].map(id=>publicSongs.find(x=>x.id===id)).filter(Boolean);
   return `<!DOCTYPE html><html lang="${zh ? 'zh-CN' : 'en'}"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title><meta name="description" content="${description}"><link rel="canonical" href="${url}">${hreflang}<link rel="icon" href="/images/favicon.svg"><meta property="og:type" content="website"><meta property="og:title" content="${title}"><meta property="og:description" content="${description}"><meta property="og:url" content="${url}"><meta property="og:image" content="https://pianoonline.cc/images/og-image.jpg"><link rel="stylesheet" href="/css/studio.css?v=${STUDIO_VERSION}"><script type="module" src="/js/studio.js?v=${STUDIO_VERSION}"></script><script async src="https://www.googletagmanager.com/gtag/js?id=G-EYGD99YB4Y"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-EYGD99YB4Y');</script><meta name="google-site-verification" content="Fii3zK2l54f0uFP7RPwdn7BEqB4OjC2jc_07JxSs1uI">${home ? '<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4423187689700927" crossorigin="anonymous"></script>' : ''}${jsonLd}</head>
-<body class="studio-page"><a class="skip-link" href="#practice-start">${s('跳到钢琴', 'Skip to piano')}</a>${studioNav(locale)}<main class="studio-main"><header class="studio-intro"><div><p class="studio-kicker">${s('一点空闲，一段旋律', 'A LITTLE TIME. A LITTLE MUSIC.')}</p><h1>${s('在线钢琴，打开就能弹。', 'Play virtual piano online, right now.')}</h1><p>${s('随心弹一段，或跟着亮起的琴键学会一首歌。', 'Play something of your own, or follow the keys to learn a familiar song.')}</p></div><div class="studio-promise"><span>${s('免费', 'Free')}</span><span>${s('无需注册', 'No signup')}</span><span>${s('手机也能弹', 'Touch friendly')}</span></div></header>${studioInstrument(locale)}
+<body class="studio-page"><a class="skip-link" href="#practice-start">${s('跳到钢琴', 'Skip to piano')}</a>${studioNav(locale, 'piano', '', home)}<main class="studio-main"><header class="studio-intro"><div><p class="studio-kicker">${s('一点空闲，一段旋律', 'A LITTLE TIME. A LITTLE MUSIC.')}</p><h1>${s('在线钢琴，打开就能弹。', 'Play virtual piano online, right now.')}</h1><p>${s('随心弹一段，或跟着亮起的琴键学会一首歌。', 'Play something of your own, or follow the keys to learn a familiar song.')}</p></div><div class="studio-promise"><span>${s('免费', 'Free')}</span><span>${s('无需注册', 'No signup')}</span><span>${s('手机也能弹', 'Touch friendly')}</span></div></header>${studioInstrument(locale)}
 <section class="studio-discover"><div class="studio-section-heading"><div><p class="studio-kicker">${s('从熟悉的旋律开始', 'FIND YOUR FIRST MELODY')}</p><h2>${s('今天，想弹哪一首？', 'What would you like to play?')}</h2></div><a href="${base}/songs/">${s(`全部 ${publicSongs.length} 首歌曲`, `All ${publicSongs.length} songs`)} →</a></div><div class="studio-song-grid">${featured.map((song,i)=>`<a class="studio-song-card" href="${base}/songs/${song.slug}/"><span class="studio-song-art" data-art="${i}"><span aria-hidden="true">${['♪','✧','♩','❋','♬','𝄞'][i]}</span><small>0${i+1}</small></span><span class="studio-song-copy"><small>${s(['入门','简单','中等','进阶'][Math.min(3,song.difficulty-1)],['Starter','Easy','Medium','Advanced'][Math.min(3,song.difficulty-1)])} · ${song.estimatedMinutes} ${s('分钟','min')}</small><strong>${esc(song.title[locale])}</strong><span>${song.notes.length} ${s('个音符 · 字母谱 + 在线跟弹', 'notes · Key letters & guided practice')}</span></span><span class="studio-song-arrow" aria-hidden="true">↗</span></a>`).join('')}</div></section>
 <section class="studio-learn"><div><p class="studio-kicker">${s('不用先会，先玩起来', 'NO EXPERIENCE NEEDED')}</p><h2>${s('第一次弹？这就够了。', 'New to piano? Start right here.')}</h2><p>${s('这里的简化旋律适合入门与休闲体验，不等同于完整钢琴编曲，也不能替代真实钢琴的力度与踏板训练。', 'These simplified melodies are for getting started, not full piano arrangements. A virtual keyboard does not replace weighted keys or pedal technique.')}</p></div><div class="studio-help"><details><summary>${s('电脑上怎么弹？', 'How do I play on a computer?')}</summary><p>${s('点击琴键，或按琴键上的大写字母。A 对应 C3，K 对应中央 C（C4），T 对应 C5。数字和部分字母对应黑键。', 'Click a key, or press its large letter. A plays C3, K plays middle C (C4), and T plays C5. Numbers and some letters play the black keys.')}</p></details><details><summary>${s('手机上琴键太多怎么办？', 'How do I play on a phone?')}</summary><p>${s('用琴键下方的左右箭头移动音区。跟弹时，会自动把下一个琴键移到可见区域。横屏有更大的弹奏空间。', 'Use the arrows below the keys to move the range. Guided mode brings the next key into view automatically. Landscape gives you more playing space.')}</p></details><details><summary>${s('没有声音，怎么检查？', 'Why can’t I hear anything?')}</summary><p>${s('先点击一次琴键以允许浏览器播放音频，再检查设备媒体音量、静音模式、蓝牙输出和页面音量。采样加载失败时会使用合成音。', 'Tap a piano key to allow browser audio. Check media volume, silent mode, Bluetooth output and the volume slider. A synthesized tone is used if samples cannot load.')}</p></details><a href="${base}/tutorials.html">${s('去看看入门教程', 'Explore beginner lessons')} →</a></div></section></main><footer class="studio-footer"><span>Piano Online <span class="brand-light">© 2026</span></span><span>${s('给日常，多一点音乐。', 'Make a little room for music.')}</span><a href="${base}/about.html">${s('关于', 'About')}</a></footer></body></html>`;
 }
@@ -61,8 +72,7 @@ export function renderTraditionalHome() {
     .replaceAll('href="/songs/', 'href="/zh-hant/songs/')
     .replace(/(<a\b[^>]*?)href="\/"/g, '$1href="/zh-hant/"')
     .replaceAll('href="/piano.html"', 'href="/zh-hant/"')
-    .replace(/<a class="studio-language" href="\/zh-hant\/" lang="zh-Hant">繁體<\/a>/, '<a class="studio-language" href="/" lang="zh-Hant">簡體</a>')
-    .replace(/(<a class="studio-language" href=")\/en\/piano\.html(")/, '$1/en/$2')
+    .replace(/<details class="studio-lang">[\s\S]*?<\/details>/, studioLanguageMenu('zh-hant', 'piano', '', true))
     .replace(/<title>[^<]*<\/title>/, `<title>${title}</title>`)
     .replace(/<meta name="description" content="[^"]*">/, `<meta name="description" content="${description}">`)
     .replace(/<link rel="canonical" href="[^"]*">/, `<link rel="canonical" href="${url}">`)
@@ -91,7 +101,7 @@ export async function generateStudioPages(root) {
   for (const name of ['about.html','en/about.html','practice.html']) {
     const file=path.join(root,name); let html=await readFile(file,'utf8');
     if (!html.includes('/css/studio.css')) html=html.replace('</head>',`<link rel="stylesheet" href="/css/studio.css?v=${STUDIO_VERSION}"></head>`);
-    html=html.replace(/<nav class="nav-bar">[\s\S]*?<\/nav>/,studioNav(name.startsWith('en/')?'en':'zh','learn'));
+    html=html.replace(/<nav class="nav-bar"[^>]*>[\s\S]*?<\/nav>/,studioNav(name.startsWith('en/')?'en':'zh','learn'));
     await writeFile(file,html);
   }
 }
