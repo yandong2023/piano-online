@@ -62,6 +62,16 @@ body.tutorial-library-page {
     line-height: 1.85;
 }
 
+.tutorial-keyboard-chart {
+    margin: 22px 0 0;
+}
+
+.tutorial-keyboard-chart img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
 .tutorial-meta {
     display: flex;
     flex-wrap: wrap;
