@@ -78,6 +78,14 @@ MIT License
 
 ## 更新日志
 
+### 2026-10-15
+
+#### SEO：语言标签与英文琴键图标题
+- 旧教程文章（`articles/tutorials/` 与 `en/articles/tutorials/`）由生成器统一写入 `lang`、自指 canonical，以及互指的 `zh-CN` / `en` / `x-default`。简体页的 `lang` 从 `zh` 改为 `zh-CN`。
+- 繁体版《钢琴基础知识》还没写。预留地址是 `/zh-hant/articles/tutorials/piano-basics.html`。文件放进去之后，hreflang 和 sitemap 会自动带上它，现在不会指向不存在的页面。
+- 英文指南 `piano-keyboard-letters` 只改了浏览器标题和 meta description，正文标题没动。页面还没有可打印的琴键图，描述里也不写 printable。
+- 简体和英文首页的语言菜单里本来就有「繁體中文」指向 `/zh-hant/`。旧教程页以前没有，现在语言菜单里补上了。
+
 ### 2025-10-26
 
 #### ✅ 谷歌广告集成完成
