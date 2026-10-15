@@ -118,7 +118,7 @@ test('english piano keyboard letters page uses the chart title and description o
   assert.ok(description.length >= 140 && description.length <= 165, `description length ${description.length}`);
   assert.doesNotMatch(description, /print/i);
   assert.match(html, /<h1>Piano Keyboard Letters Explained: C D E F G A B and Computer Keys<\/h1>/);
-  assert.doesNotMatch(html, /tutorial-keyboard-chart/);
+  assert.match(html, /<img src="\/images\/piano-keyboard-letters\.svg" alt="Piano keyboard letters chart showing notes C to B on white keys and sharps\/flats on black keys" width="768" height="350" loading="lazy">/);
 });
 
 test('tutorial index pages keep reciprocal hreflang without a traditional alternate', async () => {

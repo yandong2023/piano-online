@@ -83,7 +83,7 @@ function renderChart(article, locale) {
   if (!chart?.src) return '';
   const width = Number(chart.width) > 0 ? ` width="${Number(chart.width)}"` : '';
   const height = Number(chart.height) > 0 ? ` height="${Number(chart.height)}"` : '';
-  return `<figure class="tutorial-keyboard-chart"><img src="${esc(chart.src)}" alt="${esc(text(chart.alt, locale))}"${width}${height}></figure>`;
+  return `<figure class="tutorial-keyboard-chart"><img src="${esc(chart.src)}" alt="${esc(text(chart.alt, locale))}"${width}${height} loading="lazy"></figure>`;
 }
 function renderArticle(article, locale) {
   const zh = locale === 'zh';
