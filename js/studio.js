@@ -2,6 +2,7 @@ import { keyboardNote, keyboardIdentity } from './keyboard-input.mjs';
 import { Piano } from './piano.js';
 import { PracticeMode } from './practice-mode.js';
 import { RhythmGame } from './rhythm-game.js';
+import { track } from './analytics.js';
 
 const english = document.documentElement.lang.toLowerCase().startsWith('en');
 const text = (zh, en) => english ? en : zh;
@@ -35,10 +36,10 @@ class StudioPiano extends Piano {
     this.manualSustain = false;
     this.spaceSustain = false;
     this.midiSustain = false;
-    const hold = (note, inputStartedAt) => {
+    const hold = (note, inputStartedAt, source = 'touch') => {
       const count = this.noteHolders.get(note) || 0;
       this.noteHolders.set(note, count + 1);
-      if (!count) this.pressKey(note, inputStartedAt);
+      if (!count) this.pressKey(note, inputStartedAt, source);
     };
     const release = (note) => {
       const count = this.noteHolders.get(note) || 0;
@@ -80,7 +81,7 @@ class StudioPiano extends Piano {
       const pianoKey = event.target instanceof Element && event.target.closest('.key');
       const note = pianoKey && ['Enter', 'Space'].includes(event.code)
         ? pianoKey.dataset.note : (!isFormControl(event.target) || pianoKey) && keyboardNote(event, this.keyMap);
-      if (note) { event.preventDefault(); this.keyboardHeld.set(identity, note); hold(note, inputStartedAt); }
+      if (note) { event.preventDefault(); this.keyboardHeld.set(identity, note); hold(note, inputStartedAt, 'keyboard'); }
       else if (event.code === 'Space' && !isFormControl(event.target) && !event.target.closest?.('button,a,summary')) {
         event.preventDefault(); this.spaceSustain = true; this.applySustain();
       }
@@ -95,10 +96,10 @@ class StudioPiano extends Piano {
     document.addEventListener('visibilitychange', () => { if (document.hidden) this.releaseAll(); });
   }
 
-  pressKey(note, inputStartedAt = performance.now()) {
+  pressKey(note, inputStartedAt = performance.now(), source = 'program') {
     this.keys[note]?.classList.add('active');
     this.keys[note]?.setAttribute('aria-pressed', 'true');
-    this.audio.playNote(note, 0.9, inputStartedAt).catch(showError);
+    this.audio.playNote(note, 0.9, inputStartedAt, { source }).catch(showError);
     this.onNotePlay?.(note);
   }
   releaseKey(note) {
@@ -159,6 +160,19 @@ async function initialize() {
   window.pianoPracticeMode = practice;
   window.pianoStudio = { piano, practice, rhythm };
   let mode = 'free';
+  let freePlayEntered = false;
+  piano.audio.getPlaybackContext = () => ({
+    range: document.querySelector('.keys').getAttribute('aria-label'),
+    octaves: piano.octaves, play_mode: rhythm.isPlaying ? 'rhythm' : mode,
+    keys_visible: String($('labels-toggle').checked),
+  });
+  piano.audio.onNoteStarted = ({ source, range, octaves, play_mode, keys_visible }) => {
+    track('note_play', { source, range, octaves, play_mode });
+    if (!freePlayEntered && play_mode === 'free' && source !== 'program') {
+      freePlayEntered = true;
+      track('free_play_entry', { range, octaves, keys_visible, play_mode });
+    }
+  };
   const songSelect = $('song-select');
   const settings = readSettings();
   const volume = Number(settings.volume);
