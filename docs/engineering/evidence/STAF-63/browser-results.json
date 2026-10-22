@@ -1,0 +1,235 @@
+{
+  "AC1_before_input": {
+    "metrics": {
+      "range": "C3–C5",
+      "keys": 25,
+      "whites": [
+        40,
+        40,
+        40,
+        40,
+        40,
+        40,
+        40,
+        40,
+        40,
+        40,
+        40,
+        40,
+        40,
+        40,
+        40
+      ],
+      "buttons": [
+        {
+          "width": 50,
+          "height": 44
+        },
+        {
+          "width": 50,
+          "height": 44
+        }
+      ],
+      "labelsHidden": true,
+      "state": "suspended",
+      "buffers": 19
+    },
+    "network": [
+      {
+        "name": "piano-C3.mp3",
+        "start": 631.6000000238419,
+        "end": 645,
+        "bytes": 25885
+      },
+      {
+        "name": "piano-E3.mp3",
+        "start": 631.6999999880791,
+        "end": 644.3000000119209,
+        "bytes": 25599
+      },
+      {
+        "name": "piano-D3.mp3",
+        "start": 631.6999999880791,
+        "end": 644.6000000238419,
+        "bytes": 25859
+      },
+      {
+        "name": "piano-F3.mp3",
+        "start": 631.8999999761581,
+        "end": 644.8999999761581,
+        "bytes": 25885
+      },
+      {
+        "name": "piano-G3.mp3",
+        "start": 631.8999999761581,
+        "end": 645.3000000119209,
+        "bytes": 25885
+      },
+      {
+        "name": "piano-A3.mp3",
+        "start": 631.8999999761581,
+        "end": 646.6999999880791,
+        "bytes": 25885
+      },
+      {
+        "name": "piano-B3.mp3",
+        "start": 632,
+        "end": 647.8999999761581,
+        "bytes": 24533
+      },
+      {
+        "name": "piano-C4.mp3",
+        "start": 632,
+        "end": 648.3000000119209,
+        "bytes": 24325
+      },
+      {
+        "name": "piano-D4.mp3",
+        "start": 632,
+        "end": 650.6999999880791,
+        "bytes": 24221
+      },
+      {
+        "name": "piano-E4.mp3",
+        "start": 632.1000000238419,
+        "end": 649,
+        "bytes": 21621
+      },
+      {
+        "name": "piano-F4.mp3",
+        "start": 632.1000000238419,
+        "end": 649.6000000238419,
+        "bytes": 21595
+      },
+      {
+        "name": "piano-G4.mp3",
+        "start": 632.1000000238419,
+        "end": 650.3000000119209,
+        "bytes": 21335
+      },
+      {
+        "name": "piano-A4.mp3",
+        "start": 632.1000000238419,
+        "end": 651,
+        "bytes": 19281
+      },
+      {
+        "name": "piano-B4.mp3",
+        "start": 632.1999999880791,
+        "end": 651.3000000119209,
+        "bytes": 18709
+      },
+      {
+        "name": "piano-C5.mp3",
+        "start": 632.3000000119209,
+        "end": 651.8000000119209,
+        "bytes": 19073
+      },
+      {
+        "name": "piano-D5.mp3",
+        "start": 632.3000000119209,
+        "end": 652.1999999880791,
+        "bytes": 18553
+      },
+      {
+        "name": "piano-E5.mp3",
+        "start": 632.3000000119209,
+        "end": 652.5,
+        "bytes": 18085
+      },
+      {
+        "name": "piano-F5.mp3",
+        "start": 632.3000000119209,
+        "end": 663.8999999761581,
+        "bytes": 17773
+      },
+      {
+        "name": "piano-G5.mp3",
+        "start": 632.3999999761581,
+        "end": 664.5,
+        "bytes": 17539
+      }
+    ]
+  },
+  "AC1_first_attack": {
+    "inputToStartMs": 51,
+    "audioTime": 0.005333333333333333
+  },
+  "AC1_under_100ms": true,
+  "console_first_attack": [
+    "[piano:first-attack] {note: C4, inputToStartMs: 51, audioStartTime: 0.005333333333333333, state: running, loadedSamples: 19}"
+  ],
+  "octave_bounds": "C1–C3 through C5–C7, button state and text synchronized",
+  "multitouch_and_release": "C3/E3 native two-finger chord and range-change release passed",
+  "songs": {
+    "fur-elise": {
+      "total": 63,
+      "count": 63,
+      "high": 33,
+      "wrong": 0
+    },
+    "canon": {
+      "total": 80,
+      "count": 80,
+      "high": 21,
+      "wrong": 0
+    }
+  },
+  "shared_highlight": "C1/C#1/G5/C7/C3 all rendered and visible",
+  "pending_tap_range_change": "Pending first resume retains the C5 attack while teaching shifts to D5",
+  "midi": "note-on/off and CC64 passed (synthetic messages, no physical device)",
+  "recording_output": {
+    "bytes": 2228,
+    "mime": "audio/webm;codecs=opus",
+    "scope": "gain output capture; legacy recorder UI absent on Studio"
+  },
+  "desktop": {
+    "range": "C3–C6",
+    "keys": 37,
+    "whites": [
+      51.359375,
+      51.375,
+      51.359375,
+      51.375,
+      51.359375,
+      51.375,
+      51.359375,
+      51.375,
+      51.359375,
+      51.375,
+      51.359375,
+      51.375,
+      51.359375,
+      51.359375,
+      51.359375,
+      51.359375,
+      51.359375,
+      51.359375,
+      51.359375,
+      51.359375,
+      51.359375,
+      51.359375
+    ],
+    "buttons": [
+      {
+        "width": 65,
+        "height": 44
+      },
+      {
+        "width": 65,
+        "height": 44
+      }
+    ],
+    "labelsHidden": false,
+    "state": "running",
+    "buffers": 19
+  },
+  "page_errors": [],
+  "page_entries": {
+    "/en/": "25 mobile keys; G5 teaching highlight present",
+    "/zh-hant/": "25 mobile keys; G5 teaching highlight present",
+    "/songs/fur-elise/": "25 mobile keys; G5 teaching highlight present"
+  },
+  "early_input_failed_network": "running context and immediate fallback with requestIdleCallback unavailable",
+  "legacy_base": "25 keys, G5 range-follow and regenerated pointer bindings passed"
+}

@@ -45,17 +45,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     const resumeAudio = async () => {
-      if (piano?.audio?.context?.state === 'suspended') {
-        try {
-          await piano.audio.context.resume();
-        } catch (error) {
-          console.error('Failed to resume AudioContext:', error);
-        }
+      try {
+        // An early recording/control click can precede the idle callback too.
+        await piano.audio.ensureRunning();
+      } catch (error) {
+        console.error('Failed to resume AudioContext:', error);
       }
     };
 
     ['pointerdown', 'keydown'].forEach((event) => {
-      document.addEventListener(event, resumeAudio, { once: true });
+      document.addEventListener(event, resumeAudio, { once: true, capture: true });
     });
 
     window.addEventListener('beforeunload', () => {

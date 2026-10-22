@@ -145,12 +145,13 @@ class Piano {
         console.log('Setting up event listeners');
         // 键盘事件监听
         document.addEventListener('keydown', (e) => {
+            const inputStartedAt = performance.now();
             console.log('Key pressed:', e.key);
             if (e.repeat) return; // 忽略按键重复
             const note = this.getNoteFromKeyCode(e.key.toLowerCase());
             if (note) {
                 console.log('Playing note:', note);
-                this.pressKey(note, e.timeStamp);
+                this.pressKey(note, inputStartedAt);
             }
             // 处理延音踏板
             if (e.code === 'Space') {
@@ -303,6 +304,8 @@ class Piano {
     }
 
     ensureNoteVisible(note) {
+        // Practice emits a final progress event at notes.length before stopping.
+        if (!note) return;
         if (this.mobileViewport.matches && !this.keys[note]) {
             this.setRange(mobileRangeForNote(note, this.startOctave), false, true);
         }
@@ -320,10 +323,11 @@ class Piano {
     bindKeyPointers() {
         Object.values(this.keys).forEach(key => {
             key.addEventListener('pointerdown', event => {
+                const inputStartedAt = performance.now();
                 if (event.pointerType === 'mouse' && event.button !== 0) return;
                 event.preventDefault();
                 key.setPointerCapture?.(event.pointerId);
-                this.pressKey(key.dataset.note, event.timeStamp);
+                this.pressKey(key.dataset.note, inputStartedAt);
             });
             const release = () => this.releaseKey(key.dataset.note);
             ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(type => key.addEventListener(type, release));

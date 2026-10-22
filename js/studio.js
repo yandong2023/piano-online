@@ -46,6 +46,7 @@ class StudioPiano extends Piano {
       else this.noteHolders.set(note, count - 1);
     };
     root.querySelector('.keys').addEventListener('pointerdown', (event) => {
+      const inputStartedAt = performance.now();
       const key = event.target.closest('.key');
       if (!key || (event.pointerType === 'mouse' && event.button !== 0)) return;
       event.preventDefault();
@@ -53,14 +54,14 @@ class StudioPiano extends Piano {
       root.focus({ preventScroll: true });
       key.setPointerCapture?.(event.pointerId);
       this.pointers.set(event.pointerId, key.dataset.note);
-      hold(key.dataset.note, event.timeStamp);
+      hold(key.dataset.note, inputStartedAt);
     });
     root.addEventListener('pointermove', (event) => {
       const previous = this.pointers.get(event.pointerId);
       if (!previous) return;
       const key = document.elementFromPoint(event.clientX, event.clientY)?.closest('.key');
       if (key && root.contains(key) && key.dataset.note !== previous) {
-        release(previous); hold(key.dataset.note, event.timeStamp); this.pointers.set(event.pointerId, key.dataset.note);
+        release(previous); hold(key.dataset.note, performance.now()); this.pointers.set(event.pointerId, key.dataset.note);
       }
     });
     const releasePointer = (event) => {
@@ -72,13 +73,14 @@ class StudioPiano extends Piano {
     window.addEventListener('pointercancel', releasePointer);
     root.addEventListener('lostpointercapture', releasePointer);
     document.addEventListener('keydown', (event) => {
+      const inputStartedAt = performance.now();
       if (event.repeat || event.ctrlKey || event.metaKey || event.altKey) return;
       const identity = keyboardIdentity(event);
       if (this.keyboardHeld.has(identity)) return;
       const pianoKey = event.target instanceof Element && event.target.closest('.key');
       const note = pianoKey && ['Enter', 'Space'].includes(event.code)
         ? pianoKey.dataset.note : (!isFormControl(event.target) || pianoKey) && keyboardNote(event, this.keyMap);
-      if (note) { event.preventDefault(); this.keyboardHeld.set(identity, note); hold(note, event.timeStamp); }
+      if (note) { event.preventDefault(); this.keyboardHeld.set(identity, note); hold(note, inputStartedAt); }
       else if (event.code === 'Space' && !isFormControl(event.target) && !event.target.closest?.('button,a,summary')) {
         event.preventDefault(); this.spaceSustain = true; this.applySustain();
       }

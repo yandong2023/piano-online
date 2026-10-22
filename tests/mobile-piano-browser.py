@@ -141,8 +141,8 @@ with sync_playwright() as p:
     report['pending_tap_range_change'] = page.evaluate('''async () => {
       const {piano,practice}=window.pianoStudio,a=piano.audio;
       piano.setRange(3);await a.context.suspend();
-      const tap=a.playNote('C5');practice.highlightKey('D5');await tap;
-      if(!a.activeVoices.has('C5') || !piano.keys.D5.classList.contains('current')) throw Error('First tap lost on teaching range change');
+      const tap=a.playNote('C5');practice.highlightKey('D5');const played=await tap;
+      if(!played || !a.activeVoices.has('C5') || !piano.keys.D5.classList.contains('current')) throw Error('First tap lost on teaching range change');
       practice.clearKeyHighlight();return 'Pending first resume retains the C5 attack while teaching shifts to D5';
     }''')
     page.set_viewport_size({'width': 1280, 'height': 900})
@@ -189,6 +189,17 @@ with sync_playwright() as p:
     page.screenshot(path=str(OUT / 'desktop-1280.png'), full_page=True)
     report['page_errors'] = errors
     assert errors == [], errors
+    report['page_entries'] = {}
+    for route in ['/en/', '/zh-hant/', '/songs/fur-elise/']:
+        entry = ctx.new_page()
+        entry.route('https://**', lambda route: route.abort())
+        entry.goto(URL+route, wait_until='networkidle')
+        entry.wait_for_function('Boolean(window.pianoStudio)')
+        assert entry.locator('.keys .key').count() == 25
+        entry.evaluate('window.pianoStudio.practice.highlightKey("G5")')
+        assert entry.locator('.key.current').get_attribute('data-note') == 'G5'
+        report['page_entries'][route] = '25 mobile keys; G5 teaching highlight present'
+        entry.close()
     ctx.close()
 
     # Independent early-input/no-network run, including idle timer fallback.
@@ -204,7 +215,31 @@ with sync_playwright() as p:
     assert early.evaluate('window.pianoStudio.piano.audio.context.state') == 'running'
     report['early_input_failed_network'] = 'running context and immediate fallback with requestIdleCallback unavailable'
     slow.close()
+
+    # Base Piano must rebind regenerated keys on the legacy keyboard layout.
+    legacy_ctx = browser.new_context(viewport={'width': 390, 'height': 844})
+    legacy = legacy_ctx.new_page()
+    legacy.route('**/legacy-fixture', lambda route: route.fulfill(content_type='text/html', body='''
+      <html lang="en"><head><link rel="stylesheet" href="/css/piano.css"></head><body>
+      <div class="piano-container"><div class="keys"></div></div>
+      <script type="module">
+        import {Piano} from '/js/piano.js';
+        import {PracticeMode} from '/js/practice-mode.js';
+        window.legacyPiano=new Piano();
+        window.highlightLegacy=note=>PracticeMode.prototype.highlightKey.call({piano:legacyPiano,clearKeyHighlight:PracticeMode.prototype.clearKeyHighlight},note);
+      </script></body></html>'''))
+    legacy.add_init_script('delete window.requestIdleCallback; delete window.cancelIdleCallback;')
+    legacy.goto(URL+'/legacy-fixture', wait_until='networkidle')
+    legacy.wait_for_function('Boolean(window.legacyPiano)')
+    assert legacy.locator('.key').count() == 25
+    legacy.evaluate('window.highlightLegacy("G5")')
+    assert legacy.locator('.key.current').get_attribute('data-note') == 'G5'
+    legacy.locator('.key.current').click(position={'x': 20, 'y': 120})
+    legacy.wait_for_function('window.legacyPiano.audio.context?.state === "running"')
+    report['legacy_base'] = '25 keys, G5 range-follow and regenerated pointer bindings passed'
+    legacy_ctx.close()
     browser.close()
 
 (OUT / 'browser-results.json').write_text(json.dumps(report, indent=2, ensure_ascii=False))
 print(json.dumps(report, indent=2, ensure_ascii=False))
+assert report['AC1_under_100ms'], 'Cold pointerdown-to-source.start exceeded 100ms; see browser-results.json'
