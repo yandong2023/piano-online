@@ -64,6 +64,8 @@ ${alternates.map(([hreflang, href]) => `<link rel="alternate" hreflang="${hrefla
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(description)}">
 <meta property="og:image" content="https://pianoonline.cc/images/og-image.jpg">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-EYGD99YB4Y"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-EYGD99YB4Y');</script>
 <link rel="stylesheet" href="/css/piano.css?v=${ASSET_VERSION}">
 <link rel="stylesheet" href="/css/song-pages.css?v=${ASSET_VERSION}">
 <link rel="stylesheet" href="/css/secondary-pages.css?v=${ASSET_VERSION}">

@@ -84,7 +84,20 @@ export const tutorialArticles = [
     publishedAt: '2026-07-18',
     updatedAt: '2026-07-18',
     title: { zh: '钢琴键盘字母怎么看：C D E F G A B 与电脑按键对照', en: 'Piano Keyboard Letters Explained: C D E F G A B and Computer Keys' },
+    seoTitle: { en: 'Piano Keyboard Letters Chart: Notes C to B on Every Key' },
     description: { zh: '通过黑键分组认识 C D E F G A B，并理解本站电脑键盘字母与钢琴音符的对应方式。', en: 'Use black-key groups to identify C D E F G A B and understand the computer-key mapping used by Piano Online.' },
+    metaDescription: { en: 'A labeled piano keyboard chart showing notes C to B on every white key, how black-key groups repeat, and which computer key plays each note on Piano Online.' },
+    // Labeled keyboard chart. The SVG has width/height 768×350 and no viewBox.
+    // Do not describe it as printable: this page has no print action.
+    chart: {
+      src: '/images/piano-keyboard-letters.svg',
+      width: 768,
+      height: 350,
+      alt: {
+        en: 'Piano keyboard letters chart showing notes C to B on white keys and sharps/flats on black keys',
+        zh: 'Piano keyboard letters chart showing notes C to B on white keys and sharps/flats on black keys'
+      }
+    },
     intro: { zh: '钢琴白键只重复七个字母：C、D、E、F、G、A、B。难点不是字母本身，而是在几十个相似琴键中快速定位。黑键的“两颗一组、三颗一组”就是最可靠的路标。', en: 'White piano keys repeat only seven letters: C, D, E, F, G, A and B. The challenge is locating them across a long keyboard. Groups of two and three black keys are the most reliable landmarks.' },
     outcomes: { zh: ['通过黑键快速找到 C 和 F', '理解八度为什么会重复', '看懂电脑按键提示', '避免把电脑字母和钢琴音名混为一谈'], en: ['Find C and F from black-key groups', 'Understand octave repetition', 'Read computer-key prompts', 'Separate keyboard letters from note names'] },
     sections: [

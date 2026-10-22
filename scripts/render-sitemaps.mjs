@@ -3,27 +3,12 @@ import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { publicSongs } from '../data/song-library.mjs';
 import { tutorialArticles } from '../data/tutorial-library.mjs';
+import { legacyTutorialAlternates, legacyTutorialSlugs } from './locale-alternates.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = path.resolve(HERE, '..');
 const BASE_URL = 'https://pianoonline.cc';
 const LASTMOD = '2026-10-12';
-
-const legacyTutorialSlugs = [
-  'piano-basics',
-  'reading-notes',
-  'finger-numbers',
-  'rhythm-basics',
-  'practice-methods',
-  'scales-practice',
-  'hand-coordination',
-  'music-theory',
-  'advanced-music-theory',
-  'sight-reading',
-  'performance-skills',
-  'music-analysis',
-  'piano-maintenance'
-];
 
 function esc(value) {
   return String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
@@ -69,7 +54,16 @@ export async function generateSitemaps(root = PROJECT_ROOT) {
   const tutorialUrls = [
     ...bilingualUrl('/tutorials.html', '/en/tutorials.html', { priority: '0.9', changefreq: 'weekly' }),
     ...tutorialArticles.flatMap((article) => bilingualUrl(`/articles/guides/${article.slug}/`, `/en/articles/guides/${article.slug}/`, { priority: article.category === 'songs' ? '0.85' : '0.8', changefreq: 'monthly', lastmod: article.updatedAt })),
-    ...legacyTutorialSlugs.flatMap((slug) => bilingualUrl(`/articles/tutorials/${slug}.html`, `/en/articles/tutorials/${slug}.html`, { priority: '0.7', changefreq: 'monthly' }))
+    ...legacyTutorialSlugs.flatMap((slug) => {
+      const alternates = legacyTutorialAlternates(slug, root);
+      if (!alternates.some(([lang]) => lang === 'zh-Hant')) {
+        return bilingualUrl(`/articles/tutorials/${slug}.html`, `/en/articles/tutorials/${slug}.html`, { priority: '0.7', changefreq: 'monthly' });
+      }
+      const links = alternates.map(([lang, href]) => `<xhtml:link rel="alternate" hreflang="${lang}" href="${esc(href)}"/>`).join('');
+      return alternates
+        .filter(([lang]) => lang !== 'x-default')
+        .map(([, href]) => `<url><loc>${esc(href)}</loc>${links}<lastmod>${LASTMOD}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>`);
+    })
   ];
 
   const mainUrls = [
