@@ -4,7 +4,7 @@ import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { tutorialArticles, tutorialCategories, getTutorialBySlug, getTutorialTitle } from '../data/tutorial-library.mjs';
 import { getSongById, getSongTitle } from '../data/song-library.mjs';
-import { applyLegacyTutorialLocales } from './apply-legacy-articles.mjs';
+import { applyLegacyTutorialLocales, applyLegacyTutorialCtas } from './apply-legacy-articles.mjs';
 import { guideAlternates, hreflangBlock, tutorialIndexAlternates } from './locale-alternates.mjs';
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = path.resolve(HERE, '..');
@@ -128,7 +128,7 @@ function renderIndex(locale) {
   const itemList = tutorialArticles.map((article, index) => ({ '@type': 'ListItem', position: index + 1, url: `https://pianoonline.cc${localizedPath(locale, article.slug)}`, name: getTutorialTitle(article, locale) }));
   return `<!DOCTYPE html><html lang="${zh ? 'zh-CN' : 'en'}"><head>${sharedHead({ title, description, canonical, alternates, type: 'website' })}<link rel="stylesheet" href="/css/studio.css?v=${STUDIO_VERSION}"></head><body class="secondary-page tutorial-library-page">${nav(locale)}<main class="secondary-shell tutorial-library-main"><div class="container"><header class="secondary-hero tutorial-library-hero"><div class="secondary-eyebrow">${zh ? '入门到进阶' : 'LEARN AT YOUR OWN PACE'}</div><h1>${zh ? '从第一次按键，到真正弹完经典旋律。' : 'From your first key to a complete classic melody.'}</h1><p class="secondary-lead">${zh ? '先用在线钢琴获得即时反馈，再通过详细教程理解键位、节奏、和弦和作品。每篇内容都连接到可以直接练习的歌曲或工具。' : 'Use the online piano for immediate feedback, then learn keyboard geography, rhythm, chords and repertoire through detailed guides. Every guide links back to something playable.'}</p><div class="secondary-actions"><a class="primary-action" href="${zh ? '/#practice-start' : '/en/#practice-start'}">${zh ? '立即体验提示练习' : 'Try guided practice'}</a><a class="secondary-action" href="${zh ? '/songs/' : '/en/songs/'}">${zh ? '浏览经典曲库' : 'Browse classic songs'}</a></div><div class="tutorial-library-stats"><span><strong>${tutorialArticles.length + Object.keys(legacyTutorials).length}</strong>${zh ? '篇教程' : 'guides'}</span><span><strong>2</strong>${zh ? '种语言' : 'languages'}</span><span><strong>1</strong>${zh ? '个可直接练习的钢琴' : 'playable piano'}</span></div></header><nav class="tutorial-category-nav">${tutorialCategories.map((category) => `<a href="#${category.id}">${esc(text(category.label, locale))}</a>`).join('')}<a href="#foundation">${zh ? '基础知识库' : 'Foundation library'}</a></nav>${categorySections}<section class="tutorial-index-section" id="foundation"><div class="secondary-section-heading"><div><div class="secondary-eyebrow">${zh ? '基础知识' : 'FOUNDATIONS'}</div><h2>${zh ? '基础知识、乐理与演奏技巧' : 'Foundation, theory and performance'}</h2></div><p>${zh ? '认识琴键、读懂节奏，再逐步练习双手配合。' : 'Explore the keys, learn to read a rhythm, and build hand coordination.'}</p></div><div class="tutorial-index-grid">${legacyCards}</div></section></div></main><footer class="footer"><div class="container"><div class="footer-content"><p>&copy; 2026 Piano Online</p><div class="footer-links"><a href="${zh ? '/songs/' : '/en/songs/'}">${zh ? '曲库' : 'Songs'}</a><a href="${zh ? '/#practice-start' : '/en/#practice-start'}">${zh ? '在线钢琴' : 'Piano'}</a><a href="${zh ? '/en/tutorials.html' : '/tutorials.html'}">${zh ? 'English' : '中文'}</a></div></div></div></footer><script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', '@type': 'CollectionPage', name: title, description, url: canonical, mainEntity: { '@type': 'ItemList', itemListElement: itemList } })}</script></body></html>`;
 }
-export async function generateTutorialSite(root = PROJECT_ROOT) {
+export async function generateTutorialSite(root = PROJECT_ROOT, { includeLegacyCta = false } = {}) {
   for (const locale of ['zh', 'en']) {
     for (const article of tutorialArticles) {
       const directory = path.join(root, locale === 'zh' ? '' : 'en', 'articles', 'guides', article.slug);
@@ -140,6 +140,7 @@ export async function generateTutorialSite(root = PROJECT_ROOT) {
     await writeFile(indexPath, renderIndex(locale), 'utf8');
   }
   const legacy = await applyLegacyTutorialLocales(root);
+  if (includeLegacyCta) await applyLegacyTutorialCtas(root);
   return { articles: tutorialArticles.length, pages: tutorialArticles.length * 2 + 2, legacy: legacy.pages };
 }
 const isDirectRun = process.argv[1] && pathToFileURL(path.resolve(process.argv[1])).href === import.meta.url;

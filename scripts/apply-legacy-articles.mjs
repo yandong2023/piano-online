@@ -103,6 +103,47 @@ export function applyArticleLanguage(html, { slug, lang, root }) {
   return next;
 }
 
+export function applyArticleCta(html, { slug, lang, styles = '', warn = console.warn }) {
+  if (!['zh-CN', 'en'].includes(lang)) return html;
+  const header = /(<header\b[^>]*\bclass=["'][^"']*\barticle-header\b[^"']*["'][^>]*>)([\s\S]*?)(<\/header>)/i;
+  if (!header.test(html)) {
+    warn(`Legacy article CTA: missing header.article-header (${lang}/${slug}).`);
+    return html;
+  }
+  const hasCta = /\sdata-article-cta(?:\s|[=>])/.test(html);
+  const hasTracking = /\bid=["']article-cta-tracking["']/.test(html);
+  if (hasCta && hasTracking) return html;
+  const zh = lang === 'zh-CN';
+  // Slugs come from the fixed catalog, never from the visitor's URL.
+  const safeSlug = slug.replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+  const cta = hasCta ? '' : `<div class="article-cta" data-article-cta><a class="article-cta-primary" href="${zh ? '/' : '/en/'}#practice-start" data-article-cta-link data-article-slug="${safeSlug}">${zh ? '打开在线钢琴' : 'Open the piano'}</a></div>`;
+  const tracking = hasTracking ? '' : `<script id="article-cta-tracking">document.querySelectorAll('[data-article-cta-link]').forEach(function(link){link.addEventListener('click',function(){if(typeof window.gtag==='function'){window.gtag('event','article_cta_click',{article_slug:link.dataset.articleSlug,locale:'${lang}',position:'hero'});}});});</script>`;
+  let next = html.replace(header, (match, start, body, end) => `${start}${body}${cta}${tracking}${end}`);
+  // One legacy English page lacks article.css; use only its CTA rules so the
+  // existing article header and body retain their original appearance.
+  if (styles && !/<link\b[^>]*href=["'][^"']*\/css\/article\.css(?:\?[^"']*)?["']/i.test(next) && !next.includes('id="article-cta-styles"')) {
+    next = next.replace(/<\/head>/i, `<style id="article-cta-styles">${styles}</style></head>`);
+  }
+  return next;
+}
+
+export async function applyLegacyTutorialCtas(root = PROJECT_ROOT) {
+  const css = await readFile(path.join(root, 'css/article.css'), 'utf8');
+  const styles = css.match(/\/\* ARTICLE_CTA_START \*\/([\s\S]*?)\/\* ARTICLE_CTA_END \*\//)?.[1];
+  if (!styles) throw new Error('Missing article CTA rules in css/article.css');
+  let pages = 0;
+  for (const slug of legacyTutorialSlugs) {
+    for (const [lang, prefix] of [['zh-CN', ''], ['en', 'en/']]) {
+      const file = path.join(root, `${prefix}articles/tutorials/${slug}.html`);
+      const html = await readFile(file, 'utf8');
+      const next = applyArticleCta(html, { slug, lang, styles });
+      if (next !== html) await writeFile(file, next, 'utf8');
+      pages += 1;
+    }
+  }
+  return { pages };
+}
+
 export async function applyLegacyTutorialLocales(root = PROJECT_ROOT) {
   let pages = 0;
   for (const slug of legacyTutorialSlugs) {
