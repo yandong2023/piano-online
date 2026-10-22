@@ -216,6 +216,7 @@ class PracticeMode {
 
     highlightKey(note) {
         this.clearKeyHighlight();
+        this.piano.ensureNoteVisible?.(note);
         document.querySelectorAll('.key').forEach((key) => {
             if (key.dataset.note === note) key.classList.add('current');
         });

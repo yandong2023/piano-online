@@ -4,6 +4,7 @@ import {
   noteToMidi,
   playbackRateForNote,
   sampleUrl,
+  SAMPLE_NOTES,
 } from './audio-note-utils.mjs';
 
 class PianoAudio {
@@ -26,11 +27,30 @@ class PianoAudio {
     this.activeVoices = new Map();
     this.lastTriggerAt = new Map();
     this.duplicateWindowMs = 24;
+    this.cancelWarmup = null;
+    this.firstAttackLogged = false;
+  }
+
+  scheduleWarmup() {
+    if (this.disposed || this.initialized || this.cancelWarmup) return;
+    const warmup = () => {
+      this.cancelWarmup = null;
+      if (!this.disposed) void this.init();
+    };
+    if (typeof window.requestIdleCallback === 'function') {
+      const id = window.requestIdleCallback(warmup);
+      this.cancelWarmup = () => window.cancelIdleCallback(id);
+    } else {
+      const id = setTimeout(warmup, 1200);
+      this.cancelWarmup = () => clearTimeout(id);
+    }
   }
 
   async init() {
     if (this.disposed) return false;
     if (this.initialized) return true;
+    this.cancelWarmup?.();
+    this.cancelWarmup = null;
     try {
       const AudioContextClass = window.AudioContext || window.webkitAudioContext;
       if (!AudioContextClass) throw new Error('Web Audio API is not supported');
@@ -38,9 +58,11 @@ class PianoAudio {
       this.gainNode = this.context.createGain();
       this.gainNode.gain.value = this.volume;
       this.gainNode.connect(this.context.destination);
+      this.context.onstatechange = () => this.onStateChange?.(this.context.state);
       this.initialized = true;
       // Downloads improve later notes, but never gate a key's first attack.
-      ['C4', 'E4', 'G4', 'C5'].forEach(note => this.loadBuffer(note).catch(() => {}));
+      SAMPLE_NOTES.filter(note => noteToMidi(note) <= noteToMidi('G5'))
+        .forEach(note => this.loadBuffer(note).catch(() => {}));
       return true;
     } catch (error) {
       console.error('Failed to initialize piano audio:', error);
@@ -89,7 +111,7 @@ class PianoAudio {
     return promise;
   }
 
-  async playNote(note, velocity = 0.9) {
+  async playNote(note, velocity = 0.9, inputStartedAt = performance.now()) {
     noteToMidi(note); // Reject invalid input without leaving a held key behind.
     if (this.disposed) return false;
     const nowMs = performance.now();
@@ -117,6 +139,14 @@ class PianoAudio {
       this.releaseVoices(note, 0.015, 0);
       if (sampleNote) this.playSample(note, sampleNote, velocity);
       else this.playOscillatorFallback(note, velocity);
+      if (!this.firstAttackLogged) {
+        this.firstAttackLogged = true;
+        console.info('[piano:first-attack]', {
+          note, inputToStartMs: Number((performance.now() - inputStartedAt).toFixed(2)),
+          audioStartTime: this.context.currentTime, state: this.context.state,
+          loadedSamples: this.buffers.size,
+        });
+      }
       // An initial resume may finish after pointerup. Give that tap a short attack
       // instead of dropping it; stopAll invalidates it entirely on blur/pagehide.
       if (request.released || !this.pressedNotes.has(note)) {
@@ -236,6 +266,8 @@ class PianoAudio {
 
   dispose() {
     this.disposed = true;
+    this.cancelWarmup?.();
+    this.cancelWarmup = null;
     this.stopAll();
     this.loadControllers.forEach(controller => controller.abort());
     this.loadControllers.clear();

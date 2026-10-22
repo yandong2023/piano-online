@@ -8,7 +8,6 @@ const text = (zh, en) => english ? en : zh;
 const $ = (id) => document.getElementById(id);
 const root = document.querySelector('[data-studio]');
 const isFormControl = (target) => target instanceof Element && Boolean(target.closest('input,select,textarea,[contenteditable="true"]'));
-const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // Reuse the existing audio and song engines. Input is scoped and multi-pointer safe.
 class StudioPiano extends Piano {
@@ -16,10 +15,7 @@ class StudioPiano extends Piano {
     const keys = document.querySelector('.keys');
     keys.replaceChildren();
     super.generateKeyboard();
-    let whites = 0;
     keys.querySelectorAll('.key').forEach((key) => {
-      if (key.classList.contains('white')) whites += 1;
-      else key.style.setProperty('--key-left', `${whites / 22 * 100}%`);
       key.setAttribute('role', 'button');
       key.tabIndex = 0;
       key.setAttribute('aria-pressed', 'false');
@@ -29,7 +25,7 @@ class StudioPiano extends Piano {
       label.textContent = key.dataset.note;
       key.append(label);
     });
-    keys.classList.add('show-labels');
+    keys.classList.toggle('show-labels', $('labels-toggle')?.checked !== false);
   }
 
   setupEventListeners() {
@@ -39,10 +35,10 @@ class StudioPiano extends Piano {
     this.manualSustain = false;
     this.spaceSustain = false;
     this.midiSustain = false;
-    const hold = (note) => {
+    const hold = (note, inputStartedAt) => {
       const count = this.noteHolders.get(note) || 0;
       this.noteHolders.set(note, count + 1);
-      if (!count) this.pressKey(note);
+      if (!count) this.pressKey(note, inputStartedAt);
     };
     const release = (note) => {
       const count = this.noteHolders.get(note) || 0;
@@ -50,6 +46,7 @@ class StudioPiano extends Piano {
       else this.noteHolders.set(note, count - 1);
     };
     root.querySelector('.keys').addEventListener('pointerdown', (event) => {
+      const inputStartedAt = performance.now();
       const key = event.target.closest('.key');
       if (!key || (event.pointerType === 'mouse' && event.button !== 0)) return;
       event.preventDefault();
@@ -57,14 +54,14 @@ class StudioPiano extends Piano {
       root.focus({ preventScroll: true });
       key.setPointerCapture?.(event.pointerId);
       this.pointers.set(event.pointerId, key.dataset.note);
-      hold(key.dataset.note);
+      hold(key.dataset.note, inputStartedAt);
     });
     root.addEventListener('pointermove', (event) => {
       const previous = this.pointers.get(event.pointerId);
       if (!previous) return;
       const key = document.elementFromPoint(event.clientX, event.clientY)?.closest('.key');
       if (key && root.contains(key) && key.dataset.note !== previous) {
-        release(previous); hold(key.dataset.note); this.pointers.set(event.pointerId, key.dataset.note);
+        release(previous); hold(key.dataset.note, performance.now()); this.pointers.set(event.pointerId, key.dataset.note);
       }
     });
     const releasePointer = (event) => {
@@ -76,13 +73,14 @@ class StudioPiano extends Piano {
     window.addEventListener('pointercancel', releasePointer);
     root.addEventListener('lostpointercapture', releasePointer);
     document.addEventListener('keydown', (event) => {
+      const inputStartedAt = performance.now();
       if (event.repeat || event.ctrlKey || event.metaKey || event.altKey) return;
       const identity = keyboardIdentity(event);
       if (this.keyboardHeld.has(identity)) return;
       const pianoKey = event.target instanceof Element && event.target.closest('.key');
       const note = pianoKey && ['Enter', 'Space'].includes(event.code)
         ? pianoKey.dataset.note : (!isFormControl(event.target) || pianoKey) && keyboardNote(event, this.keyMap);
-      if (note) { event.preventDefault(); this.keyboardHeld.set(identity, note); hold(note); }
+      if (note) { event.preventDefault(); this.keyboardHeld.set(identity, note); hold(note, inputStartedAt); }
       else if (event.code === 'Space' && !isFormControl(event.target) && !event.target.closest?.('button,a,summary')) {
         event.preventDefault(); this.spaceSustain = true; this.applySustain();
       }
@@ -97,10 +95,10 @@ class StudioPiano extends Piano {
     document.addEventListener('visibilitychange', () => { if (document.hidden) this.releaseAll(); });
   }
 
-  pressKey(note) {
+  pressKey(note, inputStartedAt = performance.now()) {
     this.keys[note]?.classList.add('active');
     this.keys[note]?.setAttribute('aria-pressed', 'true');
-    this.audio.playNote(note).catch(showError);
+    this.audio.playNote(note, 0.9, inputStartedAt).catch(showError);
     this.onNotePlay?.(note);
   }
   releaseKey(note) {
@@ -120,12 +118,14 @@ class StudioPiano extends Piano {
     this.audio.setSustain(this.sustainPedal);
     $('sustain-toggle').checked = this.sustainPedal;
   }
-  releaseAll() {
+  releaseAll({ cancelPending = true } = {}) {
     this.spaceSustain = false;
     this.midiSustain = false;
     this.audio.setSustain(false);
     [...this.audio.pressedNotes].forEach((note) => this.releaseKey(note));
-    this.audio.stopAll();
+    // Teaching can change range during a pending first resume. Release that
+    // tap normally so it still receives its minimum attack after resuming.
+    if (cancelPending) this.audio.stopAll();
     this.pointers.clear(); this.keyboardHeld.clear(); this.noteHolders.clear();
     this.applySustain();
   }
@@ -142,8 +142,6 @@ function readSettings() { try { return JSON.parse(localStorage.getItem('piano-st
 async function initialize() {
   if (!root) return;
   const piano = new StudioPiano();
-  const ready = await piano.audio.init();
-  if (!ready) { showError(new Error('Web Audio unavailable')); return; }
   const practice = new PracticeMode(piano);
   const showResult = practice.showResultModal.bind(practice);
   practice.showResultModal = (options) => {
@@ -161,7 +159,6 @@ async function initialize() {
   window.pianoPracticeMode = practice;
   window.pianoStudio = { piano, practice, rhythm };
   let mode = 'free';
-  const viewport = $('keyboard-viewport');
   const songSelect = $('song-select');
   const settings = readSettings();
   const volume = Number(settings.volume);
@@ -177,7 +174,7 @@ async function initialize() {
   $('studio-volume').addEventListener('input', applySettings);
   $('labels-toggle').addEventListener('change', applySettings);
   $('sustain-toggle').addEventListener('change', (event) => { piano.manualSustain = event.target.checked; piano.applySustain(); });
-  piano.audio.context.onstatechange = () => {
+  piano.audio.onStateChange = () => {
     $('studio-audio-status').textContent = piano.audio.context.state === 'running'
       ? text('声音已开启', 'Sound enabled') : text('按下琴键开启声音', 'Press a key to enable sound');
   };
@@ -199,16 +196,7 @@ async function initialize() {
     updateIdle();
   }
   root.querySelectorAll('[data-play-mode]').forEach(button => button.addEventListener('click', () => setMode(button.dataset.playMode)));
-  root.querySelectorAll('[data-octave]').forEach(button => button.addEventListener('click', () => {
-    viewport.scrollBy({left:Number(button.dataset.octave) * Math.min(viewport.clientWidth * .85, 322),behavior:reducedMotion ? 'instant' : 'smooth'});
-  }));
-  function keepNoteVisible(note) {
-    const key = piano.keys[note]; if (!key) return;
-    const bounds=key.getBoundingClientRect(), frame=viewport.getBoundingClientRect();
-    if (bounds.left < frame.left + 5 || bounds.right > frame.right - 5) {
-      viewport.scrollTo({left:key.offsetLeft - viewport.clientWidth / 2 + key.offsetWidth / 2,behavior:'instant'});
-    }
-  }
+  const keepNoteVisible = note => piano.ensureNoteVisible(note);
   function refreshPractice() {
     if (!practice.isPlaying) { updateIdle(); return; }
     setMode('guided');
@@ -216,7 +204,7 @@ async function initialize() {
     $('studio-submessage').textContent = text('跟着金色琴键弹，按对再继续。', 'Play the gold key. The song waits for you.');
     $('studio-upcoming').hidden = false;
     $('studio-upcoming').replaceChildren(...practice.currentSong.notes.slice(practice.currentNoteIndex, practice.currentNoteIndex + 9).map(note => {
-      const el=document.createElement('span'); el.textContent=practice.getKeyboardKeyForNote(note) || note; el.title=note; return el;
+      const el=document.createElement('span'); el.textContent=piano.mobileViewport.matches ? note : practice.getKeyboardKeyForNote(note) || note; el.title=note; return el;
     }));
     $('studio-progressbar').value = practice.currentNoteIndex / practice.currentSong.notes.length * 100;
     keepNoteVisible(practice.currentSong.notes[practice.currentNoteIndex]);
@@ -287,6 +275,7 @@ async function initialize() {
     }
   });
   window.addEventListener('pagehide',()=>{piano.releaseAll();if(rhythm.isPlaying)rhythm.stopGame();});
+  window.addEventListener('beforeunload', () => piano.audio.dispose());
   document.dispatchEvent(new CustomEvent('piano:ready'));
 }
 

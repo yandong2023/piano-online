@@ -87,3 +87,39 @@ test('failed sample requests are backoff limited without disabling playback',asy
  await a.playNote('D3');a.stopNote('D3');await new Promise(r=>setTimeout(r,0));
  assert.equal(requests,first);assert.equal(a.context.starts.length,2);
 });
+
+test('idle warmup preloads 19 natural samples before input and deduplicates init/play',async()=>{
+ const a=audio();let idle,requests=[];
+ window.requestIdleCallback=callback=>{idle=callback;return 7;};window.cancelIdleCallback=()=>{};
+ globalThis.fetch=async(url,options)=>{requests.push({url,options});return {ok:true,arrayBuffer:async()=>new ArrayBuffer(8)};};
+ a.scheduleWarmup();a.scheduleWarmup();assert.equal(a.context,null);assert.equal(requests.length,0);
+ idle();await a.init();await a.playNote('C3');await Promise.all(a.loadingBuffers.values());
+ assert.equal(requests.length,19);assert.equal(a.buffers.size,19);
+ assert.ok(a.buffers.has('C3')&&a.buffers.has('G5'));
+ assert.ok(requests.every(r=>r.options.cache==='force-cache'));
+ assert.equal(new Set(requests.map(r=>r.url)).size,19);
+});
+
+test('input before idle cancels scheduled work and concurrent loads share one fetch',async()=>{
+ const a=audio();let idle,cancelled=0,requests=0;
+ window.requestIdleCallback=callback=>{idle=callback;return 7;};window.cancelIdleCallback=id=>{assert.equal(id,7);cancelled++;};
+ globalThis.fetch=(_url,{signal})=>{requests++;return new Promise((_resolve,reject)=>signal.addEventListener('abort',()=>reject(new Error('aborted'))));};
+ a.scheduleWarmup();await a.playNote('C4');
+ a.loadBuffer('C4').catch(()=>{});a.loadBuffer('C4').catch(()=>{});idle();
+ assert.equal(cancelled,1);assert.equal(requests,19);assert.equal(a.context.starts.length,1);
+});
+
+test('dispose cancels idle and aborts in-flight sample warmup',async()=>{
+ const a=audio();let idle,cancelled=0;
+ window.requestIdleCallback=callback=>{idle=callback;return 7;};window.cancelIdleCallback=()=>cancelled++;
+ a.scheduleWarmup();a.dispose();idle();assert.equal(cancelled,1);assert.equal(a.context,null);
+ const b=audio();await b.init();const signals=[...b.loadControllers.values()].map(c=>c.signal);
+ b.dispose();assert.equal(signals.length,19);assert.ok(signals.every(s=>s.aborted));
+});
+
+test('without requestIdleCallback warmup waits 1200ms and can be cancelled',t=>{
+ t.mock.timers.enable({apis:['setTimeout']});
+ const a=audio();a.scheduleWarmup();t.mock.timers.tick(1199);assert.equal(a.context,null);
+ t.mock.timers.tick(1);assert.ok(a.context);a.dispose();
+ const b=audio();b.scheduleWarmup();b.dispose();t.mock.timers.tick(1200);assert.equal(b.context,null);
+});

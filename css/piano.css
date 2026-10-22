@@ -4553,3 +4553,15 @@ html[lang="en"] .hero-home-copy {
         font-size: 0.94rem;
     }
 }
+
+/* Mobile legacy practice pages share the parameterized two-octave keyboard. */
+.piano-range{display:none}
+@media(max-width:640px){
+  .piano-keyboard-viewport{overflow-x:auto;overscroll-behavior-x:contain;max-width:100%}
+  .piano-keyboard-viewport .keys{width:600px;min-width:600px;padding:0;gap:0;justify-content:flex-start;touch-action:none}
+  .piano-keyboard-viewport .key.white{flex:1 0 40px;min-width:40px;box-sizing:border-box}
+  .piano-keyboard-viewport .key.black{position:absolute;left:var(--key-left);top:0;width:24px;margin:0;transform:translateX(-50%)}
+  .piano-keyboard-viewport .key-label,.key-hint .hint-key{display:none!important}
+  .piano-range{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .piano-range button{min-width:44px;min-height:44px}
+}

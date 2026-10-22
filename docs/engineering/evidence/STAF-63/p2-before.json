@@ -1,0 +1,76 @@
+{
+  "phase": "before",
+  "failures": [
+    "P2-1 C6: visible=36/40 after 300ms",
+    "P3 mobile range hint missing",
+    "P2-2 tablet arrows hidden or disabled",
+    "P3 desktop key count missing"
+  ],
+  "highlights": [
+    {
+      "note": "C6",
+      "width": 40,
+      "visible": 36,
+      "scrollLeft": 0
+    },
+    {
+      "note": "C7",
+      "width": 40,
+      "visible": 40,
+      "scrollLeft": 284
+    },
+    {
+      "note": "C6",
+      "width": 40,
+      "visible": 40,
+      "scrollLeft": 142
+    },
+    {
+      "note": "B5",
+      "width": 40,
+      "visible": 40,
+      "scrollLeft": 142
+    },
+    {
+      "note": "A5",
+      "width": 40,
+      "visible": 40,
+      "scrollLeft": 142
+    },
+    {
+      "note": "G5",
+      "width": 40,
+      "visible": 40,
+      "scrollLeft": 142
+    }
+  ],
+  "mobile": {
+    "keys": 25,
+    "width": 40,
+    "label": "C3–C5"
+  },
+  "tablet": {
+    "keys": 37,
+    "client": 674,
+    "content": 990,
+    "start": 0,
+    "buttons": [
+      {
+        "visible": false,
+        "enabled": false
+      },
+      {
+        "visible": false,
+        "enabled": false
+      }
+    ]
+  },
+  "desktop": {
+    "keys": 37,
+    "client": 1086,
+    "content": 1086,
+    "label": "C3–C6",
+    "arrowsHidden": true
+  },
+  "page_errors": []
+}
