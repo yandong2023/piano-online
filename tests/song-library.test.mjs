@@ -5,6 +5,7 @@ import test from 'node:test';
 import { publicSongs, songs } from '../data/song-library.mjs';
 import { KEY_MAP, jianpu, letterNoteLines, noteName, songRecommendations, SONG_TUTORIALS } from '../scripts/render-song-pages.mjs';
 import { runInNewContext } from 'node:vm';
+import { getTutorialBySlug } from '../data/tutorial-library.mjs';
 
 const ids = publicSongs.map((song) => song.id);
 const slugs = publicSongs.map((song) => song.slug);
@@ -61,33 +62,65 @@ test('generated song content links stay localized, unique and omit unavailable g
   }
 });
 
-test('difficulty deep links combine with search/category, handle hash changes and reset', async () => {
+test('moonlight links to the relevant classic pieces guide in Chinese and English only', async () => {
+  const slug = 'classic-piano-pieces-for-beginners';
+  const article = getTutorialBySlug(slug);
+  for (const [prefix, locale] of [['', 'zh'], ['en/', 'en']]) {
+    const html = await readFile(`${prefix}songs/moonlight-sonata/index.html`, 'utf8');
+    assert.ok(html.includes(`<a href="/${prefix}articles/guides/${slug}/">${article.title[locale]}</a>`));
+    const section = html.match(/<section[^>]*data-related-tutorials>[\s\S]*?<\/section>/)?.[0];
+    assert.ok(section);
+    assert.ok(!section.includes('fur-elise-piano-guide'));
+  }
+  const traditional = await readFile('zh-hant/songs/moonlight-sonata/index.html', 'utf8');
+  assert.ok(!traditional.includes('data-related-tutorials'));
+  assert.ok(!traditional.includes('/zh-hant/articles/'));
+});
+
+test('difficulty, category, search and reset keep category counts and totals in sync', async () => {
   const element = (props = {}) => ({ value: '', hidden: false, dataset: {}, events: {}, textContent: '',
     addEventListener(type, fn) { this.events[type] = fn; }, setAttribute() {}, focus() {}, ...props });
-  for (const initialHash of ['#difficulty-2', '#difficulty-99', '#kids']) {
+  const cases = ['zh-CN', 'en', 'zh-Hant'].flatMap(lang =>
+    ['#difficulty-2', '#difficulty-99', '#kids'].map(hash => [lang, hash]));
+  for (const [lang, initialHash] of cases) {
+    const totalText = count => `${count} ${lang === 'en' ? 'songs' : '首歌曲'}`;
+    const categoryText = count => `${count} ${lang === 'en' ? 'songs' : '首'}`;
     const search = element(), difficulty = element(), reset = element(), count = element(), empty = element();
     const cards = [element({ dataset: { difficulty: '1', category: 'kids' }, textContent: 'Twinkle' }),
       element({ dataset: { difficulty: '2', category: 'kids' }, textContent: 'Birthday' }),
       element({ dataset: { difficulty: '2', category: 'classical' }, textContent: 'Minuet' })];
     const button = element({ dataset: { libraryFilter: 'kids' } });
+    const headings = [element(), element()];
+    const groups = [cards.slice(0, 2), cards.slice(2)].map((items, index) => element({
+      querySelectorAll: () => items, querySelector: () => headings[index]
+    }));
+    const checkGroups = () => {
+      for (const [index, group] of groups.entries()) {
+        const visible = group.querySelectorAll().filter(card => !card.hidden).length;
+        assert.equal(group.hidden, visible === 0);
+        if (visible) assert.equal(headings[index].textContent, categoryText(visible));
+      }
+    };
     const nodes = { 'library-search': search, 'library-difficulty': difficulty, 'library-reset': reset, 'library-count': count, 'library-empty': empty };
     const events = {};
     const window = { location: { hash: initialHash, pathname: '/songs/', search: '' },
       history: { replaceState(_a, _b, url) { window.location.hash = url.includes('#') ? url.slice(url.indexOf('#')) : ''; } },
       addEventListener(type, fn) { events[type] = fn; } };
-    const document = { documentElement: { lang: 'zh-CN' }, getElementById: id => nodes[id],
-      querySelectorAll: selector => selector === '[data-library-filter]' ? [button] : selector.includes('.song-card') ? cards : [] };
+    const document = { documentElement: { lang }, getElementById: id => nodes[id],
+      querySelectorAll: selector => selector === '[data-library-filter]' ? [button] : selector === '.song-category-section' ? groups : cards };
     runInNewContext(await readFile('js/library-browser.js', 'utf8'), { document, window });
-    assert.equal(count.textContent, initialHash === '#difficulty-2' ? '2 首歌曲' : '3 首歌曲');
+    assert.equal(count.textContent, totalText(initialHash === '#difficulty-2' ? 2 : 3));
+    checkGroups();
     difficulty.value = '2'; difficulty.events.change();
     assert.equal(window.location.hash, '#difficulty-2');
-    button.events.click(); assert.equal(count.textContent, '1 首歌曲');
-    search.value = 'Minuet'; search.events.input(); assert.equal(count.textContent, '0 首歌曲');
+    checkGroups();
+    button.events.click(); assert.equal(count.textContent, totalText(1)); checkGroups();
+    search.value = 'Minuet'; search.events.input(); assert.equal(count.textContent, totalText(0)); checkGroups();
     assert.equal(empty.hidden, false);
-    reset.events.click(); assert.equal(count.textContent, '3 首歌曲');
+    reset.events.click(); assert.equal(count.textContent, totalText(3)); checkGroups();
     assert.equal(window.location.hash, '');
     window.location.hash = '#difficulty-1'; events.hashchange();
-    assert.equal(count.textContent, '1 首歌曲');
+    assert.equal(count.textContent, totalText(1)); checkGroups();
   }
 });
 

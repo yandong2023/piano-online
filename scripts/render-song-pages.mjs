@@ -140,7 +140,7 @@ export const SONG_TUTORIALS = {
   'ode-to-joy': ['classic-piano-pieces-for-beginners', 'metronome-for-beginners'],
   'jingle-bells': ['basic-piano-chords', 'metronome-for-beginners'],
   'fur-elise': ['fur-elise-piano-guide'],
-  moonlight: ['fur-elise-piano-guide'],
+  moonlight: ['classic-piano-pieces-for-beginners'],
   'minuet-in-g': ['classic-piano-pieces-for-beginners'],
   canon: ['left-hand-piano-basics', 'basic-piano-chords'],
   'brahms-lullaby': ['left-hand-piano-basics']

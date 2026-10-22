@@ -18,7 +18,11 @@ if (search) {
       const matches=(category==='all'||card.dataset.category===category)&&(!difficulty||difficulty.value==='all'||card.dataset.difficulty===difficulty.value)&&normalized(card.textContent+' '+(card.dataset.search||'')).includes(term);
       card.hidden=!matches; if(matches)count++;
     }
-    document.querySelectorAll('.song-category-section').forEach(group=>{group.hidden=![...group.querySelectorAll('.song-card')].some(card=>!card.hidden);});
+    document.querySelectorAll('.song-category-section').forEach(group=>{
+      const visibleCount=[...group.querySelectorAll('.song-card')].filter(card=>!card.hidden).length;
+      group.hidden=visibleCount===0;
+      if(visibleCount)group.querySelector('.song-category-heading > span').textContent=english?`${visibleCount} songs`:`${visibleCount} 首`;
+    });
     document.getElementById('library-count').textContent=english?`${count} songs`:`${count} 首歌曲`;
     document.getElementById('library-empty').hidden=count>0;
     buttons.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.libraryFilter===category)));
