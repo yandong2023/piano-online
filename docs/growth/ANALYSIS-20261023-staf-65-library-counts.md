@@ -151,9 +151,15 @@
 脚本在本任务工作目录（未进仓库，含属性 ID，不含凭据）：
 
 - `ga4_staf65.py`：站点日粒度、曲库首页 28 天、moonlight 页、全站事件清单、来源/设备
-- `ga4_staf65_b.py`：三语曲库首页事件明细、GSC 页面级
-- `ga4_staf65_c.py`：三语合计、GSC 页面合计、GSC 教程文
+- `ga4_staf65_b.py`：三语曲库首页事件明细、GSC 站点日粒度
+- `ga4_staf65_c.py`：三语合计、GSC 页面合计、GSC 教程文、GSC 月光页日趋势
 - `ga4_staf65_d.py`：曲库首页日粒度、GSC 月光页/曲库首页/全站合计
+- `collect_evidence.sh`：依次重跑上述四个脚本，汇总为 `evidence/STAF-65-raw-queries.log`（本次运行 52 行、0 个 HTTP 错误）
+- `prod_check.sh`：生产态核验，输出 `evidence/STAF-65-production-check.txt`（F1 的原始命令行与输出）
+
+随本报告交付的附件：
+- `ANALYSIS-20261023-staf-65-library-counts.md`（本文件）
+- `STAF-65-analysis-evidence.zip`：`raw-queries.log`（全部查询原始输出）、`production-check.txt`（生产抓取）、四个取数脚本、`prod_check.sh`
 
 关键请求形态（GA4 Data API `runReport`）：
 
