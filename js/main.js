@@ -24,7 +24,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!hasPiano) return;
 
     piano = new Piano();
-    await piano.audio.init();
     cleanupAudioRuntime = installAudioRuntime(piano);
 
     if (document.getElementById('song-select') && document.getElementById('start-practice')) {
@@ -55,7 +54,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     };
 
-    ['click', 'keydown', 'touchstart'].forEach((event) => {
+    ['pointerdown', 'keydown'].forEach((event) => {
       document.addEventListener(event, resumeAudio, { once: true });
     });
 

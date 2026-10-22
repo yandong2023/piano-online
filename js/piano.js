@@ -2,6 +2,7 @@ import PianoAudio from './piano-audio.js';
 import { PracticeMode } from './practice-mode.js';
 import { PianoRecorder } from './recorder.js';
 import { createPracticeEntryController } from './practice-entry.mjs';
+import { keyboardNotes, mobileRangeForNote, keyboardMapForRange } from './keyboard-range.mjs';
 
 console.log('piano.js loaded');
 
@@ -9,6 +10,10 @@ class Piano {
     constructor() {
         console.log('Piano constructor called');
         this.audio = new PianoAudio();
+        this.audio.scheduleWarmup();
+        this.mobileViewport = window.matchMedia('(max-width: 640px)');
+        this.startOctave = 3;
+        this.octaves = this.mobileViewport.matches ? 2 : 3;
         this.keys = {};
         this.sustainPedal = false;
         this.isRecording = false;
@@ -54,6 +59,7 @@ class Piano {
             'm': 'B5',
             ',': 'C6'
         };
+        this.baseKeyMap = { ...this.keyMap };
         
         // 等待 DOM 加载完成后再初始化
         if (document.readyState === 'loading') {
@@ -61,11 +67,13 @@ class Piano {
                 this.generateKeyboard();
                 this.initializeKeyboard();
                 this.setupEventListeners();
+                this.setupRangeControls();
             });
         } else {
             this.generateKeyboard();
             this.initializeKeyboard();
             this.setupEventListeners();
+            this.setupRangeControls();
         }
     }
 
@@ -87,50 +95,20 @@ class Piano {
             'B': 'si'
         };
 
-        const notes = [
-            { note: 'C3', type: 'white' },
-            { note: 'C#3', type: 'black' },
-            { note: 'D3', type: 'white' },
-            { note: 'D#3', type: 'black' },
-            { note: 'E3', type: 'white' },
-            { note: 'F3', type: 'white' },
-            { note: 'F#3', type: 'black' },
-            { note: 'G3', type: 'white' },
-            { note: 'G#3', type: 'black' },
-            { note: 'A3', type: 'white' },
-            { note: 'A#3', type: 'black' },
-            { note: 'B3', type: 'white' },
-            { note: 'C4', type: 'white' },
-            { note: 'C#4', type: 'black' },
-            { note: 'D4', type: 'white' },
-            { note: 'D#4', type: 'black' },
-            { note: 'E4', type: 'white' },
-            { note: 'F4', type: 'white' },
-            { note: 'F#4', type: 'black' },
-            { note: 'G4', type: 'white' },
-            { note: 'G#4', type: 'black' },
-            { note: 'A4', type: 'white' },
-            { note: 'A#4', type: 'black' },
-            { note: 'B4', type: 'white' },
-            { note: 'C5', type: 'white' },
-            { note: 'C#5', type: 'black' },
-            { note: 'D5', type: 'white' },
-            { note: 'D#5', type: 'black' },
-            { note: 'E5', type: 'white' },
-            { note: 'F5', type: 'white' },
-            { note: 'F#5', type: 'black' },
-            { note: 'G5', type: 'white' },
-            { note: 'G#5', type: 'black' },
-            { note: 'A5', type: 'white' },
-            { note: 'A#5', type: 'black' },
-            { note: 'B5', type: 'white' },
-            { note: 'C6', type: 'white' }
-        ];
+        keysContainer.replaceChildren();
+        this.keyMap = keyboardMapForRange(this.baseKeyMap, this.startOctave, this.mobileViewport.matches);
+        const notes = keyboardNotes(this.startOctave, this.octaves);
+        const reverseKeyMap = Object.entries(this.keyMap).reduce((acc, [k, n]) => { acc[n] = k.toUpperCase(); return acc; }, {});
+        const whiteCount = notes.filter(key => key.type === 'white').length;
+        keysContainer.style.setProperty('--white-count', whiteCount);
+        let whites = 0;
 
         notes.forEach(({ note, type }) => {
             const key = document.createElement('div');
             key.className = `key ${type}`;
             key.dataset.note = note;
+            if (type === 'white') whites += 1;
+            else key.style.setProperty('--key-left', `${whites / whiteCount * 100}%`);
 
             // Add solfege name
             const noteName = note.charAt(0);
@@ -140,7 +118,6 @@ class Piano {
             }
             
             // 添加键盘映射标签
-            const reverseKeyMap = Object.entries(this.keyMap).reduce((acc, [k, n]) => { acc[n] = k.toUpperCase(); return acc; }, {});
             const mappedKey = reverseKeyMap[note];
             if (mappedKey) {
                 const label = document.createElement('div');
@@ -156,7 +133,8 @@ class Piano {
     initializeKeyboard() {
         console.log('Initializing keyboard');
         // 获取所有钢琴键
-        const keys = document.querySelectorAll('.key');
+        this.keys = {};
+        const keys = document.querySelectorAll('.keys .key');
         keys.forEach(key => {
             const note = key.dataset.note;
             this.keys[note] = key;
@@ -172,7 +150,7 @@ class Piano {
             const note = this.getNoteFromKeyCode(e.key.toLowerCase());
             if (note) {
                 console.log('Playing note:', note);
-                this.pressKey(note);
+                this.pressKey(note, e.timeStamp);
             }
             // 处理延音踏板
             if (e.code === 'Space') {
@@ -203,40 +181,7 @@ class Piano {
             }
         });
 
-        // 鼠标与触摸事件监听
-        Object.values(this.keys).forEach(key => {
-            // 鼠标事件
-            key.addEventListener('mousedown', (e) => {
-                if (e.button !== 0) return; // 仅左键
-                const note = key.dataset.note;
-                this.pressKey(note);
-            });
-            key.addEventListener('mouseup', () => {
-                const note = key.dataset.note;
-                this.releaseKey(note);
-            });
-            key.addEventListener('mouseleave', () => {
-                const note = key.dataset.note;
-                if (key.classList.contains('active')) this.releaseKey(note);
-            });
-            
-            // 触摸事件 (移动端/平板多点触控)
-            key.addEventListener('touchstart', (e) => {
-                e.preventDefault(); // 防止滚动、长按选词等
-                const note = key.dataset.note;
-                this.pressKey(note);
-            }, { passive: false });
-            key.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                const note = key.dataset.note;
-                this.releaseKey(note);
-            }, { passive: false });
-            key.addEventListener('touchcancel', (e) => {
-                e.preventDefault();
-                const note = key.dataset.note;
-                this.releaseKey(note);
-            }, { passive: false });
-        });
+        this.bindKeyPointers();
 
         // 默认显示按键提示
         const keysContainer = document.querySelector('.keys');
@@ -298,6 +243,91 @@ class Piano {
 
         // MIDI 初始化
         this.setupMIDI();
+    }
+
+    setupRangeControls() {
+        const container = document.querySelector('.keys');
+        this.keyboardViewport = document.getElementById('keyboard-viewport');
+        if (!this.keyboardViewport) {
+            const viewport = document.createElement('div');
+            viewport.className = 'piano-keyboard-viewport';
+            container.before(viewport);
+            viewport.append(container);
+            this.keyboardViewport = viewport;
+        }
+        this.rangeControls = document.querySelector('.studio-range');
+        if (!this.rangeControls) {
+            const controls = document.createElement('div');
+            controls.className = 'piano-range';
+            controls.innerHTML = '<button type="button" data-octave="-1" aria-label="Lower octave">◀</button><span data-piano-range aria-live="polite"></span><button type="button" data-octave="1" aria-label="Higher octave">▶</button>';
+            this.keyboardViewport.after(controls);
+            this.rangeControls = controls;
+        }
+        // Reuse the existing studio markup without changing generated song pages.
+        this.rangeLabel = this.rangeControls.querySelector('[data-piano-range]') || this.rangeControls.querySelector(':scope > span');
+        this.rangeLabel.setAttribute('aria-live', 'polite');
+        this.rangeControls.querySelectorAll('[data-octave]').forEach(button => {
+            button.addEventListener('click', () => this.setRange(this.startOctave + Number(button.dataset.octave)));
+        });
+        this.mobileViewport.addEventListener('change', () => {
+            this.octaves = this.mobileViewport.matches ? 2 : 3;
+            this.setRange(3, true);
+        });
+        this.updateRangeLabel();
+    }
+
+    updateRangeLabel() {
+        const range = `C${this.startOctave}–C${this.startOctave + this.octaves}`;
+        if (this.rangeLabel) this.rangeLabel.textContent = range;
+        document.querySelector('.keys')?.setAttribute('aria-label', range);
+        this.rangeControls?.querySelectorAll('[data-octave]').forEach(button => {
+            button.disabled = !this.mobileViewport.matches || (Number(button.dataset.octave) < 0 ? this.startOctave === 1 : this.startOctave === 5);
+        });
+    }
+
+    setRange(startOctave, force = false, automatic = false) {
+        const next = this.mobileViewport.matches ? Math.max(1, Math.min(5, startOctave)) : 3;
+        if (!force && next === this.startOctave) return;
+        const current = document.querySelector('.keys .key.current')?.dataset.note;
+        if (this.releaseAll) this.releaseAll({ cancelPending: !automatic });
+        else if (automatic) [...this.audio.pressedNotes].forEach(note => this.releaseKey(note));
+        else this.audio.stopAll();
+        this.startOctave = next;
+        this.generateKeyboard();
+        this.initializeKeyboard();
+        if (!this.releaseAll) this.bindKeyPointers();
+        this.updateRangeLabel();
+        this.keyboardViewport.scrollLeft = 0;
+        // A manual range change also keeps an active teaching target visible.
+        if (current) this.ensureNoteVisible(current)?.classList.add('current');
+    }
+
+    ensureNoteVisible(note) {
+        if (this.mobileViewport.matches && !this.keys[note]) {
+            this.setRange(mobileRangeForNote(note, this.startOctave), false, true);
+        }
+        const key = this.keys[note];
+        const viewport = this.keyboardViewport;
+        if (key && viewport) {
+            const bounds = key.getBoundingClientRect(), frame = viewport.getBoundingClientRect();
+            if (bounds.left < frame.left || bounds.right > frame.right) {
+                viewport.scrollTo({ left: viewport.scrollLeft + bounds.left - frame.left - (viewport.clientWidth - bounds.width) / 2, behavior: 'instant' });
+            }
+        }
+        return key;
+    }
+
+    bindKeyPointers() {
+        Object.values(this.keys).forEach(key => {
+            key.addEventListener('pointerdown', event => {
+                if (event.pointerType === 'mouse' && event.button !== 0) return;
+                event.preventDefault();
+                key.setPointerCapture?.(event.pointerId);
+                this.pressKey(key.dataset.note, event.timeStamp);
+            });
+            const release = () => this.releaseKey(key.dataset.note);
+            ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(type => key.addEventListener(type, release));
+        });
     }
 
     setupMIDI() {
@@ -374,12 +404,12 @@ class Piano {
         return this.keyMap[key];
     }
 
-    pressKey(note) {
+    pressKey(note, inputStartedAt = performance.now()) {
         console.log('Pressing key:', note);
         if (this.keys[note]) {
             this.keys[note].classList.add('active');
         }
-        this.audio.playNote(note);
+        this.audio.playNote(note, 0.9, inputStartedAt).catch(error => console.error('Piano audio:', error));
         
         // 触发音符播放回调
         if (this.onNotePlay) {

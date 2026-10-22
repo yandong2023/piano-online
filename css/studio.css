@@ -46,3 +46,13 @@ body.studio-focus{overflow:hidden!important}body.studio-focus ins.adsbygoogle,bo
 :root body.secondary-page .score-mode-button{padding:9px 12px;min-height:42px;border-radius:7px;border:0;font-size:12px;font-weight:600;white-space:nowrap}
 :root body.secondary-page .score-mode-button.is-active{background:var(--studio-gold)}
 :root body.secondary-page .song-card-level{align-self:flex-start;padding:3px 9px;border-radius:5px}
+
+/* Two octaves retain playable touch targets inside the existing viewport. */
+@media(max-width:640px){
+  :root body .studio-instrument .piano-container{min-width:600px}
+  :root body .studio-instrument .key.black{width:calc(60% / var(--white-count))}
+  :root body .studio-instrument .key-label,
+  :root body .studio-instrument .hint-key,
+  .studio-toggle:has(#labels-toggle){display:none!important}
+}
+@media(min-width:641px){.studio-range button{visibility:hidden}}
