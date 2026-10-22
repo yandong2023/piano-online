@@ -73,3 +73,38 @@ exit 0
 移动端 600px 键盘内部滚动，保证当前单音高亮可见。教学中手动切到不包含当前目标的音域会自动回到目标音域；不支持把跨度超过两八度的和弦全部同时放在手机可视区。
 
 原工作目录保持 200 项用户改动；测试生成的站点文件未纳入本 PR。无部署、无 main 推送、无 Vercel/SEO 配置修改。回滚按 TECH 文档 revert 本 PR 提交，无数据迁移。
+
+## v2 局部修复：P2-1 / P2-2 / P3（2026-10-22）
+
+原记录的整曲高亮断言是同步测量，不能排除 300ms 后动画覆盖定位。质检发现 P2-1 后，已把 `tests/mobile-piano-browser.py` 的整曲与共享高亮检查改为跨两帧、等待 300ms 后测量。本轮不重跑首音/完整浏览器套件；针对修复单独运行 `tests/piano-range-timing-browser.py`，且保留修复前失败证据。
+
+同一测试、同一站点入口 `/songs/fur-elise/`：
+
+```text
+P2_PHASE=before ... python tests/piano-range-timing-browser.py
+基线 abba783；退出 1
+P2-1 C6: visible=36/40 after 300ms; scrollLeft=0
+P2-2 tablet arrows hidden or disabled
+P3 mobile range hint missing
+P3 desktop key count missing
+
+P2_PHASE=after ... python tests/piano-range-timing-browser.py
+退出 0；failures=[]；page_errors=[]
+C6, C7, C6, B5, A5, G5：每一步两帧 + 300ms 后 visible=40/40
+首个 C6：scrollLeft=142；C7：scrollLeft=284
+768×1024：37 键，viewport=674，content=990；两按钮 visible=true/enabled=true
+点击右箭头后 scrollLeft=316=max；末键 C6 visible=45/45；左箭头可返回
+1280×800：37 键，viewport=1086=content；arrowsHidden=true
+390×844：25 键，白键 40px；双向八度切换正常，提示含「用两侧箭头切换音区」
+
+npm test
+87 pass / 0 fail（audio 24、home 17、secondary 9、songs 23、tutorials 10、score 4）
+npm run build
+Built static site in dist with 100 public songs, 10 new tutorials and 357 sitemap URLs.
+git diff --check
+退出 0
+```
+
+完整命令：先 `npm run build`，再使用 webapp-testing 的 `with_server.py --server 'python3 -m http.server 8763 --bind 127.0.0.1 --directory dist' --port 8763 -- python tests/piano-range-timing-browser.py`；环境 `PIANO_CHROMIUM` 指已有 Chromium，`P2_PHASE` 标记前后，`PIANO_EVIDENCE` 指证据目录。原始数据见 `evidence/STAF-63/p2-before.json`、`p2-after.json`，平板截图见 `p2-tablet-right.png`；命令完整输出另附交接 ZIP。
+
+只提交 P2/P3 相关代码、测试、文档与证据。不改键宽/音域，原音频预热实现未变；未部署。请质检只复核 TC-08 / TC-13、AC2-3 等待时序与提示后回 Morgan。真实设备、硬件和旧录音 UI 的未测范围沿用原记录。

@@ -55,4 +55,3 @@ body.studio-focus{overflow:hidden!important}body.studio-focus ins.adsbygoogle,bo
   :root body .studio-instrument .hint-key,
   .studio-toggle:has(#labels-toggle){display:none!important}
 }
-@media(min-width:641px){.studio-range button{visibility:hidden}}

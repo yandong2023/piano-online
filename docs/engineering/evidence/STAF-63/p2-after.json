@@ -1,0 +1,77 @@
+{
+  "phase": "after",
+  "failures": [],
+  "highlights": [
+    {
+      "note": "C6",
+      "width": 40,
+      "visible": 40,
+      "scrollLeft": 142
+    },
+    {
+      "note": "C7",
+      "width": 40,
+      "visible": 40,
+      "scrollLeft": 284
+    },
+    {
+      "note": "C6",
+      "width": 40,
+      "visible": 40,
+      "scrollLeft": 142
+    },
+    {
+      "note": "B5",
+      "width": 40,
+      "visible": 40,
+      "scrollLeft": 142
+    },
+    {
+      "note": "A5",
+      "width": 40,
+      "visible": 40,
+      "scrollLeft": 142
+    },
+    {
+      "note": "G5",
+      "width": 40,
+      "visible": 40,
+      "scrollLeft": 142
+    }
+  ],
+  "mobile": {
+    "keys": 25,
+    "width": 40,
+    "label": "25 键 · C3–C5 · 用两侧箭头切换音区"
+  },
+  "tablet": {
+    "keys": 37,
+    "client": 674,
+    "content": 990,
+    "start": 0,
+    "buttons": [
+      {
+        "visible": true,
+        "enabled": true
+      },
+      {
+        "visible": true,
+        "enabled": true
+      }
+    ],
+    "right": {
+      "scrollLeft": 316,
+      "max": 316,
+      "visible": 45,
+      "width": 45
+    }
+  },
+  "desktop": {
+    "keys": 37,
+    "client": 1086,
+    "content": 1086,
+    "label": "37 键 · C3–C6 · 用两侧箭头切换音区",
+    "arrowsHidden": true
+  },
+  "page_errors": []
+}

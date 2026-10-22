@@ -268,7 +268,11 @@ class Piano {
         this.rangeLabel = this.rangeControls.querySelector('[data-piano-range]') || this.rangeControls.querySelector(':scope > span');
         this.rangeLabel.setAttribute('aria-live', 'polite');
         this.rangeControls.querySelectorAll('[data-octave]').forEach(button => {
-            button.addEventListener('click', () => this.setRange(this.startOctave + Number(button.dataset.octave)));
+            button.addEventListener('click', () => {
+                const direction = Number(button.dataset.octave);
+                if (this.mobileViewport.matches) this.setRange(this.startOctave + direction);
+                else this.keyboardViewport.scrollBy({ left: direction * Math.min(this.keyboardViewport.clientWidth * .85, 322), behavior: 'auto' });
+            });
         });
         this.mobileViewport.addEventListener('change', () => {
             this.octaves = this.mobileViewport.matches ? 2 : 3;
@@ -279,10 +283,18 @@ class Piano {
 
     updateRangeLabel() {
         const range = `C${this.startOctave}–C${this.startOctave + this.octaves}`;
-        if (this.rangeLabel) this.rangeLabel.textContent = range;
+        if (this.rangeLabel) {
+            const language = document.documentElement.lang.toLowerCase();
+            const english = language.startsWith('en'), traditional = language === 'zh-hant';
+            this.rangeLabel.textContent = `${this.octaves * 12 + 1} ${english ? 'keys' : traditional ? '鍵' : '键'} · ${range}`;
+            const hint = document.createElement('span');
+            hint.className = 'mobile-only';
+            hint.textContent = ` · ${english ? 'Use arrows to change range' : traditional ? '用兩側箭頭切換音區' : '用两侧箭头切换音区'}`;
+            this.rangeLabel.append(hint);
+        }
         document.querySelector('.keys')?.setAttribute('aria-label', range);
         this.rangeControls?.querySelectorAll('[data-octave]').forEach(button => {
-            button.disabled = !this.mobileViewport.matches || (Number(button.dataset.octave) < 0 ? this.startOctave === 1 : this.startOctave === 5);
+            button.disabled = this.mobileViewport.matches && (Number(button.dataset.octave) < 0 ? this.startOctave === 1 : this.startOctave === 5);
         });
     }
 
@@ -298,7 +310,7 @@ class Piano {
         this.initializeKeyboard();
         if (!this.releaseAll) this.bindKeyPointers();
         this.updateRangeLabel();
-        this.keyboardViewport.scrollLeft = 0;
+        this.keyboardViewport.scrollTo({ left: 0, behavior: 'instant' });
         // A manual range change also keeps an active teaching target visible.
         if (current) this.ensureNoteVisible(current)?.classList.add('current');
     }

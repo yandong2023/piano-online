@@ -15,7 +15,8 @@ report = {}
 
 def metrics(page):
     return page.evaluate('''() => ({
-      range: document.querySelector('.studio-range > span').textContent,
+      range: document.querySelector('.keys').getAttribute('aria-label'),
+      rangeHint: document.querySelector('.studio-range > span').textContent,
       keys: document.querySelectorAll('.keys .key').length,
       whites: [...document.querySelectorAll('.key.white')].map(k=>k.getBoundingClientRect().width),
       buttons: [...document.querySelectorAll('[data-octave]')].map(k=>({width:k.getBoundingClientRect().width,height:k.getBoundingClientRect().height})),
@@ -111,10 +112,12 @@ with sync_playwright() as p:
         page.locator('#song-select').select_option(song)
         page.locator('#start-practice').click()
         page.screenshot(path=str(OUT / f'guided-{song}-390.png'), full_page=True)
-        result = page.evaluate('''() => {
+        result = page.evaluate('''async () => {
           const {piano,practice}=window.pianoStudio; let count=0,high=0;
           const total=practice.currentSong.notes.length;
           while(practice.isPlaying && count <= total){
+            await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+            await new Promise(r=>setTimeout(r,300));
             const note=practice.currentSong.notes[practice.currentNoteIndex];
             const key=document.querySelector('.key.current');
             if(!key || key.dataset.note!==note) throw Error(`Lost highlight: ${note}`);
@@ -129,10 +132,12 @@ with sync_playwright() as p:
         report['songs'][song] = result
 
     # The shared highlight method itself, without Studio's practice-event listener.
-    report['shared_highlight'] = page.evaluate('''() => {
+    report['shared_highlight'] = page.evaluate('''async () => {
       const {piano,practice}=window.pianoStudio;
       for(const note of ['C1','C#1','G5','C7','C3']) {
         practice.highlightKey(note);
+        await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+        await new Promise(r=>setTimeout(r,300));
         const key=document.querySelector('.key.current'),b=key?.getBoundingClientRect(),v=piano.keyboardViewport.getBoundingClientRect();
         if(key?.dataset.note!==note || b.left<v.left-.5 || b.right>v.right+.5) throw Error(`Shared highlight ${note}`);
       }
