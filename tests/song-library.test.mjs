@@ -3,10 +3,93 @@ import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import { publicSongs, songs } from '../data/song-library.mjs';
-import { KEY_MAP, jianpu, letterNoteLines, noteName } from '../scripts/render-song-pages.mjs';
+import { KEY_MAP, jianpu, letterNoteLines, noteName, songRecommendations, SONG_TUTORIALS } from '../scripts/render-song-pages.mjs';
+import { runInNewContext } from 'node:vm';
 
 const ids = publicSongs.map((song) => song.id);
 const slugs = publicSongs.map((song) => song.slug);
+
+test('recommendations prioritize level, composer, category and stable id independently of input order', () => {
+  const song = { id: 'self', difficulty: 2, composer: 'Bach', category: 'classical' };
+  const item = (id, difficulty, composer, category) => ({ id, difficulty, composer, category });
+  const candidates = [song,
+    item('level-d', 2, 'Bach', 'kids'), item('level-c', 2, 'Bach', 'classical'),
+    item('level-b', 2, 'Bach', 'classical'), item('level-a', 2, 'Bach', 'classical'),
+    item('level-e', 2, 'Mozart', 'kids'), item('composer', 3, 'Bach', 'kids'),
+    item('category', 3, 'Mozart', 'classical'), item('z-rest', 3, 'Mozart', 'kids'),
+    item('a-rest', 3, 'Mozart', 'kids'), item('extra', 4, 'Mozart', 'kids')
+  ];
+  const result = songRecommendations(song, candidates);
+  assert.deepEqual(result.sameDifficulty.map(s => s.id), ['level-a', 'level-b', 'level-c']);
+  assert.deepEqual(result.related.map(s => s.id), ['level-d', 'level-e', 'composer', 'category', 'a-rest', 'extra']);
+  assert.deepEqual(result, songRecommendations(song, [...candidates].reverse()));
+  assert.deepEqual(songRecommendations(song, [song]), { sameDifficulty: [], related: [] });
+});
+
+test('every public song gets six related and three distinct same-level choices', () => {
+  for (const song of publicSongs) {
+    const { related, sameDifficulty } = songRecommendations(song);
+    assert.equal(related.length, 6, song.id);
+    assert.equal(sameDifficulty.length, 3, song.id);
+    assert.ok(sameDifficulty.every(other => other.difficulty === song.difficulty));
+    assert.equal(new Set([...related, ...sameDifficulty].map(other => other.id)).size, 9, song.id);
+    assert.ok([...related, ...sameDifficulty].every(other => other.id !== song.id));
+  }
+});
+
+test('generated song content links stay localized, unique and omit unavailable guides', async () => {
+  for (const prefix of ['', 'en/', 'zh-hant/']) {
+    for (const song of publicSongs) {
+      const html = await readFile(`${prefix}songs/${song.slug}/index.html`, 'utf8');
+      const songLinks = [...html.matchAll(/class="song-card" href="([^"]+)"/g)].map(match => match[1]);
+      assert.equal(songLinks.length, 9);
+      assert.equal(new Set(songLinks).size, 9);
+      assert.ok(songLinks.every(href => href.startsWith(`/${prefix}songs/`)));
+      assert.ok(html.includes(`href="/${prefix}songs/#difficulty-${song.difficulty}"`));
+      const tutorialLinks = [...html.matchAll(/<a href="([^\"]*\/articles\/guides\/[^\"]+)"/g)].map(match => match[1]);
+      if (prefix === 'zh-hant/' || !SONG_TUTORIALS[song.id]) {
+        assert.equal(tutorialLinks.length, 0);
+        assert.ok(!html.includes('data-related-tutorials'));
+      } else {
+        assert.ok(tutorialLinks.length >= 1);
+        assert.equal(new Set(tutorialLinks).size, tutorialLinks.length);
+        assert.ok(tutorialLinks.every(href => href.startsWith(`/${prefix}articles/guides/`)));
+        for (const href of tutorialLinks) assert.ok(existsSync(`.${href}index.html`), href);
+      }
+      assert.ok(html.includes('G-EYGD99YB4Y'));
+    }
+  }
+});
+
+test('difficulty deep links combine with search/category, handle hash changes and reset', async () => {
+  const element = (props = {}) => ({ value: '', hidden: false, dataset: {}, events: {}, textContent: '',
+    addEventListener(type, fn) { this.events[type] = fn; }, setAttribute() {}, focus() {}, ...props });
+  for (const initialHash of ['#difficulty-2', '#difficulty-99', '#kids']) {
+    const search = element(), difficulty = element(), reset = element(), count = element(), empty = element();
+    const cards = [element({ dataset: { difficulty: '1', category: 'kids' }, textContent: 'Twinkle' }),
+      element({ dataset: { difficulty: '2', category: 'kids' }, textContent: 'Birthday' }),
+      element({ dataset: { difficulty: '2', category: 'classical' }, textContent: 'Minuet' })];
+    const button = element({ dataset: { libraryFilter: 'kids' } });
+    const nodes = { 'library-search': search, 'library-difficulty': difficulty, 'library-reset': reset, 'library-count': count, 'library-empty': empty };
+    const events = {};
+    const window = { location: { hash: initialHash, pathname: '/songs/', search: '' },
+      history: { replaceState(_a, _b, url) { window.location.hash = url.includes('#') ? url.slice(url.indexOf('#')) : ''; } },
+      addEventListener(type, fn) { events[type] = fn; } };
+    const document = { documentElement: { lang: 'zh-CN' }, getElementById: id => nodes[id],
+      querySelectorAll: selector => selector === '[data-library-filter]' ? [button] : selector.includes('.song-card') ? cards : [] };
+    runInNewContext(await readFile('js/library-browser.js', 'utf8'), { document, window });
+    assert.equal(count.textContent, initialHash === '#difficulty-2' ? '2 首歌曲' : '3 首歌曲');
+    difficulty.value = '2'; difficulty.events.change();
+    assert.equal(window.location.hash, '#difficulty-2');
+    button.events.click(); assert.equal(count.textContent, '1 首歌曲');
+    search.value = 'Minuet'; search.events.input(); assert.equal(count.textContent, '0 首歌曲');
+    assert.equal(empty.hidden, false);
+    reset.events.click(); assert.equal(count.textContent, '3 首歌曲');
+    assert.equal(window.location.hash, '');
+    window.location.hash = '#difficulty-1'; events.hashchange();
+    assert.equal(count.textContent, '1 首歌曲');
+  }
+});
 
 test('classic library includes at least 100 public songs', () => {
   assert.ok(publicSongs.length >= 100, `expected at least 100 songs, received ${publicSongs.length}`);

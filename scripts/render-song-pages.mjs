@@ -5,6 +5,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { publicSongs } from '../data/song-library.mjs';
 import { getScoreBySongId, hasScoreForSong } from '../data/song-scores.mjs';
 import { toTraditionalHtml } from '../data/zh-hant.mjs';
+import { getTutorialBySlug } from '../data/tutorial-library.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = path.resolve(HERE, '..');
@@ -64,6 +65,8 @@ ${alternates.map(([hreflang, href]) => `<link rel="alternate" hreflang="${hrefla
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(description)}">
 <meta property="og:image" content="https://pianoonline.cc/images/og-image.jpg">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-EYGD99YB4Y"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-EYGD99YB4Y');</script>
 <link rel="stylesheet" href="/css/piano.css?v=${ASSET_VERSION}">
 <link rel="stylesheet" href="/css/song-pages.css?v=${ASSET_VERSION}">
 <link rel="stylesheet" href="/css/secondary-pages.css?v=${ASSET_VERSION}">
@@ -88,7 +91,7 @@ function jsonLdScript(graph) {
 }
 function card(song, locale) {
   const composer = song.composer ? `<span class="song-card-composer">${esc(song.composer)}</span>` : '';
-  return `<a class="song-card" href="${songUrl(song, locale)}" data-category="${esc(song.category)}" data-search="${esc(song.title.zh + ' ' + song.title.en)}">
+  return `<a class="song-card" href="${songUrl(song, locale)}" data-category="${esc(song.category)}" data-difficulty="${song.difficulty}" data-search="${esc(song.title.zh + ' ' + song.title.en)}">
 <span class="song-card-level">${difficultyLabel(song.difficulty, locale)}</span>
 <h3>${esc(localeText(song, locale))}</h3>
 <p>${song.estimatedMinutes} ${locale === 'zh' ? '分钟' : 'min'} · ${song.notes.length} ${locale === 'zh' ? '个音符' : 'notes'}</p>
@@ -115,14 +118,40 @@ function renderLibrary(locale) {
 <body class="secondary-page song-library-theme premium-song-library">${nav(locale)}
 <main class="song-library-page song-library-main">
 <header class="song-library-hero"><div class="song-library-hero-inner"><div class="section-kicker">${zh ? '经典曲库' : 'Classic song library'}</div><h1>${zh ? '从熟悉的旋律，走进钢琴。' : 'Start with a melody you already know.'}</h1><p>${zh ? `已收录 ${total} 首可直接练习的经典曲目。按难度和类型挑一首，查看电脑按键并立即开始。` : `${total} playable classics, organized by style and difficulty. Choose a song, see the keyboard letters and begin.`}</p><div class="library-stats"><span>${total} ${zh ? '首歌曲' : 'songs'}</span><span>${zh ? '中英文页面' : 'Bilingual pages'}</span><span>${zh ? '无需注册' : 'No signup'}</span></div></div></header>
-<section class="library-browser" aria-label="${zh ? '筛选曲库' : 'Filter songs'}"><div class="library-search-row"><label for="library-search"><span class="sr-only">${zh ? '搜索歌名或作曲家' : 'Search songs or composers'}</span><input id="library-search" type="search" placeholder="${zh ? '搜索歌名、英文名或作曲家…' : 'Search a song or composer…'}" autocomplete="off"></label><span id="library-count" class="library-count" role="status">${total} ${zh ? '首歌曲' : 'songs'}</span></div><div class="library-filters" role="group" aria-label="${zh ? '歌曲分类' : 'Song categories'}"><button type="button" data-library-filter="all" aria-pressed="true">${zh ? '全部' : 'All songs'}</button>${groups.map(group=>`<button type="button" data-library-filter="${group.category}" aria-pressed="false">${categoryLabels[locale][group.category]}</button>`).join('')}</div><div class="library-empty" id="library-empty" hidden><p>${zh ? '没有找到匹配的歌曲，换个关键词试试。' : 'No songs found. Try a different search.'}</p><button class="studio-quiet" type="button" id="library-reset">${zh ? '清除筛选' : 'Clear filters'}</button></div></section>
+<section class="library-browser" aria-label="${zh ? '筛选曲库' : 'Filter songs'}"><div class="library-search-row"><label for="library-search"><span class="sr-only">${zh ? '搜索歌名或作曲家' : 'Search songs or composers'}</span><input id="library-search" type="search" placeholder="${zh ? '搜索歌名、英文名或作曲家…' : 'Search a song or composer…'}" autocomplete="off"></label><span id="library-count" class="library-count" role="status">${total} ${zh ? '首歌曲' : 'songs'}</span></div><label class="library-difficulty" for="library-difficulty">${zh ? '难度' : 'Difficulty'} <select id="library-difficulty"><option value="all">${zh ? '全部难度' : 'All levels'}</option>${[1, 2, 3, 4].map(level => `<option value="${level}">${difficultyLabel(level, locale)}</option>`).join('')}</select></label><div class="library-filters" role="group" aria-label="${zh ? '歌曲分类' : 'Song categories'}"><button type="button" data-library-filter="all" aria-pressed="true">${zh ? '全部' : 'All songs'}</button>${groups.map(group=>`<button type="button" data-library-filter="${group.category}" aria-pressed="false">${categoryLabels[locale][group.category]}</button>`).join('')}</div><div class="library-empty" id="library-empty" hidden><p>${zh ? '没有找到匹配的歌曲，换个关键词试试。' : 'No songs found. Try a different search.'}</p><button class="studio-quiet" type="button" id="library-reset">${zh ? '清除筛选' : 'Clear filters'}</button></div></section>
 <div class="container song-library-groups">${groups.map((group) => `<section class="song-category-section" id="${group.category}"><div class="song-category-heading"><div><div class="section-kicker">${esc(group.category)}</div><h2>${categoryLabels[locale][group.category]}</h2></div><span>${group.songs.length} ${zh ? '首' : 'songs'}</span></div><div class="song-card-grid">${group.songs.map((song) => card(song, locale)).join('')}</div></section>`).join('')}</div>
 </main><footer class="footer"><div class="container"><div class="footer-content"><p>&copy; 2026 Piano Online</p><div class="footer-links"><a href="${zh ? '/' : '/en/'}">${zh ? '首页' : 'Home'}</a><a href="${zh ? '/tutorials.html' : '/en/tutorials.html'}">${zh ? '学习' : 'Learn'}</a></div></div></div></footer></body></html>`;
 }
-function relatedSongs(song) {
-  const same = publicSongs.filter((item) => item.id !== song.id && item.category === song.category);
-  const rest = publicSongs.filter((item) => item.id !== song.id && item.category !== song.category);
-  return [...same, ...rest].slice(0, 3);
+// Reserve the same-level links first so the two sections never repeat a song.
+export function songRecommendations(song, songs = publicSongs) {
+  const candidates = songs.filter((item) => item.id !== song.id).sort((a, b) =>
+    Number(b.difficulty === song.difficulty) - Number(a.difficulty === song.difficulty) ||
+    Number(Boolean(song.composer) && b.composer === song.composer) - Number(Boolean(song.composer) && a.composer === song.composer) ||
+    Number(b.category === song.category) - Number(a.category === song.category) ||
+    (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+  const sameDifficulty = candidates.filter((item) => item.difficulty === song.difficulty).slice(0, 3);
+  const reserved = new Set(sameDifficulty.map((item) => item.id));
+  return { sameDifficulty, related: candidates.filter((item) => !reserved.has(item.id)).slice(0, 6) };
+}
+export const SONG_TUTORIALS = {
+  'happy-birthday': ['happy-birthday-piano-guide', 'basic-piano-chords'],
+  twinkle: ['piano-keyboard-letters', 'learn-piano-without-sheet-music'],
+  'hot-cross-buns': ['piano-keyboard-letters'],
+  'ode-to-joy': ['classic-piano-pieces-for-beginners', 'metronome-for-beginners'],
+  'jingle-bells': ['basic-piano-chords', 'metronome-for-beginners'],
+  'fur-elise': ['fur-elise-piano-guide'],
+  moonlight: ['fur-elise-piano-guide'],
+  'minuet-in-g': ['classic-piano-pieces-for-beginners'],
+  canon: ['left-hand-piano-basics', 'basic-piano-chords'],
+  'brahms-lullaby': ['left-hand-piano-basics']
+};
+function relatedTutorials(song, locale) {
+  // There are no existing Traditional Chinese tutorial URLs. Do not invent any.
+  if (locale === 'zh-hant') return '';
+  const articles = [...new Set(SONG_TUTORIALS[song.id] || [])].map(getTutorialBySlug).filter(Boolean);
+  if (!articles.length) return '';
+  const zh = locale === 'zh';
+  return `<section class="song-content-section" data-related-tutorials><h2>${zh ? '相关教程' : 'Related piano tutorials'}</h2><ul>${articles.map((article) => `<li><a href="${zh ? '' : '/en'}/articles/guides/${article.slug}/">${esc(article.title[locale])}</a></li>`).join('')}</ul></section>`;
 }
 function keyboardPreview(notes) {
   return notes.slice(0, 20).map((note) => `<span class="note-chip" title="${esc(note)}">${esc(KEY_MAP[note] || note)}</span>`).join('');
@@ -250,7 +279,7 @@ function songFactsSection(song, locale, title) {
 ${items.map(([question, answer]) => `<h3>${esc(question)}</h3><p>${esc(answer)}</p>`).join('\n')}
 </section>`;
 }
-function renderSong(song, locale) {
+function renderSong(song, locale, tutorialLocale = locale) {
   const zh = locale === 'zh';
   const title = localeText(song, locale);
   const pageTitle = zh ? `${title}钢琴简谱与字母谱｜在线弹奏教程` : (song.difficulty <= 2 ? `${title} Piano Letter Notes (Easy) – Play Online` : `${title} Piano Letter Notes – Play Online`);
@@ -265,7 +294,7 @@ function renderSong(song, locale) {
     { '@type': 'MusicComposition', name: title, url: canonical, musicalKey: song.keySignature,
       ...(song.composer && !song.composer.startsWith('Traditional') ? { composer: { '@type': 'Person', name: song.composer } } : {}) }
   ];
-  const rel = relatedSongs(song);
+  const { related: rel, sameDifficulty } = songRecommendations(song);
   const startLabel = zh ? '开始提示练习' : 'Start guided practice';
   const scoreReady = hasScoreForSong(song.id);
   return `<!DOCTYPE html><html lang="${zh ? 'zh-CN' : 'en'}"><head><base href="/">${sharedHead({ locale, title: pageTitle, description, canonical, alternates: songAlternates(`/songs/${song.slug}/`), jsonLd: jsonLdScript(graph) })}<script type="module" src="/js/studio.js?v=${STUDIO_VERSION}"></script><script type="module" src="/js/song-page.js?v=${ASSET_VERSION}"></script></head>
@@ -278,6 +307,8 @@ ${letterNotesSection(song, locale, title)}
 ${songFactsSection(song, locale, title)}
 ${scoreReady ? `<section class="score-stage" data-score-viewer data-locale="${locale}" data-score-ready="${scoreReady ? 'true' : 'false'}"><div class="score-stage-header"><div><div class="section-kicker">${zh ? '互动乐谱' : 'Interactive sheet music'}</div><h2>${zh ? '看着乐谱，也能直接开始弹。' : 'Read the score while you play.'}</h2><p data-score-caption>${scoreReady ? (zh ? '双视图会同时保留乐谱与键位提示，适合从提示练习逐步过渡到看谱弹奏。' : 'Dual view keeps the score and key prompts together so you can transition into reading notation.') : (zh ? '这首曲目的五线谱正在补充中，当前仍可直接使用上方提示练习。' : 'Sheet music for this song is still being prepared, but guided practice above is ready right now.')}</p></div><div class="score-stage-options"><label class="score-follow"><input type="checkbox" data-score-follow checked>${zh ? '自动跟随当前音符' : 'Follow current note'}</label><span>${scoreReady ? (zh ? '已支持乐谱同步' : 'Score sync available') : (zh ? '更多乐谱陆续上线' : 'More scores coming soon')}</span></div></div><div class="score-stage-toolbar"><div class="score-mode-group"><button type="button" class="score-mode-button" data-score-mode="guided">${zh ? '提示模式' : 'Guided'}</button><button type="button" class="score-mode-button is-active" data-score-mode="dual">${zh ? '双视图' : 'Dual view'}</button><button type="button" class="score-mode-button" data-score-mode="score">${zh ? '只看乐谱' : 'Score only'}</button></div><div class="section-kicker">${zh ? '先用提示熟悉旋律，再对照乐谱。' : 'Learn the melody first, then explore its notation.'}</div></div><div class="score-canvas-frame"><div class="score-canvas" data-score-canvas><div class="score-viewer-empty"><strong>${zh ? '正在准备互动乐谱…' : 'Preparing interactive sheet music…'}</strong><p>${zh ? '如果当前歌曲尚未支持五线谱，我们会在这里提示你继续使用上方练习区。' : 'If this song does not support notation yet, you will see a friendly fallback here.'}</p></div></div></div></section>` : ''}
 <section class="song-content-section"><div class="song-category-heading"><div><div class="section-kicker">${zh ? '继续演奏' : 'Keep playing'}</div><h2>${zh ? '下一首经典旋律' : 'Your next classic melody'}</h2></div></div><div class="song-card-grid">${rel.map((item) => card(item, locale)).join('')}</div></section>
+<section class="song-content-section" data-same-difficulty><h2>${zh ? '同难度曲目' : 'Songs at the same level'}</h2><p><a href="${zh ? '' : '/en'}/songs/#difficulty-${song.difficulty}">${zh ? `浏览全部${difficultyLabel(song.difficulty, locale)}曲目` : `Browse all ${difficultyLabel(song.difficulty, locale).toLowerCase()} songs`}</a></p><div class="song-card-grid">${sameDifficulty.map((item) => card(item, locale)).join('')}</div></section>
+${relatedTutorials(song, tutorialLocale)}
 </div></main><footer class="footer"><div class="container"><div class="footer-content"><p>&copy; 2026 Piano Online</p><div class="footer-links"><a href="${zh ? '/songs/' : '/en/songs/'}">${zh ? '返回曲库' : 'Back to songs'}</a><a href="${languageUrl(song, locale)}">${zh ? 'English' : '中文'}</a></div></div></div></footer></body></html>`;
 }
 function renderSitemap() {
@@ -309,7 +340,7 @@ export async function generateSongSite(rootDir = PROJECT_ROOT) {
     const zhSongHtml = renderSong(song, 'zh');
     await writeFile(path.join(zhDir, 'index.html'), zhSongHtml, 'utf8');
     await writeFile(path.join(enDir, 'index.html'), renderSong(song, 'en'), 'utf8');
-    await writeFile(path.join(zhHantDir, 'index.html'), renderTraditional(zhSongHtml, song.slug), 'utf8');
+    await writeFile(path.join(zhHantDir, 'index.html'), renderTraditional(renderSong(song, 'zh', 'zh-hant'), song.slug), 'utf8');
   }
   await writeFile(path.join(rootDir, 'sitemap-songs.xml'), renderSitemap(), 'utf8');
   return { count: publicSongs.length, pages: publicSongs.length * 3 + 3 };
