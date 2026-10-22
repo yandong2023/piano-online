@@ -1,4 +1,13 @@
 /* Shared song discovery and song-detail experience. */
+.library-difficulty { display: block; margin: 16px 0; }
+.library-difficulty select {
+    padding: 8px 12px;
+    color: var(--studio-ink, #242823);
+    background: var(--studio-paper, #fffefa);
+    border: 1px solid var(--studio-line, #dedfd6);
+    border-radius: 8px;
+    font: inherit;
+}
 .song-library-section {
     padding: 76px 0;
     background: #f5f1e9;

@@ -1,0 +1,13 @@
+.home-faq {
+  margin: 48px 0;
+  padding: clamp(20px, 4vw, 36px);
+  border: 1px solid var(--studio-line, #dedfd6);
+  border-radius: 16px;
+  background: var(--studio-paper, #fffefa);
+  color: var(--studio-ink, #242823);
+}
+.home-faq h2 { margin: 0 0 20px; font-size: 24px; }
+.home-faq details { padding: 16px 0; border-top: 1px solid var(--studio-line, #dedfd6); }
+.home-faq summary { cursor: pointer; font-weight: 600; line-height: 1.6; }
+.home-faq p { max-width: 760px; margin: 12px 0 0; line-height: 1.8; }
+.home-faq summary:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }

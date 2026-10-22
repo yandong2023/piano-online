@@ -4,12 +4,18 @@ if (search) {
   const english = document.documentElement.lang.startsWith('en');
   const buttons = [...document.querySelectorAll('[data-library-filter]')];
   const cards = [...document.querySelectorAll('.song-category-section .song-card')];
+  const difficulty = document.getElementById('library-difficulty');
+  const readDifficulty = () => {
+    const level = window.location.hash.match(/^#difficulty-([1-4])$/)?.[1];
+    if (difficulty) difficulty.value = level || 'all';
+  };
+  readDifficulty();
   let category = 'all';
   const normalized = (text) => text.normalize('NFKD').toLocaleLowerCase().replace(/\p{Diacritic}/gu, '').trim();
   const update = () => {
     const term=normalized(search.value); let count=0;
     for(const card of cards){
-      const matches=(category==='all'||card.dataset.category===category)&&normalized(card.textContent+' '+(card.dataset.search||'')).includes(term);
+      const matches=(category==='all'||card.dataset.category===category)&&(!difficulty||difficulty.value==='all'||card.dataset.difficulty===difficulty.value)&&normalized(card.textContent+' '+(card.dataset.search||'')).includes(term);
       card.hidden=!matches; if(matches)count++;
     }
     document.querySelectorAll('.song-category-section').forEach(group=>{group.hidden=![...group.querySelectorAll('.song-card')].some(card=>!card.hidden);});
@@ -19,6 +25,16 @@ if (search) {
   };
   search.addEventListener('input',update);
   buttons.forEach(button=>button.addEventListener('click',()=>{category=button.dataset.libraryFilter;update();}));
-  document.getElementById('library-reset').addEventListener('click',()=>{search.value='';category='all';update();search.focus();});
+  difficulty?.addEventListener('change',()=>{
+    window.history.replaceState(null,'',window.location.pathname+window.location.search+(difficulty.value==='all'?'':`#difficulty-${difficulty.value}`));
+    update();
+  });
+  window.addEventListener('hashchange',()=>{readDifficulty();update();});
+  document.getElementById('library-reset').addEventListener('click',()=>{
+    search.value='';category='all';
+    if (difficulty) difficulty.value='all';
+    window.history.replaceState(null,'',window.location.pathname+window.location.search);
+    update();search.focus();
+  });
   update();
 }

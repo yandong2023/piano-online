@@ -34,9 +34,9 @@ for (const locale of ['zh','en']) for (const home of [true,false]) {
     assert.equal((html.match(/<h1>/g)||[]).length,1);
   });
 }
-test('zh home keeps the original title', () => {
+test('zh home adds simulator while piano page keeps its title', () => {
   const html = renderStudioPage('zh', true);
-  assert.ok(html.includes('<title>在线钢琴 · 打开就能弹，跟着提示学歌 | Piano Online</title>'));
+  assert.ok(html.includes('<title>在线钢琴模拟器 · 跟着提示学歌 | Piano Online</title>'));
   assert.ok(renderStudioPage('zh', false).includes('<title>在线钢琴 · 打开就能弹，跟着提示学歌 | Piano Online</title>'));
 });
 
@@ -60,7 +60,7 @@ test('en piano page language menu links back to zh piano and zh-hant home', () =
 test('zh-hant home renders traditional content with correct head and nav', () => {
   const html = renderTraditionalHome();
   assert.match(html, /<html lang="zh-Hant">/);
-  assert.ok(html.includes('<title>線上鋼琴琴鍵 - 免費網上鋼琴，用電腦鍵盤直接彈 | Piano Online</title>'));
+  assert.ok(html.includes('<title>線上鋼琴模擬器 · 跟著提示學歌 | Piano Online</title>'));
   assert.ok(html.includes('<link rel="canonical" href="https://pianoonline.cc/zh-hant/">'));
   assert.deepEqual(html.match(/<link rel="alternate"[^>]*>/g), HOME_ALTERNATES);
   assert.equal((html.match(/<h1>/g) || []).length, 1);
@@ -100,4 +100,28 @@ test('input and focus safety are implemented without replacing the audio engine'
 });
 test('legacy homepage modules remain inert compatibility shims',async()=>{
   for(const file of ['js/home-premium-style.js','js/en-home-style.js'])assert.doesNotMatch(await readFile(file,'utf8'),/textContent|classList\.add|createElement\(['"]link/);
+});
+
+for (const [locale, html, keywords] of [
+  ['zh', renderStudioPage('zh'), ['钢琴模拟器', '自由钢琴', '五线谱']],
+  ['en', renderStudioPage('en'), ['piano simulator']],
+  ['zh-Hant', renderTraditionalHome(), ['鋼琴模擬器', '自由鋼琴', '五線譜']]
+]) test(`${locale} home has visible localized FAQ matching independent JSON-LD`, () => {
+  const scripts = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map(match => JSON.parse(match[1]));
+  const faqs = scripts.filter(item => item['@type'] === 'FAQPage');
+  assert.equal(faqs.length, 1);
+  assert.equal(faqs[0].inLanguage, locale === 'zh' ? 'zh-CN' : locale);
+  assert.equal(faqs[0].mainEntity.length, 3);
+  const section = html.match(/<section class="home-faq"[\s\S]*?<\/section>/)[0];
+  for (const { name, acceptedAnswer } of faqs[0].mainEntity) {
+    assert.ok(section.includes(name));
+    assert.ok(section.includes(acceptedAnswer.text));
+  }
+  const description = html.match(/<meta name="description" content="([^"]*)/)[1];
+  assert.ok(description.length <= 155);
+  for (const keyword of keywords) assert.ok(description.includes(keyword), keyword);
+  if (locale !== 'en') {
+    const title = html.match(/<title>(.*?)<\/title>/)[1];
+    assert.ok([...title].reduce((n, char) => n + (char.charCodeAt(0) > 127 ? 2 : 1), 0) <= 60);
+  } else assert.match(html, /<title>Virtual Piano Online: Play Free with Your Computer Keyboard<\/title>/);
 });
