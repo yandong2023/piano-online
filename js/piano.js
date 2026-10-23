@@ -1,4 +1,5 @@
 import PianoAudio from './piano-audio.js';
+import { track } from './analytics.js';
 import { PracticeMode } from './practice-mode.js';
 import { PianoRecorder } from './recorder.js';
 import { createPracticeEntryController } from './practice-entry.mjs';
@@ -301,6 +302,8 @@ class Piano {
     setRange(startOctave, force = false, automatic = false) {
         const next = this.mobileViewport.matches ? Math.max(1, Math.min(5, startOctave)) : 3;
         if (!force && next === this.startOctave) return;
+        const previousOctave = this.startOctave;
+        const fromRange = document.querySelector('.keys')?.getAttribute('aria-label');
         const current = document.querySelector('.keys .key.current')?.dataset.note;
         if (this.releaseAll) this.releaseAll({ cancelPending: !automatic });
         else if (automatic) [...this.audio.pressedNotes].forEach(note => this.releaseKey(note));
@@ -310,6 +313,12 @@ class Piano {
         this.initializeKeyboard();
         if (!this.releaseAll) this.bindKeyPointers();
         this.updateRangeLabel();
+        if (this.mobileViewport.matches && !force && !automatic && next !== previousOctave) {
+            track('octave_shift', {
+                direction: next > previousOctave ? 'up' : 'down', from_range: fromRange,
+                to_range: document.querySelector('.keys').getAttribute('aria-label'), octaves: this.octaves,
+            });
+        }
         this.keyboardViewport.scrollTo({ left: 0, behavior: 'instant' });
         // A manual range change also keeps an active teaching target visible.
         if (current) this.ensureNoteVisible(current)?.classList.add('current');
@@ -402,7 +411,7 @@ class Piano {
         const noteStr = midiToNoteName(note);
 
         if (command === 9 && velocity > 0) { // Note on
-            this.pressKey(noteStr);
+            this.pressKey(noteStr, performance.now(), 'midi');
         } else if (command === 8 || (command === 9 && velocity === 0)) { // Note off
             this.releaseKey(noteStr);
         } else if (command === 11) { // Control change (e.g. sustain pedal)

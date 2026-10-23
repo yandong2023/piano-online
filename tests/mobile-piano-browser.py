@@ -5,6 +5,7 @@ Uses real Web Audio, cold contexts, CDP cache disabling and native pointer input
 """
 import json
 import os
+import sys
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 
@@ -12,6 +13,204 @@ OUT = Path(os.environ.get('PIANO_EVIDENCE', '../evidence')).resolve()
 OUT.mkdir(parents=True, exist_ok=True)
 URL = 'http://127.0.0.1:8763'
 report = {}
+
+def run_analytics():
+    """STAF-69: deterministic event assertions with real Web Audio and native input.
+
+    Serve candidate dist on :8763, origin/main (9bcdcab) dist on :8764.
+    Run this file with --analytics; PIANO_EVIDENCE selects the JSON output folder.
+    """
+    from collections import Counter
+
+    results = {}
+    contexts = []
+    hooks = '''
+      for (const event of ['pointerdown','keydown']) document.addEventListener(event,e=>{
+        if(event==='keydown'||e.target.closest?.('.key')) window.inputStartedAt=performance.now();
+      },true);
+      for(const type of [AudioBufferSourceNode,OscillatorNode]){
+        const original=type.prototype.start;
+        type.prototype.start=function(...args){
+          window.startCount=(window.startCount||0)+1;
+          if(window.inputStartedAt&&!window.firstStart) window.firstStart={inputToStartMs:performance.now()-window.inputStartedAt};
+          return original.apply(this,args);
+        };
+      }
+    '''
+
+    def events(page):
+        return page.evaluate("(window.dataLayer||[]).filter(c=>c[0]==='event').map(c=>({name:c[1],params:{...c[2]}}))")
+
+    def named(page, name):
+        return [e['params'] for e in events(page) if e['name'] == name]
+
+    def tap(page, note):
+        page.locator(f'.key[data-note="{note}"]').tap(position={'x': 20, 'y': 170})
+        page.wait_for_function('window.pianoStudio.piano.audio.pendingNotes.size===0')
+
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True, executable_path=os.environ.get('PIANO_CHROMIUM'),
+                                   args=['--autoplay-policy=document-user-activation-required'])
+        def new_page(width=390, path='/', origin=URL):
+            ctx = browser.new_context(viewport={'width': width, 'height': 844}, has_touch=True)
+            contexts.append(ctx)
+            page = ctx.new_page()
+            page.set_default_timeout(5000)
+            page.route('**/*', lambda route: route.continue_() if route.request.url.startswith(origin + '/') else route.abort())
+            errors, consoles = [], []
+            page.on('pageerror', lambda err: errors.append(str(err)))
+            page.on('console', lambda msg: consoles.append(msg.text) if msg.type == 'error' else None)
+            page.add_init_script(hooks)
+            cdp = ctx.new_cdp_session(page)
+            cdp.send('Network.enable')
+            cdp.send('Network.setCacheDisabled', {'cacheDisabled': True})
+            page.goto(origin + path, wait_until='networkidle')
+            page.wait_for_function('window.pianoStudio?.piano.audio.buffers.size===19')
+            return page, cdp, errors, consoles
+
+        mobile, _, _, _ = new_page()
+        assert not events(mobile)
+        tap(mobile, 'C4')
+        mobile.keyboard.press('a')
+        mobile.wait_for_function('window.pianoStudio.piano.audio.pendingNotes.size===0')
+        mobile.locator('[data-octave="1"]').click()
+        tap(mobile, 'D4')
+        assert Counter(e['name'] for e in events(mobile)) == {'audio_first_attack': 1, 'free_play_entry': 1, 'note_play': 3, 'octave_shift': 1}, events(mobile)
+        results['AC1_mobile'] = events(mobile)
+        desktop, _, _, _ = new_page(1280)
+        desktop.locator('[data-studio]').focus()
+        desktop.keyboard.press('a')
+        desktop.wait_for_function('window.firstStart')
+        assert Counter(e['name'] for e in events(desktop)) == {'audio_first_attack': 1, 'free_play_entry': 1, 'note_play': 1}
+        results['AC1_desktop'] = events(desktop)
+
+        for note in ['C4','D4','E4','F4','G4','A4','B4','C5','D5','E5']:
+            tap(mobile, note)
+        assert len(named(mobile, 'audio_first_attack')) == 1
+        first = named(mobile, 'audio_first_attack')[0]
+        latency = first['input_to_start_ms']
+        assert isinstance(latency, (int,float)) and 0 <= latency < 10000 and round(latency,2) == latency
+        bucket = '<50' if latency < 50 else '50-100' if latency < 100 else '100-200' if latency < 200 else '200-500' if latency < 500 else '>=500'
+        assert first['latency_bucket'] == bucket and first['note'] == 'C4'
+        assert first['hit'] in ['sample','fallback'] and first['cold_start'] in ['yes','no'] and first['play_mode'] == 'free'
+        results['AC2'] = {'event': first, 'independent_start_hook': mobile.evaluate('window.firstStart')}
+
+        inputs, cdp, _, _ = new_page()
+        tap(inputs,'C4')
+        inputs.keyboard.press('s')
+        inputs.wait_for_function('window.pianoStudio.piano.audio.pendingNotes.size===0')
+        # Scroll both keys before measuring: revealing D4 can move C4's box.
+        inputs.locator('.key[data-note="D4"]').scroll_into_view_if_needed()
+        points = []
+        for note in ['C4','D4']:
+            box = inputs.locator(f'.key[data-note="{note}"]').bounding_box()
+            points.append({'x': box['x']+20,'y':box['y']+170,'id':1})
+        cdp.send('Input.dispatchTouchEvent', {'type':'touchStart','touchPoints':[points[0]]})
+        inputs.wait_for_function('window.pianoStudio.piano.audio.pressedNotes.has("C4")',timeout=2000)
+        cdp.send('Input.dispatchTouchEvent', {'type':'touchMove','touchPoints':[points[1]]})
+        inputs.wait_for_function('window.pianoStudio.piano.audio.pressedNotes.has("D4")',timeout=2000)
+        cdp.send('Input.dispatchTouchEvent', {'type':'touchEnd','touchPoints':[]})
+        notes = named(inputs,'note_play')
+        assert [e['source'] for e in notes] == ['touch','keyboard','touch','touch'], notes
+        aria = inputs.locator('.keys').get_attribute('aria-label')
+        assert all(e['range'] == aria and e['octaves'] == 2 for e in notes)
+        results['AC3'] = {'events':notes,'aria_label':aria}
+        inputs.evaluate('''async()=>{
+          const p=window.pianoStudio.piano;
+          p.handleMIDIMessage({data:[0x90,64,100]});p.handleMIDIMessage({data:[0x80,64,0]});
+          await p.audio.playNote('F4');p.audio.stopNote('F4');
+        }''')
+        assert [e['source'] for e in named(inputs,'note_play')][-2:] == ['midi','program']
+        results['additional_midi_program'] = named(inputs,'note_play')[-2:]
+
+        shifts, _, _, _ = new_page()
+        shifts.locator('[data-octave="1"]').click()
+        shifts.locator('[data-octave="1"]').click()
+        assert shifts.locator('[data-octave="1"]').is_disabled()
+        shifts.evaluate('document.querySelector(\'[data-octave="1"]\').click();window.pianoStudio.piano.setRange(9)')
+        assert shifts.locator('.keys').get_attribute('aria-label') == 'C5–C7'
+        shifts.set_viewport_size({'width':1280,'height':800})
+        shifts.wait_for_function('window.pianoStudio.piano.octaves===3')
+        desktop_arrows_visible = shifts.locator('[data-octave="-1"]').is_visible()
+        # Existing CSS hides desktop arrows. Native DOM click exercises the
+        # existing scrollBy branch without changing that product behavior.
+        shifts.evaluate('for(let i=0;i<2;i++)document.querySelector(\'[data-octave="-1"]\').click()')
+        shift_events = named(shifts,'octave_shift')
+        assert [(e['from_range'],e['to_range'],e['direction'],e['octaves']) for e in shift_events] == [('C3–C5','C4–C6','up',2),('C4–C6','C5–C7','up',2)]
+        results['AC4'] = {'events':shift_events,'mobile_max_disabled':True,'desktop_arrows_visible':desktop_arrows_visible,'desktop_click_method':'HTMLElement.click','desktop_range':shifts.locator('.keys').get_attribute('aria-label')}
+        shifts.set_viewport_size({'width':390,'height':844})
+        shifts.wait_for_function('window.pianoStudio.piano.octaves===2')
+        shifts.evaluate('window.pianoStudio.piano.ensureNoteVisible("C7")')
+        assert len(named(shifts,'octave_shift')) == 2
+        results['additional_automatic_range'] = shifts.locator('.keys').get_attribute('aria-label')
+
+        free, _, _, _ = new_page()
+        free.wait_for_timeout(2000)
+        assert not named(free,'free_play_entry')
+        # Mobile CSS hides this existing setting; set its state explicitly.
+        free.evaluate('const labels=document.getElementById("labels-toggle");labels.checked=false;labels.dispatchEvent(new Event("change",{bubbles:true}))')
+        tap(free,'C4')
+        entry = named(free,'free_play_entry')[0]
+        assert entry['keys_visible'] == 'false' and entry['range'] == 'C3–C5' and entry['play_mode'] == 'free'
+        free.locator('[data-play-mode="guided"]').click()
+        free.locator('[data-play-mode="free"]').click()
+        tap(free,'E4')
+        assert len(named(free,'free_play_entry')) == 1
+        guided, _, _, _ = new_page(path='/songs/twinkle-twinkle-little-star/')
+        tap(guided,'C4')
+        assert not named(guided,'free_play_entry')
+        assert named(guided,'audio_first_attack')[0]['play_mode'] == 'guided'
+        results['AC5'] = {'before_keys':[],'free_after_reentry':events(free),'song_guided':events(guided)}
+        guided.locator('[data-play-mode="free"]').click()
+        tap(guided,'D4')
+        assert len(named(guided,'free_play_entry')) == 1
+
+        version = mobile.evaluate('new URL(document.querySelector(\'script[src*="/js/studio.js"]\').src).searchParams.get("v")')
+        assert all(e['params']['event_version'] == 1 and e['params']['asset_version'] == version for e in results['AC1_mobile']+results['AC1_desktop'])
+        mobile.evaluate('document.querySelector(\'script[src*="/js/studio.js"]\').src="/js/studio.js"')
+        tap(mobile,'F5')
+        assert named(mobile,'note_play')[-1]['asset_version'] == 'unknown'
+        mobile.evaluate('document.querySelector(\'script[src*="/js/studio.js"]\').src="/js/studio.js?v=changed"')
+        tap(mobile,'G5')
+        assert named(mobile,'note_play')[-1]['asset_version'] == 'changed'
+        results['AC6'] = {'script_version':version,'unknown_event':named(mobile,'note_play')[-2],'updated_event':named(mobile,'note_play')[-1]}
+
+        comparisons = {}
+        for failure in ['missing','throw']:
+            samples = {}
+            for label, origin in [('baseline','http://127.0.0.1:8764'),('candidate',URL)]:
+                page, _, errors, consoles = new_page(origin=origin)
+                page.evaluate('() => { window.gtag=undefined; }' if failure=='missing' else '() => { window.gtag=()=>{throw Error("boom")}; }')
+                before = metrics(page)
+                page.locator('.key[data-note="C4"]').scroll_into_view_if_needed()
+                box = page.locator('.key[data-note="C4"]').bounding_box()
+                page.mouse.move(box['x']+20,box['y']+170)
+                page.mouse.down()
+                page.wait_for_function('window.firstStart')
+                held = page.evaluate('''()=>({notes:[...window.pianoStudio.piano.audio.pressedNotes],active:document.querySelector('.key[data-note="C4"]').classList.contains('active'),state:window.pianoStudio.piano.audio.context.state})''')
+                assert held == {'notes':['C4'],'active':True,'state':'running'}, held
+                page.mouse.up()
+                assert page.evaluate('window.pianoStudio.piano.audio.pressedNotes.size') == 0
+                page.locator('[data-octave="1"]').click()
+                assert page.locator('.keys').get_attribute('aria-label') == 'C4–C6'
+                assert errors == [], errors
+                app_errors = [e for e in consoles if 'net::ERR_FAILED' not in e]
+                assert app_errors == [], app_errors
+                samples[label] = {'before':before,'after':metrics(page),'first_start':page.evaluate('window.firstStart'),'held':held,'page_errors':errors,'console_errors':consoles,'events':events(page)}
+            a,b = samples['baseline'],samples['candidate']
+            geometry = a['before']==b['before'] and a['after']==b['after']
+            latency_delta = abs(a['first_start']['inputToStartMs']-b['first_start']['inputToStartMs'])
+            comparisons[failure] = {**samples,'geometry_equal':geometry,'latency_delta_ms':latency_delta,'within_1ms':latency_delta<=1,'zero_console_errors':not a['console_errors'] and not b['console_errors']}
+            assert geometry
+        results['AC7'] = comparisons
+        results['AC7_strict_pass'] = all(c['within_1ms'] and c['zero_console_errors'] for c in comparisons.values())
+        for ctx in contexts:
+            ctx.close()
+        browser.close()
+    (OUT/'analytics-browser.json').write_text(json.dumps(results,ensure_ascii=False,indent=2)+'\n')
+    print(json.dumps({'AC1_to_AC6':'PASS','AC7_functional':'PASS','AC7_strict':results['AC7_strict_pass'],'evidence':str(OUT/'analytics-browser.json')},ensure_ascii=False))
+    if not results['AC7_strict_pass']:
+        raise AssertionError('AC-7 strict acceptance failed; see analytics-browser.json for baseline/candidate evidence')
 
 def metrics(page):
     return page.evaluate('''() => ({
@@ -24,6 +223,10 @@ def metrics(page):
       state: window.pianoStudio.piano.audio.context?.state,
       buffers: window.pianoStudio.piano.audio.buffers.size
     })''')
+
+if '--analytics' in sys.argv:
+    run_analytics()
+    sys.exit(0)
 
 with sync_playwright() as p:
     browser = p.chromium.launch(headless=True, executable_path=os.environ.get('PIANO_CHROMIUM'),
