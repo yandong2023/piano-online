@@ -141,18 +141,45 @@ await check('AC-15', () => {
   return `all ${files.length} title/description pairs unchanged; home + piano HTML byte-identical; no changed piano.html links`;
 });
 await check('AC-16', () => {
-  const violations = [];
-  let maxZh = 0, maxHant = 0;
-  for (const file of files) {
-    const html = current.get(file);
-    const zhCount = homeLinks(html).length;
-    const hantCount = traditionalHomeLinks(html).length;
-    maxZh = Math.max(maxZh, zhCount);
-    maxHant = Math.max(maxHant, hantCount);
-    if (zhCount > 3 || hantCount > 3) violations.push(`${file}: zh=${zhCount}, zh-hant=${hantCount}`);
+  // STAF-76 decision 01a166f9-3bb3-7a23-9f10-b08ef701beb0:
+  // count each page's own-language home links, excluding brand and empty-text anchors.
+  function countHomeTextLinks(html, home) {
+    return [...html.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi)].filter(match => {
+      const classes = match[1].match(/(?:^|\s)class\s*=\s*["']([^"']*)["']/i)?.[1].split(/\s+/) || [];
+      const href = match[1].match(/(?:^|\s)href\s*=\s*["']([^"']*)["']/i)?.[1];
+      const visibleText = text(match[2]).replace(/&nbsp;|&#160;|&#x0*a0;/gi, ' ').trim();
+      return !classes.includes('studio-brand') && visibleText && (href === home || href?.startsWith(`${home}#`));
+    }).length;
   }
-  assert.equal(violations.length, 0, `${violations.length} pages exceed 3; max zh=${maxZh}, max zh-hant=${maxHant}; samples: ${violations.slice(0, 3).join('; ')}`);
-  return `all HTML: max zh=${maxZh}, max zh-hant=${maxHant}, violations=0 (all anchors including logos counted)`;
+  // Boundary checks ensure excluded brands/images do not hide real text links.
+  const sample = '<a class="extra studio-brand" href="/">Brand</a><a href="/"><img alt="Logo"></a>'
+    + '<a href="/">&nbsp;</a><a href="/en/">English</a><a href="/">首页</a><a href="/#practice-start">练习</a>';
+  assert.equal(countHomeTextLinks(sample, '/'), 2);
+  assert.equal(countHomeTextLinks(sample, '/en/'), 1);
+  assert.equal(countHomeTextLinks('<a class="studio-brand-extra" href="/">首页</a>', '/'), 1);
+  assert.equal(countHomeTextLinks('<a href="/">1</a>'.repeat(4), '/'), 4);
+
+  function distribution(pages) {
+    const zones = Object.fromEntries(['zh', 'en', 'zh-hant'].map(zone => [zone, { pages: 0, max: 0, over3: 0, histogram: {} }]));
+    const violations = [];
+    for (const file of files) {
+      const zone = file.startsWith('en/') ? 'en' : file.startsWith('zh-hant/') ? 'zh-hant' : 'zh';
+      const count = countHomeTextLinks(pages.get(file), zone === 'zh' ? '/' : `/${zone}/`);
+      const result = zones[zone];
+      result.pages++;
+      result.max = Math.max(result.max, count);
+      result.histogram[count] = (result.histogram[count] || 0) + 1;
+      if (count > 3) { result.over3++; violations.push(`${file}: ${count}`); }
+    }
+    return { zones, violations };
+  }
+  const actual = distribution(current);
+  const original = distribution(baseline);
+  console.log(`AC-16 current ${JSON.stringify(actual.zones)}`);
+  console.log(`AC-16 baseline ${JSON.stringify(original.zones)}`);
+  assert.equal(actual.violations.length, 0, `current pages exceed 3: ${actual.violations.slice(0, 3).join('; ')}`);
+  assert.equal(original.violations.length, 0, `baseline pages exceed 3: ${original.violations.slice(0, 3).join('; ')}`);
+  return '360 HTML by page language; current + baseline violations=0; brand/empty-text anchors excluded';
 });
 console.log(`Result: ${7 - failures}/7 AC groups passed`);
 process.exitCode = failures ? 1 : 0;

@@ -1,6 +1,6 @@
 # STAF-76：首页权重内链
 
-版本 v1，2026-10-23。对应 PRD-STAF-73 v1 §4 B1、AC-10～AC-16；范围 A 不在本任务内。基线为 remote main `9bcdcabec6d78d31f767bf94f5c9adf1bf672e0b`，独立 clone，未访问用户工作区。
+版本 v2，2026-10-23。对应 PRD-STAF-73 v1 §4 B1、AC-10～AC-16；范围 A 不在本任务内。基线为 remote main `9bcdcabec6d78d31f767bf94f5c9adf1bf672e0b`，独立 clone，未访问用户工作区。v2 按 Morgan 决策澄清 AC-16 计数口径并更新验证证据；页面实现不变。
 
 ## 方案
 
@@ -44,7 +44,7 @@ node scripts/build-site.mjs
 node scripts/verify-home-internal-links.mjs dist ../staf-76-baseline-dist
 ```
 
-统计遍历全部 360 个 HTML，按 `<a>` 实际链接计算，不将 canonical、hreflang 或 JSON-LD 算作内链；繁体以 `/zh-hant/` 和 `/zh-hant/#…` 为目标，简中以 `/` 和 `/#…` 为目标，语言菜单和 logo 计入对应目标密度。不同语言目标分别检查，不将它们相加。AC-14 全站命中恰为 125/100/0；main 基线已有 11 个简中命中页（10 guides + 教程索引），不是新增 125 页。全文输出发生变化的页面是 125 简中 + 100 繁体 = 225 页，英文 0 页。
+统计遍历全部 360 个 HTML，按 `<a>` 实际链接计算，不将 canonical、hreflang 或 JSON-LD 算作内链。AC-16 按页面所属语言统计，排除品牌 logo 和空文本锚，详见下节决策原文。AC-14 的关键词命中逻辑未修改：全站命中恰为 125/100/0；main 基线已有 11 个简中命中页（10 guides + 教程索引），不是新增 125 页。全文输出发生变化的页面是 125 简中 + 100 繁体 = 225 页，英文 0 页。
 
 | AC | 验证方法 | 结果 |
 | --- | --- | --- |
@@ -54,9 +54,9 @@ node scripts/verify-home-internal-links.mjs dist ../staf-76-baseline-dist
 | AC-13 | 两索引、10 guides、13 旧教程及原有 CTA | PASS，旧教程重复转换也不变，`:85` |
 | AC-14 | 遍历所有 HTML，分组计数；歌曲/教程数 | PASS，125/100/0；歌曲100、教程10，`:111` |
 | AC-15 | 所有 HTML 的 title/description 对比干净 main 基线 | PASS，360 对逐字一致；首页及 piano 全文不变，`:132` |
-| AC-16 | 全站简中及繁体首页链接密度最大值 | **FAIL**，111 页最大 4 条；需决策，`:143` |
+| AC-16 | 按页面语言统计首页文字链接，排除品牌与空文本锚 | PASS，zh/en/zh-hant 最大均为 3，当前与基线超标均为 0，`:143` |
 
-实际命令与输出（验收脚本退出码 **1**，保留失败，不放宽计数口径）：
+实际命令与输出（构建与验收脚本退出码均为 **0**）：
 
 ```text
 $ node scripts/build-site.mjs
@@ -68,8 +68,10 @@ AC-12 PASS 100 en + 100 zh-hant songs; all 128 English HTML and zh-hant library 
 AC-13 PASS 2 song-index anchors; 1 tutorial-index body anchor; 10 guides + 13 legacy; existing practice CTAs unchanged; legacy conversion idempotent
 AC-14 PASS all 360 HTML: {"zh":125,"zh-hant":100,"en":0}; zh={"songs":100,"guides":10,"legacy":13,"indexes":2}
 AC-15 PASS all 360 title/description pairs unchanged; home + piano HTML byte-identical; no changed piano.html links
-AC-16 FAIL 111 pages exceed 3; max zh=4, max zh-hant=4
-Result: 6/7 AC groups passed
+AC-16 current {"zh":{"pages":130,"max":3,"over3":0,"histogram":{"0":2,"1":16,"2":101,"3":11}},"en":{"pages":128,"max":3,"over3":0,"histogram":{"0":2,"1":102,"2":1,"3":23}},"zh-hant":{"pages":102,"max":3,"over3":0,"histogram":{"1":1,"2":1,"3":100}}}
+AC-16 baseline {"zh":{"pages":130,"max":3,"over3":0,"histogram":{"0":2,"1":117,"2":1,"3":10}},"en":{"pages":128,"max":3,"over3":0,"histogram":{"0":2,"1":102,"2":1,"3":23}},"zh-hant":{"pages":102,"max":2,"over3":0,"histogram":{"1":1,"2":101}}}
+AC-16 PASS 360 HTML by page language; current + baseline violations=0; brand/empty-text anchors excluded
+Result: 7/7 AC groups passed
 ```
 
 对构建产物运行全部既有测试（避免 `npm test` 的 generate:content 将受版本控制的 HTML 源文件改写），退出码 0：
@@ -85,23 +87,38 @@ $ (cd dist && node --test tests/*.test.mjs)
 
 静态文案变更没有新增空数据、权限或并发路径；相关生成器的异常由构建命令非零退出暴露。旧教程转换应可重复运行且英文保持不变；验收脚本覆盖这些边界。
 
+## AC-16 口径与决策来源
+
+来源：STAF-76，Morgan 于 2026-10-23 04:16:12 UTC 的评论 `01a166f9-3bb3-7a23-9f10-b08ef701beb0`（“AC-16 口径我来定，不再挂决策单，回开发做收尾”）。该评论明确指示只调整核对脚本和 TECH、保持页面实现及测试断言、复跑后交质检。以下为口径原文：
+
+> 1. 按语言区分别计数：zh 数 `/` 与 `/#…`；zh-hant 数 `/zh-hant/` 与 `/zh-hant/#…`；en 数 `/en/` 与 `/en/#…`（跨语言切换链接因此天然不计入）。
+> 2. 不计入站级品牌 logo：`class` 含 `studio-brand` 的锚，以及锚文本为空（纯图片 logo）的锚。
+> 3. 其余**有可见文字的关键词型首页锚文本，每页 ≤3**，全站 360 页无一例外。
+
+原因：原先“全部锚含 logo”的口径在干净 main 基线已不成立。Morgan 独立复核确认 10 篇 zh guides 和 23 个 en 页共 33 页原本已有 4 条（现有文字入口 + logo）。原报告中的 111 页也都只多出品牌 logo；不能为此删掉原有 CTA 或改变 logo 的交互。新口径保留 ≤3 上限，实际统计所有本语言首页的非品牌文字锚，不只筛选包含“在线钢琴”的锚。代码对 class 按空白分词匹配 `studio-brand`，不会误排除 `studio-brand-extra`。
+
+验收脚本同时校验当前产物与 main 基线，并输出直方图；新增边界断言覆盖品牌锚、纯图片锚、空白实体、跨语言锚、同名前缀 class 和 4 个实际文字链接（仍计为 4，触发超标判定）。不新增页面、不改变导航和 CTA。
+
+当前产物分布：
+
+| 语言区 | 页数 | 0 条页 | 1 条页 | 2 条页 | 3 条页 | >3 条页 | 最大值 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| zh | 130 | 2 | 16 | 101 | 11 | 0 | 3 |
+| en | 128 | 2 | 102 | 1 | 23 | 0 | 3 |
+| zh-hant | 102 | 0 | 1 | 1 | 100 | 0 | 3 |
+
+基线分布：zh 的 0/1/2/3 条页数为 2/117/1/10；en 为 2/102/1/23；zh-hant 为 0/1/101/0。三个语言区均 0 页超过 3。
+
 ## 上线与回滚
 
 仅提 PR，禁止本任务合并。质检通过后，由用户决定是否及何时上线。main 合并即触发 Vercel 生产自动部署，无预发环境、无独立开关。获批后合并并记录 merge SHA、部署 URL、线上抽查结果。
 
 未合并时关闭 PR 即可撤销。合并后在独立回滚分支执行 `git revert <merge-or-squash-commit-sha>`，走回滚 PR 和发布决策，再由既有生产构建重新生成所有页面；不手改 dist，不回滚其他提交。无数据变更，完全可逆。
 
-## 风险与未知
+## 发布风险与观察
 
-- 原任务报告线上 title 与 remote main 不一致、合并可能顺带改变首页 title。实际 `9bcdcab` 的 `scripts/studio-pages.mjs:77` 已按 `home` 分支区分：首页是“在线钢琴模拟器 · 跟着提示学歌 | Piano Online”；“在线钢琴 · 打开就能弹，跟着提示学歌 | Piano Online”属于 `/piano.html`。所以该 SHA 的干净构建并不支持“必然改变首页 title”的结论。AC-15 仍严格使用干净 main 构建基线；当前线上与待发布版本是否存在其他差异不确定，发布决策前须核对线上和合并后的实际产物。
-- guides 已有 hero 与侧栏两个练习 CTA，教程索引已有 hero 和 footer 两个首页链接。总密度按全部链接核算，保留原 CTA。
-- PRD 密度计算遗漏 logo 和其他现有入口：10 篇 guides 基线已为 4 条（logo + 面包屑 + hero CTA + 侧栏 CTA）；教程索引从 3 变 4（logo + 新正文 + hero CTA + footer CTA）；100 个繁体歌曲页从 3 变 4（logo + 原导航“彈鋼琴”被改写至繁体首页 + 面包屑 + 新正文）。不能排除 logo 来伪报通过。
-- 排名改善不作承诺；上线后观察 3～4 周的 GSC，同 PRD B2 口径。本次未做线上验证。
+首页 title **无变化**。`scripts/studio-pages.mjs:77` 的首页分支为“在线钢琴模拟器 · 跟着提示学歌 | Piano Online”；“在线钢琴 · 打开就能弹，跟着提示学歌 | Piano Online”属于 `/piano.html`。AC-15 已比较干净 main 构建：360 页 title/description 无变化，首页和 `/piano.html` 全文无变化。Morgan 在上述决策评论中也独立确认线上与 main 首页 title 一致，并撤回任务书中的标题风险。本次未自行访问线上，线上复核结论来源为 Morgan。
 
-## [需决策] 保留现有 CTA 与 ≤3 密度冲突
+上线决策仅保留一项风险：**合并 main 即触发 Vercel 生产部署，无预发环境**。本任务只更新 PR，不合并，是否及何时发布仍由用户决定。
 
-方案 A（建议）：允许仅对上述 111 页将 logo 渲染成非链接品牌标识，保留现有导航与全部练习 CTA，满足 ≤3。代价是这些页面 logo 不再导航，需要批准此范围调整，再实施及复验。
-
-方案 B：保留 logo 与 CTA 当前行为，接受 111 页为 4 条。需要明确批准修改 AC-16，不得把当前报告标为全通过。
-
-未决时：PR 保持 draft、不合并；issue blocked 交 Morgan 转用户决策。用户未授权前，两种方案均不实施；暂不进入质检验收。
+guides 的 hero/侧栏 CTA、教程索引的 hero/footer CTA、品牌 logo 均保持原样。排名改善不是验收承诺；上线后按 PRD B2 观察 3～4 周 GSC。本次未进行生产发布或排名观察。
