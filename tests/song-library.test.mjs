@@ -340,7 +340,7 @@ test('song and library pages in all variants emit one canonical and exactly four
 test('zh-hant song pages link home to the traditional home and use the language dropdown', async () => {
   const html = await readFile('zh-hant/songs/happy-birthday/index.html', 'utf8');
   assert.ok(html.includes('<a class="studio-brand" href="/zh-hant/"'));
-  assert.ok(html.includes('<a href="/zh-hant/">首頁</a>'));
+  assert.ok(html.includes('<a href="/zh-hant/">在線鋼琴</a>'));
   assert.ok(html.includes('<span class="studio-lang-option" lang="zh-Hant" aria-current="true">繁體中文</span>'));
   assert.ok(html.includes('<a class="studio-lang-option" href="/songs/happy-birthday/" lang="zh-CN"'));
   assert.ok(html.includes('<a class="studio-lang-option" href="/en/songs/happy-birthday/" lang="en"'));
@@ -348,6 +348,7 @@ test('zh-hant song pages link home to the traditional home and use the language 
   const blocks = [...html.matchAll(/application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => JSON.parse(m[1]));
   const breadcrumb = blocks.flatMap((b) => b['@graph']).find((node) => node['@type'] === 'BreadcrumbList');
   assert.equal(breadcrumb.itemListElement[0].item, 'https://pianoonline.cc/zh-hant/');
+  assert.equal(breadcrumb.itemListElement[0].name, '在線鋼琴');
   assert.ok(html.includes('/js/zh-hant-runtime.js'));
 });
 
