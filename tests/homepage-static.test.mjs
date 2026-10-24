@@ -5,23 +5,23 @@ import { renderStudioPage, renderTraditionalHome, studioInstrument } from '../sc
 import { toTraditionalText } from '../data/zh-hant.mjs';
 
 const HOME_ALTERNATES = [
-  '<link rel="alternate" hreflang="zh-CN" href="https://pianoonline.cc/">',
-  '<link rel="alternate" hreflang="en" href="https://pianoonline.cc/en/">',
+  '<link rel="alternate" hreflang="zh-CN" href="https://pianoonline.cc/piano.html">',
+  '<link rel="alternate" hreflang="en" href="https://pianoonline.cc/">',
   '<link rel="alternate" hreflang="zh-Hant" href="https://pianoonline.cc/zh-hant/">',
-  '<link rel="alternate" hreflang="x-default" href="https://pianoonline.cc/en/">'
+  '<link rel="alternate" hreflang="x-default" href="https://pianoonline.cc/">'
 ];
 
 for (const locale of ['zh','en']) for (const home of [true,false]) {
   test(`${locale} ${home ? 'home' : 'piano'} has a playable first paint and accurate content`, () => {
     const html=renderStudioPage(locale,home);
-    assert.match(html, /class="studio-page"/);
+    assert.match(html, /class="studio-page(?: virtual-piano-home)?"/);
     assert.match(html, /\/css\/studio\.css/);
     assert.match(html, /\/js\/studio\.js/);
     for (const id of ['song-select','sustain-toggle','labels-toggle','start-practice','stop-practice','start-rhythm-game','toggle-fullscreen','studio-volume','keyboard-viewport']) assert.ok(html.includes(`id="${id}"`));
     assert.ok(html.indexOf('data-studio') < html.indexOf('class="studio-discover"'));
     assert.doesNotMatch(html, /tutorial-overlay|88键|88 keys|src="piano\.js"/);
     assert.match(html, /37/);
-    const homeUrl = `https://pianoonline.cc${locale === 'zh' ? '' : '/en'}/`;
+    const homeUrl = locale === 'zh' ? 'https://pianoonline.cc/piano.html' : 'https://pianoonline.cc/';
     assert.ok(html.includes(`<link rel="canonical" href="${homeUrl}">`));
     if (home) {
       assert.deepEqual(html.match(/<link rel="alternate"[^>]*>/g), HOME_ALTERNATES);
@@ -46,7 +46,7 @@ test('zh home language menu links all locales and marks 简体中文 current', (
   assert.ok(html.includes('<details class="studio-lang">'));
   assert.ok(html.includes('<span class="studio-lang-option" lang="zh-CN" aria-current="true">简体中文</span>'));
   assert.ok(html.includes('<a class="studio-lang-option" href="/zh-hant/" lang="zh-Hant"'));
-  assert.ok(html.includes('<a class="studio-lang-option" href="/en/" lang="en"'));
+  assert.ok(html.includes('<a class="studio-lang-option" href="/" lang="en"'));
 });
 
 test('en piano page language menu links back to zh piano and zh-hant home', () => {
@@ -71,12 +71,12 @@ test('zh-hant home renders traditional content with correct head and nav', () =>
     .map((pattern) => html.match(pattern)[1]);
   for (const text of texts) assert.ok(!/钢|琴键|弹/.test(text), text);
   assert.ok(html.includes('<details class="studio-lang">'));
-  assert.ok(html.includes('<a class="studio-lang-option" href="/" lang="zh-CN"'));
-  assert.ok(html.includes('<a class="studio-lang-option" href="/en/" lang="en"'));
+  assert.ok(html.includes('<a class="studio-lang-option" href="/piano.html" lang="zh-CN"'));
+  assert.ok(html.includes('<a class="studio-lang-option" href="/" lang="en"'));
   assert.ok(html.includes('<span class="studio-lang-option" lang="zh-Hant" aria-current="true">繁體中文</span>'));
   assert.match(html, /class="studio-song-card" href="\/zh-hant\/songs\//);
   assert.ok(!html.includes('href="/songs/'));
-  assert.ok(!html.includes('href="/piano.html"'));
+  assert.equal(html.match(/href="\/piano\.html"/g).length, 1);
   const ld = JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
   assert.deepEqual(ld['@graph'].map((node) => node['@type']), ['WebSite', 'WebApplication']);
   assert.equal(ld['@graph'][0].inLanguage, 'zh-Hant');
@@ -104,7 +104,7 @@ test('legacy homepage modules remain inert compatibility shims',async()=>{
 
 for (const [locale, html, keywords] of [
   ['zh', renderStudioPage('zh'), ['钢琴模拟器', '自由钢琴', '五线谱']],
-  ['en', renderStudioPage('en'), ['piano simulator']],
+  ['en', renderStudioPage('en'), ['virtual piano', 'visual piano']],
   ['zh-Hant', renderTraditionalHome(), ['鋼琴模擬器', '自由鋼琴', '五線譜']]
 ]) test(`${locale} home has visible localized FAQ matching independent JSON-LD`, () => {
   const scripts = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map(match => JSON.parse(match[1]));
@@ -123,5 +123,5 @@ for (const [locale, html, keywords] of [
   if (locale !== 'en') {
     const title = html.match(/<title>(.*?)<\/title>/)[1];
     assert.ok([...title].reduce((n, char) => n + (char.charCodeAt(0) > 127 ? 2 : 1), 0) <= 60);
-  } else assert.match(html, /<title>Virtual Piano Online: Play Free with Your Computer Keyboard<\/title>/);
+  } else assert.match(html, /<title>Virtual Piano Online — Play Free in Browser<\/title>/);
 });

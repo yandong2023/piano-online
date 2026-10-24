@@ -1,0 +1,84 @@
+/* Virtual piano landing. Auto ads stay in normal flow so they cannot cover the keys. */
+body.virtual-piano-home .studio-instrument,
+body.virtual-piano-home .studio-keyboard-viewport {
+  position: relative;
+  z-index: 30;
+}
+
+body.virtual-piano-home .studio-instrument :is(ins.adsbygoogle, iframe[src*="googlesyndication"], [id^="aswift_"]) {
+  display: none !important;
+}
+
+body.virtual-piano-home :is(ins.adsbygoogle, .google-auto-placed, iframe[id^="google_ads_iframe"], [id^="aswift_"]) {
+  position: static !important;
+  top: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+  z-index: 1 !important;
+  margin-top: 24px;
+}
+
+.vp-sections {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin: 28px 0 8px;
+}
+
+.vp-sections article {
+  margin: 0;
+  padding: 18px 18px 8px;
+  border: 1px solid var(--studio-line, #dedfd6);
+  border-radius: 16px;
+  background: var(--studio-paper, #fffefa);
+}
+
+.vp-sections h2 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+
+.vp-sections p,
+.vp-sections li {
+  color: var(--studio-muted, #5c6156);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.vp-sections a,
+.vp-links a {
+  color: inherit;
+}
+
+.vp-links {
+  margin: 22px 0 8px;
+  font-size: 14px;
+}
+
+.midi-drop {
+  margin: 0 0 18px;
+  padding: 16px 18px;
+  border: 1px dashed #b7b9ad;
+  border-radius: 14px;
+  background: #f7f7f1;
+}
+
+.midi-drop.is-hot {
+  border-color: #2f342b;
+  background: #fff;
+}
+
+.midi-drop p {
+  margin: 0 0 10px;
+}
+
+.midi-drop input {
+  margin-right: 12px;
+}
+
+@media (max-width: 800px) {
+  .vp-sections {
+    grid-template-columns: 1fr;
+  }
+}
