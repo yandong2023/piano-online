@@ -3,15 +3,18 @@ import path from 'node:path';
 import { publicSongs } from '../data/song-library.mjs';
 import { toTraditionalHtml } from '../data/zh-hant.mjs';
 
-export const STUDIO_VERSION = '20261001.1';
+export const STUDIO_VERSION = '20261024.1';
+// `/` is the English virtual piano. Simplified Chinese keeps the full piano page.
+export const ZH_PIANO_HOME = '/piano.html';
+export const EN_VIRTUAL_HOME = '/';
 const esc = (v = '') => String(v).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
 export function studioLanguageMenu(current = 'zh', active = 'piano', songSlug = '', home = false) {
   const song = songSlug ? `${songSlug}/` : '';
-  const page = home ? '/' : active === 'songs' ? `/songs/${song}` : active === 'learn' ? '/tutorials.html' : '/piano.html';
+  const page = home ? EN_VIRTUAL_HOME : active === 'songs' ? `/songs/${song}` : active === 'learn' ? '/tutorials.html' : '/piano.html';
   const options = [
-    ['zh', 'zh-CN', '简体中文', page],
+    ['zh', 'zh-CN', '简体中文', home ? ZH_PIANO_HOME : page],
     ['zh-hant', 'zh-Hant', '繁體中文', active === 'songs' ? `/zh-hant/songs/${song}` : '/zh-hant/'],
-    ['en', 'en', 'English', `/en${page}`]
+    ['en', 'en', 'English', home ? EN_VIRTUAL_HOME : `/en${page}`]
   ];
   const label = { zh: '切换语言', 'zh-hant': '切換語言', en: 'Change language' }[current];
   const short = { zh: '中文', 'zh-hant': '繁體', en: 'EN' }[current];
@@ -23,7 +26,8 @@ export function studioLanguageMenu(current = 'zh', active = 'piano', songSlug = 
 
 export function studioNav(locale = 'zh', active = 'piano', songSlug = '', home = false) {
   const zh = locale === 'zh', base = zh ? '' : '/en';
-  return `<nav class="nav-bar" aria-label="${zh ? '主导航' : 'Main navigation'}"><div class="nav-container"><a class="studio-brand" href="${base}/" aria-label="Piano Online"><span class="brand-keys" aria-hidden="true"><i></i><i></i><i></i></span><span>Piano<span class="brand-light">Online</span><small>${zh ? '让音乐发生' : 'MAKE A LITTLE MUSIC'}</small></span></a><div class="nav-links"><a href="${base}/piano.html"${active === 'piano' ? ' class="active" aria-current="page"' : ''}>${zh ? '弹钢琴' : 'Piano'}</a><a href="${base}/songs/"${active === 'songs' ? ' class="active" aria-current="page"' : ''}>${zh ? '找首歌' : 'Songs'}</a><a href="${base}/tutorials.html"${active === 'learn' ? ' class="active" aria-current="page"' : ''}>${zh ? '学一点' : 'Learn'}</a>${studioLanguageMenu(locale, active, songSlug, home)}</div></div></nav>`;
+  const homeHref = zh ? ZH_PIANO_HOME : EN_VIRTUAL_HOME;
+  return `<nav class="nav-bar" aria-label="${zh ? '主导航' : 'Main navigation'}"><div class="nav-container"><a class="studio-brand" href="${homeHref}" aria-label="Piano Online"><span class="brand-keys" aria-hidden="true"><i></i><i></i><i></i></span><span>Piano<span class="brand-light">Online</span><small>${zh ? '让音乐发生' : 'MAKE A LITTLE MUSIC'}</small></span></a><div class="nav-links"><a href="${zh ? ZH_PIANO_HOME : `${base}/piano.html`}"${active === 'piano' ? ' class="active" aria-current="page"' : ''}>${zh ? '弹钢琴' : 'Piano'}</a><a href="${base}/songs/"${active === 'songs' ? ' class="active" aria-current="page"' : ''}>${zh ? '找首歌' : 'Songs'}</a><a href="${base}/tutorials.html"${active === 'learn' ? ' class="active" aria-current="page"' : ''}>${zh ? '学一点' : 'Learn'}</a>${studioLanguageMenu(locale, active, songSlug, home)}</div></div></nav>`;
 }
 
 export function studioInstrument(locale = 'zh', songId = 'happy-birthday') {
@@ -50,9 +54,9 @@ const homeFaq = {
     ['不会五线谱，可以跟着简谱学吗？', '可以。歌曲页提供数字简谱、音名与电脑按键字母谱；部分歌曲还支持五线谱视图。简化旋律适合入门，不能替代完整钢琴编曲。']
   ],
   en: [
-    ['Do I need to download this piano simulator?', 'No. Open the page and play with a mouse, touchscreen or computer keyboard. Press a key once to enable browser audio.'],
-    ['How do I use free play?', 'Select Free play to explore your own melodies without signing up. Switch to Learn a song for one-key prompts.'],
-    ['Can I learn without reading sheet music?', 'Yes. Song pages include note names and computer-key letters; selected songs also have staff notation. These simplified melodies help you get started.']
+    ['What is a virtual piano?', 'A virtual piano, also called a visual piano, is a piano keyboard in the browser. Click, tap or use your computer keys. There is no download and no account.'],
+    ['How do I play this virtual piano online?', 'Press the keys with a mouse or finger, or type the letters printed on them. A plays C3 and K plays middle C. Key labels shows or hides those letters. Note names stay on the keys.'],
+    ['Can I use MIDI?', 'Yes. Open More tools under the keyboard and choose Connect a MIDI keyboard. To hear a .mid file, open Piano MIDI online and drop the file. Playback stays in this browser.']
   ],
   'zh-hant': [
     ['使用模擬鋼琴需要下載程式嗎？', '不需要。開啟網頁後，就能用滑鼠、觸控螢幕或電腦鍵盤彈奏。首次按下琴鍵後，瀏覽器便會開啟聲音。'],
@@ -61,7 +65,10 @@ const homeFaq = {
   ]
 };
 function faqSection(locale) {
-  return `<section class="home-faq" aria-labelledby="home-faq-title"><h2 id="home-faq-title">${{ zh: '在线弹琴常见问题', en: 'Online piano questions', 'zh-hant': '線上彈琴常見問題' }[locale]}</h2>${homeFaq[locale].map(([q,a]) => `<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join('')}</section>`;
+  return `<section class="home-faq" aria-labelledby="home-faq-title"><h2 id="home-faq-title">${{ zh: '在线弹琴常见问题', en: 'Virtual piano questions', 'zh-hant': '線上彈琴常見問題' }[locale]}</h2>${homeFaq[locale].map(([q,a]) => `<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join('')}</section>`;
+}
+function virtualPianoSections() {
+  return `<section class="vp-sections" aria-label="Virtual piano guide"><article><h2>What is a virtual piano?</h2><p>A virtual piano is a piano you play in the browser. This page is a visual piano too: the keys, note names and computer letters are on screen. It is free, with no download and no account.</p></article><article><h2>How to play</h2><ol><li>Click or tap a key. The first press turns sound on.</li><li>On a computer, press the letter on a key. A plays C3 and K plays middle C.</li><li>Use the Key labels switch to show or hide those letters. Note names stay on the keys.</li><li>Stay on Free play, or switch to Learn a song and follow the gold key.</li></ol></article><article><h2>MIDI</h2><p>Connect a MIDI keyboard from More tools under the keys. To hear a file, open <a href="/midi/">Piano MIDI online</a> and drop a .mid file. Playback stays in this browser. You can also open the <a href="/with-notes/">virtual piano with notes</a>.</p></article></section>`;
 }
 function faqJsonLd(locale) {
   return `<script type="application/ld+json">${JSON.stringify({
@@ -73,22 +80,26 @@ function faqJsonLd(locale) {
 
 export function renderStudioPage(locale = 'zh', home = true) {
   const zh = locale === 'zh', s = (a,b) => zh ? a : b, base = zh ? '' : '/en';
-  const url = `https://pianoonline.cc${base}/`;
-  const title = s(home ? '在线钢琴模拟器 · 跟着提示学歌 | Piano Online' : '在线钢琴 · 打开就能弹，跟着提示学歌 | Piano Online', 'Virtual Piano Online: Play Free with Your Computer Keyboard');
+  const englishLanding = !zh && home;
+  const url = `https://pianoonline.cc${zh ? ZH_PIANO_HOME : EN_VIRTUAL_HOME}`;
+  const title = zh
+    ? (home ? '在线钢琴模拟器 · 跟着提示学歌 | Piano Online' : '在线钢琴 · 打开就能弹，跟着提示学歌 | Piano Online')
+    : (home ? 'Virtual Piano Online — Play Free in Browser' : 'Virtual Piano Online: Play Free with Your Computer Keyboard');
   const description = home
-    ? s('免费在线钢琴模拟器，无需下载或注册。用鼠标、触屏或电脑键盘自由弹奏，体验自由钢琴的乐趣；跟着简谱与按键提示学歌，部分歌曲支持五线谱。', 'Free online piano simulator for keyboard, mouse or touch. Play freely, follow song prompts and read letter notes or sheet music. No download or signup.')
+    ? s('免费在线钢琴模拟器，无需下载或注册。用鼠标、触屏或电脑键盘自由弹奏，体验自由钢琴的乐趣；跟着简谱与按键提示学歌，部分歌曲支持五线谱。', 'Play a free virtual piano in your browser. This visual piano needs no download or signup.')
     : s('免费的在线钢琴，支持鼠标、触屏和电脑键盘。37 个琴键、逐键学歌提示、音量与延音控制，无需注册。', 'Play a free online piano with your keyboard, mouse or touchscreen. 37 keys, guided songs, volume, sustain and distraction-free full screen. No signup.');
-  const hreflang = home ? '<link rel="alternate" hreflang="zh-CN" href="https://pianoonline.cc/"><link rel="alternate" hreflang="en" href="https://pianoonline.cc/en/"><link rel="alternate" hreflang="zh-Hant" href="https://pianoonline.cc/zh-hant/"><link rel="alternate" hreflang="x-default" href="https://pianoonline.cc/en/">' : '';
+  const hreflang = home ? '<link rel="alternate" hreflang="zh-CN" href="https://pianoonline.cc/piano.html"><link rel="alternate" hreflang="en" href="https://pianoonline.cc/"><link rel="alternate" hreflang="zh-Hant" href="https://pianoonline.cc/zh-hant/"><link rel="alternate" hreflang="x-default" href="https://pianoonline.cc/">' : '';
   const jsonLd = home ? `<script type="application/ld+json">${JSON.stringify({
     '@context': 'https://schema.org',
     '@graph': [
-      { '@type': 'WebSite', name: 'Piano Online', url, inLanguage: zh ? 'zh-CN' : 'en' },
-      { '@type': 'WebApplication', name: 'Piano Online', url, applicationCategory: 'MusicApplication', operatingSystem: 'Web browser', isAccessibleForFree: true, offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' }, description }
+      { '@type': 'WebSite', name: englishLanding ? 'Virtual Piano Online' : 'Piano Online', url, inLanguage: zh ? 'zh-CN' : 'en' },
+      { '@type': 'WebApplication', name: englishLanding ? 'Virtual Piano Online' : 'Piano Online', url, applicationCategory: 'MusicApplication', operatingSystem: 'Web browser', isAccessibleForFree: true, offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' }, description }
     ]
   }).replaceAll('<', '\\u003c')}</script>` : '';
   const featured = ['happy-birthday','twinkle','ode-to-joy','jingle-bells','fur-elise','canon'].map(id=>publicSongs.find(x=>x.id===id)).filter(Boolean);
-  return `<!DOCTYPE html><html lang="${zh ? 'zh-CN' : 'en'}"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title><meta name="description" content="${description}"><link rel="canonical" href="${url}">${hreflang}<link rel="icon" href="/images/favicon.svg"><meta property="og:type" content="website"><meta property="og:title" content="${title}"><meta property="og:description" content="${description}"><meta property="og:url" content="${url}"><meta property="og:image" content="https://pianoonline.cc/images/og-image.jpg"><link rel="stylesheet" href="/css/studio.css?v=${STUDIO_VERSION}"><script type="module" src="/js/studio.js?v=${STUDIO_VERSION}"></script><script async src="https://www.googletagmanager.com/gtag/js?id=G-EYGD99YB4Y"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-EYGD99YB4Y');</script><meta name="google-site-verification" content="Fii3zK2l54f0uFP7RPwdn7BEqB4OjC2jc_07JxSs1uI">${home ? '<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4423187689700927" crossorigin="anonymous"></script>' : ''}${jsonLd}${home ? '<link rel="stylesheet" href="/css/home-faq.css?v=20261022.1">' + faqJsonLd(locale) : ''}</head>
-<body class="studio-page"><a class="skip-link" href="#practice-start">${s('跳到钢琴', 'Skip to piano')}</a>${studioNav(locale, 'piano', '', home)}<main class="studio-main"><header class="studio-intro"><div><p class="studio-kicker">${s('一点空闲，一段旋律', 'A LITTLE TIME. A LITTLE MUSIC.')}</p><h1>${s('在线钢琴，打开就能弹。', 'Play virtual piano online, right now.')}</h1><p>${home ? s('免费在线钢琴模拟器，无需下载，鼠标、触屏和电脑键盘都能弹。', 'Play something of your own, or follow the keys to learn a familiar song.') : s('随心弹一段，或跟着亮起的琴键学会一首歌。', 'Play something of your own, or follow the keys to learn a familiar song.')}</p></div><div class="studio-promise"><span>${s('免费', 'Free')}</span><span>${s('无需注册', 'No signup')}</span><span>${s('手机也能弹', 'Touch friendly')}</span></div></header>${studioInstrument(locale)}
+  return `<!DOCTYPE html><html lang="${zh ? 'zh-CN' : 'en'}"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title><meta name="description" content="${description}"><link rel="canonical" href="${url}">${hreflang}<link rel="icon" href="/images/favicon.svg"><meta property="og:type" content="website"><meta property="og:title" content="${title}"><meta property="og:description" content="${description}"><meta property="og:url" content="${url}"><meta property="og:image" content="https://pianoonline.cc/images/og-image.jpg"><link rel="stylesheet" href="/css/studio.css?v=${STUDIO_VERSION}"><script type="module" src="/js/studio.js?v=${STUDIO_VERSION}"></script><script async src="https://www.googletagmanager.com/gtag/js?id=G-EYGD99YB4Y"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-EYGD99YB4Y');</script><meta name="google-site-verification" content="Fii3zK2l54f0uFP7RPwdn7BEqB4OjC2jc_07JxSs1uI">${home ? '<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4423187689700927" crossorigin="anonymous"></script>' : ''}${jsonLd}${englishLanding ? '<link rel="stylesheet" href="/css/virtual-piano-home.css?v=20261024.1">' : ''}${home ? '<link rel="stylesheet" href="/css/home-faq.css?v=20261022.1">' + faqJsonLd(locale) : ''}</head>
+<body class="studio-page${englishLanding ? ' virtual-piano-home' : ''}"><a class="skip-link" href="#practice-start">${s('跳到钢琴', 'Skip to piano')}</a>${studioNav(locale, 'piano', '', home)}<main class="studio-main"><header class="studio-intro"><div><p class="studio-kicker">${s('一点空闲，一段旋律', englishLanding ? 'PLAY IN THE BROWSER' : 'A LITTLE TIME. A LITTLE MUSIC.')}</p><h1>${zh ? '在线钢琴，打开就能弹。' : (englishLanding ? 'Virtual Piano' : 'Play virtual piano online, right now.')}</h1><p>${home ? s('免费在线钢琴模拟器，无需下载，鼠标、触屏和电脑键盘都能弹。', 'A visual piano you can play online in the browser. No download and no account.') : s('随心弹一段，或跟着亮起的琴键学会一首歌。', 'Play something of your own, or follow the keys to learn a familiar song.')}</p></div><div class="studio-promise"><span>${s('免费', 'Free')}</span><span>${s('无需注册', 'No signup')}</span><span>${s('手机也能弹', 'No download')}</span></div></header>${studioInstrument(locale)}
+${englishLanding ? virtualPianoSections() : ''}
 <section class="studio-discover"><div class="studio-section-heading"><div><p class="studio-kicker">${s('从熟悉的旋律开始', 'FIND YOUR FIRST MELODY')}</p><h2>${s('今天，想弹哪一首？', 'What would you like to play?')}</h2></div><a href="${base}/songs/">${s(`全部 ${publicSongs.length} 首歌曲`, `All ${publicSongs.length} songs`)} →</a></div><div class="studio-song-grid">${featured.map((song,i)=>`<a class="studio-song-card" href="${base}/songs/${song.slug}/"><span class="studio-song-art" data-art="${i}"><span aria-hidden="true">${['♪','✧','♩','❋','♬','𝄞'][i]}</span><small>0${i+1}</small></span><span class="studio-song-copy"><small>${s(['入门','简单','中等','进阶'][Math.min(3,song.difficulty-1)],['Starter','Easy','Medium','Advanced'][Math.min(3,song.difficulty-1)])} · ${song.estimatedMinutes} ${s('分钟','min')}</small><strong>${esc(song.title[locale])}</strong><span>${song.notes.length} ${s('个音符 · 字母谱 + 在线跟弹', 'notes · Key letters & guided practice')}</span></span><span class="studio-song-arrow" aria-hidden="true">↗</span></a>`).join('')}</div></section>
 <section class="studio-learn"><div><p class="studio-kicker">${s('不用先会，先玩起来', 'NO EXPERIENCE NEEDED')}</p><h2>${s('第一次弹？这就够了。', 'New to piano? Start right here.')}</h2><p>${s('这里的简化旋律适合入门与休闲体验，不等同于完整钢琴编曲，也不能替代真实钢琴的力度与踏板训练。', 'These simplified melodies are for getting started, not full piano arrangements. A virtual keyboard does not replace weighted keys or pedal technique.')}</p></div><div class="studio-help"><details><summary>${s('电脑上怎么弹？', 'How do I play on a computer?')}</summary><p>${s('点击琴键，或按琴键上的大写字母。A 对应 C3，K 对应中央 C（C4），T 对应 C5。数字和部分字母对应黑键。', 'Click a key, or press its large letter. A plays C3, K plays middle C (C4), and T plays C5. Numbers and some letters play the black keys.')}</p></details><details><summary>${s('手机上琴键太多怎么办？', 'How do I play on a phone?')}</summary><p>${s('用琴键下方的左右箭头移动音区。跟弹时，会自动把下一个琴键移到可见区域。横屏有更大的弹奏空间。', 'Use the arrows below the keys to move the range. Guided mode brings the next key into view automatically. Landscape gives you more playing space.')}</p></details><details><summary>${s('没有声音，怎么检查？', 'Why can’t I hear anything?')}</summary><p>${s('先点击一次琴键以允许浏览器播放音频，再检查设备媒体音量、静音模式、蓝牙输出和页面音量。采样加载失败时会使用合成音。', 'Tap a piano key to allow browser audio. Check media volume, silent mode, Bluetooth output and the volume slider. A synthesized tone is used if samples cannot load.')}</p></details><a href="${base}/tutorials.html">${s('去看看入门教程', 'Explore beginner lessons')} →</a></div></section>${home ? faqSection(locale) : ''}</main><footer class="studio-footer"><span>Piano Online <span class="brand-light">© 2026</span></span><span>${s('给日常，多一点音乐。', 'Make a little room for music.')}</span><a href="${base}/about.html">${s('关于', 'About')}</a></footer></body></html>`;
 }
@@ -122,13 +133,47 @@ export function renderTraditionalHome() {
   return html.replace('</head>', `<script type="module" src="/js/zh-hant-runtime.js?v=${STUDIO_VERSION}"></script></head>`);
 }
 
+const focusedCopy = {
+  notes: {
+    path: '/with-notes/',
+    title: 'Virtual Piano with Notes — Play Free in Browser',
+    description: 'Virtual piano with note names on every key. Play this visual piano online in the browser. No download or signup.',
+    h1: 'Virtual piano with notes',
+    lead: 'Note names sit on the keys of this visual piano. Show or hide the computer letters with Key labels, then play online. No download and no account.'
+  },
+  midi: {
+    path: '/midi/',
+    title: 'Piano MIDI Online — Drop a File to Play',
+    description: 'Piano MIDI online. Drop a .mid file and hear it on the virtual piano in your browser. No download or signup.',
+    h1: 'Piano MIDI online — drop file to play',
+    lead: 'Drop a .mid or .midi file on the piano. It plays in your browser and is not uploaded. You can also play along with the mouse, touch or computer keys.'
+  }
+};
+
+export function renderFocusedLanding(variant) {
+  const copy = focusedCopy[variant];
+  const url = `https://pianoonline.cc${copy.path}`;
+  const midi = variant === 'midi';
+  const drop = midi ? `<div id="midi-drop" class="midi-drop"><p class="studio-kicker">DROP A FILE</p><p>Drop a MIDI file here, or choose one from your computer.</p><input id="midi-file" type="file" accept=".mid,.midi,audio/midi,audio/mid"><button type="button" id="midi-stop" class="studio-quiet">Stop</button><p id="midi-status" role="status">Nothing is playing yet.</p></div>` : '';
+  const extra = midi
+    ? '<p class="vp-links"><a href="/">Back to the virtual piano</a> · <a href="/with-notes/">Virtual piano with notes</a></p>'
+    : '<p class="vp-links">The Key labels switch under the keyboard shows the computer letters. Note names stay visible. <a href="/">Back to the virtual piano</a> · <a href="/midi/">Piano MIDI online</a></p>';
+  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${copy.title}</title><meta name="description" content="${copy.description}"><link rel="canonical" href="${url}"><link rel="icon" href="/images/favicon.svg"><meta property="og:type" content="website"><meta property="og:title" content="${copy.title}"><meta property="og:description" content="${copy.description}"><meta property="og:url" content="${url}"><meta property="og:image" content="https://pianoonline.cc/images/og-image.jpg"><link rel="stylesheet" href="/css/studio.css?v=${STUDIO_VERSION}"><link rel="stylesheet" href="/css/virtual-piano-home.css?v=20261024.1"><script type="module" src="/js/studio.js?v=${STUDIO_VERSION}"></script>${midi ? '<script type="module" src="/js/midi-drop.mjs?v=20261024.1"></script>' : ''}<script async src="https://www.googletagmanager.com/gtag/js?id=G-EYGD99YB4Y"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-EYGD99YB4Y');</script><meta name="google-site-verification" content="Fii3zK2l54f0uFP7RPwdn7BEqB4OjC2jc_07JxSs1uI"></head>
+<body class="studio-page virtual-piano-home"><a class="skip-link" href="#practice-start">Skip to piano</a>${studioNav('en', 'piano', '', true)}<main class="studio-main"><header class="studio-intro"><div><p class="studio-kicker">PLAY IN THE BROWSER</p><h1>${copy.h1}</h1><p>${copy.lead}</p></div><div class="studio-promise"><span>Free</span><span>No signup</span><span>No download</span></div></header>${drop}${studioInstrument('en')}${extra}</main><footer class="studio-footer"><span>Piano Online <span class="brand-light">© 2026</span></span><a href="/">Virtual piano</a></footer></body></html>`;
+}
+
 export async function generateStudioPages(root) {
   await mkdir(path.join(root,'en'),{recursive:true});
   await mkdir(path.join(root,'zh-hant'),{recursive:true});
-  for (const locale of ['zh','en']) for (const home of [true,false]) {
-    const file = path.join(root, locale==='zh'?'':'en', home?'index.html':'piano.html');
-    await writeFile(file,renderStudioPage(locale,home));
-  }
+  await mkdir(path.join(root,'with-notes'),{recursive:true});
+  await mkdir(path.join(root,'midi'),{recursive:true});
+  const landing = renderStudioPage('en', true);
+  await writeFile(path.join(root,'index.html'), landing);
+  await writeFile(path.join(root,'en','index.html'), landing);
+  await writeFile(path.join(root,'piano.html'), renderStudioPage('zh', true));
+  await writeFile(path.join(root,'en','piano.html'), renderStudioPage('en', false));
+  await writeFile(path.join(root,'with-notes','index.html'), renderFocusedLanding('notes'));
+  await writeFile(path.join(root,'midi','index.html'), renderFocusedLanding('midi'));
   await writeFile(path.join(root,'zh-hant','index.html'), renderTraditionalHome());
   // Apply the shared design to legacy editorial pages without changing their content/hooks.
   for (const name of ['about.html','en/about.html','practice.html']) {

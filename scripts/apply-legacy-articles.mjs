@@ -95,7 +95,12 @@ export function applyArticleLanguage(html, { slug, lang, root }) {
   const pathname = legacyTutorialLocales(slug, root).find(([code]) => code === lang)?.[1];
   const canonical = `${SITE_ORIGIN}${pathname}`;
   // Update only Chinese legacy home anchors; English source/output stays intact.
-  let next = lang === 'zh-CN' ? html.replaceAll('<a href="/">首页</a>', '<a href="/">在线钢琴</a>') : html;
+  let next = html;
+  if (lang === 'zh-CN') {
+    next = next.replaceAll('<a href="/">首页</a>', '<a href="/piano.html">在线钢琴</a>');
+    next = next.replaceAll('<a href="/">在线钢琴</a>', '<a href="/piano.html">在线钢琴</a>');
+    next = next.replaceAll('<a href="/" class="nav-logo">', '<a href="/piano.html" class="nav-logo">');
+  }
   next = stripAlternateLinks(next);
   next = setHtmlLang(next, lang);
   next = setCanonical(next, canonical);

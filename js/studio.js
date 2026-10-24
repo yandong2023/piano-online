@@ -276,6 +276,18 @@ async function initialize() {
   });
   window.addEventListener('pagehide',()=>{piano.releaseAll();if(rhythm.isPlaying)rhythm.stopGame();});
   window.addEventListener('beforeunload', () => piano.audio.dispose());
+  // MIDI file playback asks for notes after the user drops a file. Audio starts on that gesture.
+  document.addEventListener('studio:unlock-audio', () => { piano.audio.ensureRunning().catch(showError); });
+  document.addEventListener('studio:note-on', (event) => {
+    const note = event.detail?.note;
+    if (typeof note !== 'string' || !note) return;
+    piano.ensureNoteVisible(note);
+    piano.pressKey(note);
+  });
+  document.addEventListener('studio:note-off', (event) => {
+    const note = event.detail?.note;
+    if (typeof note === 'string' && note) piano.releaseKey(note);
+  });
   document.dispatchEvent(new CustomEvent('piano:ready'));
 }
 

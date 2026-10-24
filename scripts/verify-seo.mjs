@@ -11,12 +11,16 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const dist = path.join(root, 'dist');
 const read = relative => readFile(path.join(dist, relative), 'utf8');
 const baseline = process.argv[2] ? JSON.parse(await readFile(process.argv[2], 'utf8')) : null;
-const homePages = ['index.html', 'en/index.html', 'zh-hant/index.html'];
-for (const [index, file] of homePages.entries()) {
+const homePages = [
+  ['index.html', ['virtual piano', 'visual piano'], true],
+  ['en/index.html', ['virtual piano', 'visual piano'], true],
+  ['piano.html', ['钢琴模拟器', '自由钢琴', '五线谱'], false],
+  ['zh-hant/index.html', ['鋼琴模擬器', '自由鋼琴', '五線譜'], false]
+];
+for (const [file, keywords, english] of homePages) {
   const html = await read(file);
   const title = html.match(/<title>([^<]*)<\/title>/)[1];
   const description = html.match(/<meta name="description" content="([^"]*)"/)[1];
-  const keywords = [['钢琴模拟器', '自由钢琴', '五线谱'], ['piano simulator'], ['鋼琴模擬器', '自由鋼琴', '五線譜']][index];
   for (const keyword of keywords) assert.ok(description.includes(keyword), `${file}: ${keyword}`);
   const json = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map(match => JSON.parse(match[1]));
   const faqs = json.filter(item => item['@type'] === 'FAQPage');
@@ -27,7 +31,7 @@ for (const [index, file] of homePages.entries()) {
     assert.ok(visible.includes(question.acceptedAnswer.text));
   }
   assert.ok(description.length <= 155);
-  if (index !== 1) assert.ok([...title].reduce((n, c) => n + (c.charCodeAt(0) > 127 ? 2 : 1), 0) <= 60);
+  if (!english) assert.ok([...title].reduce((n, c) => n + (c.charCodeAt(0) > 127 ? 2 : 1), 0) <= 60);
   if (baseline) {
     assert.equal(html.match(/<h1>([^<]*)<\/h1>/)[1], baseline[file].h1);
     assert.equal(html.match(/<nav[\s\S]*?<\/nav>/)[0], baseline[file].nav);
@@ -82,9 +86,9 @@ for (const [index, song] of sampled.entries()) {
 
 const sitemap = await read('sitemap.xml');
 const locations = xml => [...xml.matchAll(/<loc>(.*?)<\/loc>/g)].map(match => match[1]);
-assert.equal(locations(sitemap).length, 357);
+assert.equal(locations(sitemap).length, 359);
 if (process.argv[3]) assert.deepEqual(locations(sitemap), locations(await readFile(process.argv[3], 'utf8')));
-console.log(`SITEMAP before=357 after=${locations(sitemap).length}; URL list=${process.argv[3] ? 'identical' : 'not compared'}`);
+console.log(`SITEMAP before=357 after=${locations(sitemap).length}; homepage is English / plus /with-notes/ and /midi/; URL list=${process.argv[3] ? 'identical' : 'not compared'}`);
 
 // A real static server, with 404 for missing files (no SPA fallback).
 const server = createServer(async (request, response) => {
