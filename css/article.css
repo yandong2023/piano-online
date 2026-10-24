@@ -137,6 +137,38 @@
 }
 
 /* 响应式设计 */
+/* ARTICLE_CTA_START */
+.article-cta {
+    margin: 16px;
+    text-align: center;
+}
+
+.article-cta-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-height: 44px;
+    padding: 10px 24px;
+    border-radius: var(--border-radius);
+    background: var(--primary-color);
+    color: var(--background-light);
+    font: inherit;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.article-cta-primary:hover {
+    background: var(--secondary-color);
+}
+
+.article-cta-primary:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 4px;
+}
+/* ARTICLE_CTA_END */
+
 @media (max-width: 768px) {
     .article-header h1 {
         font-size: 2rem;
