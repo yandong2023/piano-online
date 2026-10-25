@@ -67,8 +67,8 @@ export async function generateSitemaps(root = PROJECT_ROOT) {
   ];
 
   const mainUrls = [
-    ...trilingualUrl('/piano.html', '/', '/zh-hant/', { priority: '1.0', changefreq: 'daily', lastmod: '2026-10-24' }),
-    singleUrl('/with-notes/', { priority: '0.8', changefreq: 'weekly', lastmod: '2026-10-24' }),
+    ...trilingualUrl('/piano.html', '/', '/zh-hant/', { priority: '1.0', changefreq: 'daily', lastmod: '2026-10-25' }),
+    singleUrl('/with-notes/', { priority: '0.8', changefreq: 'weekly', lastmod: '2026-10-25' }),
     singleUrl('/midi/', { priority: '0.8', changefreq: 'weekly', lastmod: '2026-10-24' }),
     singleUrl('/practice.html', { priority: '0.8', changefreq: 'weekly' }),
     ...bilingualUrl('/about.html', '/en/about.html', { priority: '0.5', changefreq: 'monthly' }),

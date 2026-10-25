@@ -12,9 +12,9 @@ const dist = path.join(root, 'dist');
 const read = relative => readFile(path.join(dist, relative), 'utf8');
 const baseline = process.argv[2] ? JSON.parse(await readFile(process.argv[2], 'utf8')) : null;
 const homePages = [
-  ['index.html', ['virtual piano', 'visual piano'], true],
-  ['en/index.html', ['virtual piano', 'visual piano'], true],
-  ['piano.html', ['钢琴模拟器', '自由钢琴', '五线谱'], false],
+  ['index.html', ['virtual piano', 'visual piano', 'online piano', 'piano online'], true],
+  ['en/index.html', ['virtual piano', 'visual piano', 'online piano', 'piano online'], true],
+  ['piano.html', ['在线钢琴', '钢琴模拟器', '自由钢琴', '五线谱'], false],
   ['zh-hant/index.html', ['鋼琴模擬器', '自由鋼琴', '五線譜'], false]
 ];
 for (const [file, keywords, english] of homePages) {

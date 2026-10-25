@@ -78,6 +78,13 @@ MIT License
 
 ## 更新日志
 
+### 2026-10-25
+
+#### 首页关键词与带音名琴页
+- 英文首页 `/` 的标题、大标题和简介覆盖 `virtual piano`、`visual piano`、`online piano`、`piano online`。主意图仍是 virtual / visual piano。
+- 简体首页 `/piano.html` 的标题、大标题和简介以「在线钢琴」开头。不另做 `/zh`、`/es`，也不去抢「琴鍵」这类更像找图片的搜索。
+- `/with-notes/` 写明音名一直显示、电脑字母用 Key labels 开关。首页第一屏和说明区都链到这页。
+
 ### 2026-10-24
 
 #### 首页改成英文 Virtual Piano
