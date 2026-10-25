@@ -3,7 +3,7 @@ import path from 'node:path';
 import { publicSongs } from '../data/song-library.mjs';
 import { toTraditionalHtml } from '../data/zh-hant.mjs';
 
-export const STUDIO_VERSION = '20261026.1';
+export const STUDIO_VERSION = '20261026.2';
 // Keep stable language homes: Chinese at /, English at /en/, Traditional at /zh-hant/.
 export const ZH_PIANO_HOME = '/';
 export const EN_VIRTUAL_HOME = '/en/';
@@ -17,17 +17,18 @@ export function studioLanguageMenu(current = 'zh', active = 'piano', songSlug = 
     ['en', 'en', 'English', home ? EN_VIRTUAL_HOME : `/en${page}`]
   ];
   const label = { zh: '切换语言', 'zh-hant': '切換語言', en: 'Change language' }[current];
+  const currentName = { zh: '简体中文', 'zh-hant': '繁體中文', en: 'English' }[current];
   const short = { zh: '中文', 'zh-hant': '繁體', en: 'EN' }[current];
   const items = options.map(([id, lang, name, href]) => id === current
     ? `<span class="studio-lang-option" lang="${lang}" aria-current="true">${name}</span>`
     : `<a class="studio-lang-option" href="${href}" lang="${lang}" hreflang="${lang}">${name}</a>`).join('');
-  return `<details class="studio-lang"><summary aria-label="${label}"><span class="studio-lang-globe" aria-hidden="true"></span>${short}</summary><div class="studio-lang-menu">${items}</div></details>`;
+  return `<details class="studio-lang"><summary aria-label="${label} · ${currentName}" title="${label}"><svg class="studio-lang-globe" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18"/></svg><span class="studio-lang-current">${short}</span></summary><div class="studio-lang-menu">${items}</div></details>`;
 }
 
 export function studioNav(locale = 'zh', active = 'piano', songSlug = '', home = false) {
   const zh = locale === 'zh', base = zh ? '' : '/en';
   const homeHref = zh ? ZH_PIANO_HOME : EN_VIRTUAL_HOME;
-  return `<nav class="nav-bar" aria-label="${zh ? '主导航' : 'Main navigation'}"><div class="nav-container"><a class="studio-brand" href="${homeHref}" aria-label="Piano Online"><span class="brand-keys" aria-hidden="true"><i></i><i></i><i></i></span><span>Piano<span class="brand-light">Online</span><small>${zh ? '让音乐发生' : 'MAKE A LITTLE MUSIC'}</small></span></a><div class="nav-links"><a href="${zh ? ZH_PIANO_HOME : `${base}/piano.html`}"${active === 'piano' ? ' class="active" aria-current="page"' : ''}>${zh ? '弹钢琴' : 'Piano'}</a><a href="${base}/songs/"${active === 'songs' ? ' class="active" aria-current="page"' : ''}>${zh ? '找首歌' : 'Songs'}</a><a href="${base}/tutorials.html"${active === 'learn' ? ' class="active" aria-current="page"' : ''}>${zh ? '学一点' : 'Learn'}</a>${studioLanguageMenu(locale, active, songSlug, home)}</div></div></nav>`;
+  return `<nav class="nav-bar" aria-label="${zh ? '主导航' : 'Main navigation'}"><div class="nav-container"><a class="studio-brand" href="${homeHref}" aria-label="Piano Online"><span class="brand-keys" aria-hidden="true"><i></i><i></i><i></i></span><span>Piano<span class="brand-light">Online</span><small>${zh ? '让音乐发生' : 'MAKE A LITTLE MUSIC'}</small></span></a><div class="nav-links"><a href="${zh ? ZH_PIANO_HOME : `${base}/piano.html`}"${active === 'piano' ? ' class="active" aria-current="page"' : ''}>${zh ? '弹钢琴' : 'Piano'}</a><a href="${base}/songs/"${active === 'songs' ? ' class="active" aria-current="page"' : ''}>${zh ? '找首歌' : 'Songs'}</a><a href="${base}/tutorials.html"${active === 'learn' ? ' class="active" aria-current="page"' : ''}>${zh ? '学一点' : 'Learn'}</a>${studioLanguageMenu(locale, active, songSlug, home)}</div></div><script type="module" src="/js/language-menu.js?v=${STUDIO_VERSION}"></script></nav>`;
 }
 
 export function studioInstrument(locale = 'zh', songId = 'happy-birthday') {
@@ -179,6 +180,7 @@ export async function generateStudioPages(root) {
   for (const name of ['about.html','en/about.html','practice.html']) {
     const file=path.join(root,name); let html=await readFile(file,'utf8');
     if (!html.includes('/css/studio.css')) html=html.replace('</head>',`<link rel="stylesheet" href="/css/studio.css?v=${STUDIO_VERSION}"></head>`);
+    html=html.replace(/href="\/css\/studio\.css(?:\?v=[^"]*)?"/g, `href="/css/studio.css?v=${STUDIO_VERSION}"`);
     html=html.replace(/<nav class="nav-bar"[^>]*>[\s\S]*?<\/nav>/,studioNav(name.startsWith('en/')?'en':'zh','learn'));
     await writeFile(file,html);
   }
