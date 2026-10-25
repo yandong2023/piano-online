@@ -56,6 +56,40 @@ body.studio-focus{overflow:hidden!important}body.studio-focus ins.adsbygoogle,bo
   .studio-toggle:has(#labels-toggle){display:none!important}
 }
 
+/* A compact entrance: the instrument and a first melody share the first screen. */
+.studio-intro{padding:24px 0 16px}
+.studio-quick-start{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:0 0 16px;font-size:12px;color:var(--studio-muted)}
+.studio-quick-start button{display:inline-flex;align-items:center;gap:12px;min-height:44px;padding:9px 16px;border:1px solid #d9c898;border-radius:9px;background:#f2e9d2;color:var(--studio-ink);font-size:13px;font-weight:600}
+.studio-quick-start button:hover{background:var(--studio-gold);border-color:var(--studio-accent)}
+.studio-quick-help{margin-left:auto}
+.studio-score{border-bottom:1px solid var(--studio-line);background:var(--studio-paper)}
+.studio-score>summary{cursor:pointer;padding:10px 20px;color:var(--studio-accent);font-size:12px;font-weight:600;min-height:42px}
+:root body[data-song-id] .studio-score .score-stage{margin:0;padding:0 16px 12px;border:0;border-radius:0;box-shadow:none;background:transparent}
+:root body.secondary-page .studio-score .score-stage-header{display:none}
+:root body .studio-score .score-stage-toolbar{margin:0 0 8px;gap:8px}
+.studio-score .score-stage-toolbar>.section-kicker{display:none}
+:root body .studio-score .score-mode-button{min-height:32px;padding:5px 10px;font-size:11px}
+.studio-score .score-canvas-frame{padding:0;border:1px solid var(--studio-line);border-radius:8px;background:#fffaf0;box-shadow:none;overscroll-behavior-x:contain}
+.studio-score .score-canvas{min-height:0}
+.studio-score .score-svg{width:auto;height:140px;max-width:none}
+.studio-score .score-follow{font-size:11px;color:var(--studio-muted)}
+:root body .studio-score .score-stage-toolbar .score-follow{margin-left:auto}
+:root body .studio-instrument:fullscreen .studio-score .score-svg,:root body .studio-instrument.studio-focus-fallback .studio-score .score-svg{height:110px}
+@media(max-width:640px){
+  .studio-intro{padding:18px 2px 12px}
+  .studio-quick-start{gap:7px;margin-bottom:12px}
+  .studio-quick-start>span:first-child{width:100%;font-size:11px}
+  .studio-quick-start button{flex:1;justify-content:space-between;padding:8px 12px;font-size:12px}
+  .studio-quick-help{display:none}
+  .studio-display{min-height:60px;margin-bottom:12px}
+  .studio-surface{padding-top:14px}
+  .studio-eyebrow{margin-bottom:5px}
+  .studio-score>summary{padding:8px 12px}
+  :root body[data-song-id] .studio-score .score-stage{padding:0 10px 8px}
+  .studio-score .score-svg{height:112px}
+  :root body .studio-score .score-mode-button{font-size:10px;padding:5px 7px}
+}
+
 /* The globe stays visible at every size; native disclosure works without JavaScript. */
 .studio-lang>summary{min-height:44px;gap:8px}
 .studio-lang>summary::after{flex:none}

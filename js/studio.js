@@ -7,6 +7,7 @@ const english = document.documentElement.lang.toLowerCase().startsWith('en');
 const text = (zh, en) => english ? en : zh;
 const $ = (id) => document.getElementById(id);
 const root = document.querySelector('[data-studio]');
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const isFormControl = (target) => target instanceof Element && Boolean(target.closest('input,select,textarea,[contenteditable="true"]'));
 
 // Reuse the existing audio and song engines. Input is scoped and multi-pointer safe.
@@ -185,7 +186,9 @@ async function initialize() {
     $('studio-message').textContent = mode === 'guided' ? songSelect.selectedOptions[0]?.textContent : text('随手按下一个音符。', 'Make yourself a little music.');
     $('studio-submessage').textContent = mode === 'guided'
       ? text('准备好后点击「开始跟弹」，不用赶节拍。', 'Press Start learning when ready. Take it at your own pace.')
-      : text('点击琴键，或按电脑键盘上的 A、S、D。', 'Click a key, or press A, S, D on your keyboard.');
+      : piano.mobileViewport.matches
+        ? text('轻触琴键弹奏，用下方箭头切换音区。', 'Tap a key to play. Use the arrows to change range.')
+        : text('点击琴键，或按电脑键盘上的 A、S、D。', 'Click a key, or press A, S, D on your keyboard.');
     $('studio-upcoming').hidden = true;
   };
   function setMode(next) {
@@ -221,6 +224,18 @@ async function initialize() {
     updateIdle();
   });
   $('start-rhythm-game').addEventListener('click', () => { practice.stopPractice(); setMode('guided'); },{capture:true});
+  document.querySelectorAll('[data-quick-song]').forEach(button => {
+    button.disabled = false;
+    button.addEventListener('click', () => {
+      songSelect.value = button.dataset.quickSong;
+      songSelect.dispatchEvent(new Event('change', { bubbles: true }));
+      setMode('guided');
+      $('start-practice').click();
+      root.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
+      root.focus({ preventScroll: true });
+      if (typeof window.gtag === 'function') window.gtag('event', 'quick_practice_start', { song_id: songSelect.value });
+    });
+  });
   const requested = new URLSearchParams(location.search).get('song');
   if (requested && [...songSelect.options].some(o=>o.value===requested)) { songSelect.value=requested; mode='guided'; }
   if (document.body.dataset.songId) { songSelect.value=document.body.dataset.songId; mode='guided'; }

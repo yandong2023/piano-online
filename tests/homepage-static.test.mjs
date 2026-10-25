@@ -29,7 +29,7 @@ for (const locale of ['zh','en']) for (const home of [true,false]) {
       assert.ok(!html.includes('<link rel="alternate"'), 'piano pages must not emit hreflang alternates');
       assert.ok(html.includes(`<meta property="og:url" content="${homeUrl}">`));
     }
-    assert.equal(html.includes('adsbygoogle.js'), home);
+    assert.equal(html.includes('adsbygoogle.js'), false, 'interactive landing pages must stay free of auto-ad overlays');
     assert.ok(!html.includes('zh-hant-runtime'), 'zh/en pages must not load the traditional runtime');
     assert.equal((html.match(/<h1>/g)||[]).length,1);
   });
@@ -67,7 +67,7 @@ test('zh-hant home renders traditional content with correct head and nav', () =>
   assert.deepEqual(html.match(/<link rel="alternate"[^>]*>/g), HOME_ALTERNATES);
   assert.equal((html.match(/<h1>/g) || []).length, 1);
   assert.ok(html.includes('<h1>線上鋼琴，打開就能彈。</h1>'));
-  assert.ok(html.includes('adsbygoogle.js'));
+  assert.ok(!html.includes('adsbygoogle.js'));
   for (const id of ['song-select','sustain-toggle','labels-toggle','start-practice','stop-practice','start-rhythm-game','toggle-fullscreen','studio-volume','keyboard-viewport']) assert.ok(html.includes(`id="${id}"`));
   const texts = [/<title>([^<]*)<\/title>/, /<h1>([^<]*)<\/h1>/, /<meta name="description" content="([^"]*)">/]
     .map((pattern) => html.match(pattern)[1]);

@@ -14,7 +14,7 @@ test('English homepage is the virtual piano landing', () => {
   assert.equal((landing.match(/<h1>/g) || []).length, 1);
   const guide = '<h2>What is a virtual piano?</h2>';
   assert.ok(landing.indexOf('id="keyboard-viewport"') < landing.indexOf(guide));
-  assert.ok(landing.indexOf(guide) < landing.indexOf('class="studio-discover"'));
+  assert.ok(landing.indexOf('class="studio-discover"') < landing.indexOf(guide));
   assert.ok(landing.indexOf('<h1>') < landing.indexOf('href="/with-notes/"'));
   assert.match(landing, /How to play/);
   assert.match(landing, /href="\/midi\/"/);
@@ -29,7 +29,7 @@ test('English homepage is the virtual piano landing', () => {
   for (const phrase of ['virtual piano', 'visual piano', 'online piano', 'piano online']) {
     assert.ok(`${head} ${landing.match(/<h1>[^<]*<\/h1>/)[0]}`.toLowerCase().includes(phrase), phrase);
   }
-  assert.match(landing, /adsbygoogle\.js/);
+  assert.doesNotMatch(landing, /adsbygoogle\.js/);
   assert.doesNotMatch(landing, /<section id="practice-start"[\s\S]*adsbygoogle/);
 });
 

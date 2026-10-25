@@ -160,6 +160,8 @@ class ScoreViewer {
     const height = 222;
     const svg = createSvgElement('svg', {
       viewBox: `0 0 ${width} ${height}`,
+      width,
+      height,
       class: 'score-svg',
       role: 'img',
       'aria-label': this.locale === 'zh' ? '互动钢琴乐谱' : 'Interactive piano sheet music'
@@ -341,7 +343,16 @@ class ScoreViewer {
 
     if (this.isFollowing && !completed) {
       const current = this.noteGroups[noteIndex];
-      current?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      const frame = this.root.querySelector('.score-canvas-frame');
+      if (current && frame) {
+        const noteBox = current.getBoundingClientRect();
+        const frameBox = frame.getBoundingClientRect();
+        // Follow horizontally inside the score, keeping the piano in place.
+        if (noteBox.left < frameBox.left + 32 || noteBox.right > frameBox.right - 32) {
+          frame.scrollTo({ left: frame.scrollLeft + noteBox.left - frameBox.left - frame.clientWidth / 3,
+            behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+        }
+      }
     }
   }
 

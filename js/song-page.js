@@ -98,6 +98,10 @@ function initializeSongPage() {
         observer.observe(panel, { attributes: true, childList: true, subtree: true, attributeFilter: ['style', 'class'] });
     }
     initializeScoreViewer(songId, { locale: document.documentElement.lang?.startsWith('zh') ? 'zh' : 'en' });
+    const scorePanel = document.querySelector('.studio-score');
+    document.getElementById('song-select')?.addEventListener('change', (event) => {
+        if (scorePanel) scorePanel.hidden = event.target.value !== songId;
+    });
     if (typeof window.gtag === 'function') window.gtag('event', 'song_page_view', { song_id: songId });
 }
 
