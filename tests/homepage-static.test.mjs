@@ -36,7 +36,9 @@ for (const locale of ['zh','en']) for (const home of [true,false]) {
 }
 test('zh home adds simulator while piano page keeps its title', () => {
   const html = renderStudioPage('zh', true);
-  assert.ok(html.includes('<title>在线钢琴模拟器 · 跟着提示学歌 | Piano Online</title>'));
+  assert.ok(html.includes('<title>在线钢琴 · 打开就能弹 | Piano Online</title>'));
+  assert.match(html, /<h1>在线钢琴<\/h1>/);
+  assert.match(html, /<meta name="description" content="在线钢琴，/);
   assert.ok(renderStudioPage('zh', false).includes('<title>在线钢琴 · 打开就能弹，跟着提示学歌 | Piano Online</title>'));
 });
 
@@ -123,5 +125,9 @@ for (const [locale, html, keywords] of [
   if (locale !== 'en') {
     const title = html.match(/<title>(.*?)<\/title>/)[1];
     assert.ok([...title].reduce((n, char) => n + (char.charCodeAt(0) > 127 ? 2 : 1), 0) <= 60);
-  } else assert.match(html, /<title>Virtual Piano Online — Play Free in Browser<\/title>/);
+  } else {
+    assert.match(html, /<title>Virtual Piano Online — Free Visual Piano<\/title>/);
+    assert.match(html, /<h1>Virtual Piano Online<\/h1>/);
+    for (const phrase of ['virtual piano', 'visual piano', 'online piano', 'piano online']) assert.ok(description.toLowerCase().includes(phrase), phrase);
+  }
 });
