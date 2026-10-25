@@ -12,9 +12,8 @@ const dist = path.join(root, 'dist');
 const read = relative => readFile(path.join(dist, relative), 'utf8');
 const baseline = process.argv[2] ? JSON.parse(await readFile(process.argv[2], 'utf8')) : null;
 const homePages = [
-  ['index.html', ['virtual piano', 'visual piano', 'online piano', 'piano online'], true],
+  ['index.html', ['在线钢琴', '钢琴模拟器', '自由钢琴', '五线谱'], false],
   ['en/index.html', ['virtual piano', 'visual piano', 'online piano', 'piano online'], true],
-  ['piano.html', ['在线钢琴', '钢琴模拟器', '自由钢琴', '五线谱'], false],
   ['zh-hant/index.html', ['鋼琴模擬器', '自由鋼琴', '五線譜'], false]
 ];
 for (const [file, keywords, english] of homePages) {
@@ -88,7 +87,7 @@ const sitemap = await read('sitemap.xml');
 const locations = xml => [...xml.matchAll(/<loc>(.*?)<\/loc>/g)].map(match => match[1]);
 assert.equal(locations(sitemap).length, 359);
 if (process.argv[3]) assert.deepEqual(locations(sitemap), locations(await readFile(process.argv[3], 'utf8')));
-console.log(`SITEMAP before=357 after=${locations(sitemap).length}; homepage is English / plus /with-notes/ and /midi/; URL list=${process.argv[3] ? 'identical' : 'not compared'}`);
+console.log(`SITEMAP before=357 after=${locations(sitemap).length}; Chinese /, English /en/, plus /with-notes/ and /midi/; URL list=${process.argv[3] ? 'identical' : 'not compared'}`);
 
 // A real static server, with 404 for missing files (no SPA fallback).
 const server = createServer(async (request, response) => {

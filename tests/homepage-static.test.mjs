@@ -5,8 +5,8 @@ import { renderStudioPage, renderTraditionalHome, studioInstrument } from '../sc
 import { toTraditionalText } from '../data/zh-hant.mjs';
 
 const HOME_ALTERNATES = [
-  '<link rel="alternate" hreflang="zh-CN" href="https://pianoonline.cc/piano.html">',
-  '<link rel="alternate" hreflang="en" href="https://pianoonline.cc/">',
+  '<link rel="alternate" hreflang="zh-CN" href="https://pianoonline.cc/">',
+  '<link rel="alternate" hreflang="en" href="https://pianoonline.cc/en/">',
   '<link rel="alternate" hreflang="zh-Hant" href="https://pianoonline.cc/zh-hant/">',
   '<link rel="alternate" hreflang="x-default" href="https://pianoonline.cc/">'
 ];
@@ -21,7 +21,7 @@ for (const locale of ['zh','en']) for (const home of [true,false]) {
     assert.ok(html.indexOf('data-studio') < html.indexOf('class="studio-discover"'));
     assert.doesNotMatch(html, /tutorial-overlay|88键|88 keys|src="piano\.js"/);
     assert.match(html, /37/);
-    const homeUrl = locale === 'zh' ? 'https://pianoonline.cc/piano.html' : 'https://pianoonline.cc/';
+    const homeUrl = locale === 'zh' ? 'https://pianoonline.cc/' : 'https://pianoonline.cc/en/';
     assert.ok(html.includes(`<link rel="canonical" href="${homeUrl}">`));
     if (home) {
       assert.deepEqual(html.match(/<link rel="alternate"[^>]*>/g), HOME_ALTERNATES);
@@ -36,8 +36,8 @@ for (const locale of ['zh','en']) for (const home of [true,false]) {
 }
 test('zh home adds simulator while piano page keeps its title', () => {
   const html = renderStudioPage('zh', true);
-  assert.ok(html.includes('<title>在线钢琴 · 打开就能弹 | Piano Online</title>'));
-  assert.match(html, /<h1>在线钢琴<\/h1>/);
+  assert.ok(html.includes('<title>在线钢琴模拟器 · 跟着提示学歌 | Piano Online</title>'));
+  assert.match(html, /<h1>在线钢琴，打开就能弹。<\/h1>/);
   assert.match(html, /<meta name="description" content="在线钢琴，/);
   assert.ok(renderStudioPage('zh', false).includes('<title>在线钢琴 · 打开就能弹，跟着提示学歌 | Piano Online</title>'));
 });
@@ -48,7 +48,7 @@ test('zh home language menu links all locales and marks 简体中文 current', (
   assert.ok(html.includes('<details class="studio-lang">'));
   assert.ok(html.includes('<span class="studio-lang-option" lang="zh-CN" aria-current="true">简体中文</span>'));
   assert.ok(html.includes('<a class="studio-lang-option" href="/zh-hant/" lang="zh-Hant"'));
-  assert.ok(html.includes('<a class="studio-lang-option" href="/" lang="en"'));
+  assert.ok(html.includes('<a class="studio-lang-option" href="/en/" lang="en"'));
 });
 
 test('en piano page language menu links back to zh piano and zh-hant home', () => {
@@ -73,12 +73,12 @@ test('zh-hant home renders traditional content with correct head and nav', () =>
     .map((pattern) => html.match(pattern)[1]);
   for (const text of texts) assert.ok(!/钢|琴键|弹/.test(text), text);
   assert.ok(html.includes('<details class="studio-lang">'));
-  assert.ok(html.includes('<a class="studio-lang-option" href="/piano.html" lang="zh-CN"'));
-  assert.ok(html.includes('<a class="studio-lang-option" href="/" lang="en"'));
+  assert.ok(html.includes('<a class="studio-lang-option" href="/" lang="zh-CN"'));
+  assert.ok(html.includes('<a class="studio-lang-option" href="/en/" lang="en"'));
   assert.ok(html.includes('<span class="studio-lang-option" lang="zh-Hant" aria-current="true">繁體中文</span>'));
   assert.match(html, /class="studio-song-card" href="\/zh-hant\/songs\//);
   assert.ok(!html.includes('href="/songs/'));
-  assert.equal(html.match(/href="\/piano\.html"/g).length, 1);
+  assert.equal(html.match(/href="\/"/g).length, 1);
   const ld = JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
   assert.deepEqual(ld['@graph'].map((node) => node['@type']), ['WebSite', 'WebApplication']);
   assert.equal(ld['@graph'][0].inLanguage, 'zh-Hant');

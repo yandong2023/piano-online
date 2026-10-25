@@ -97,9 +97,8 @@ export function applyArticleLanguage(html, { slug, lang, root }) {
   // Update only Chinese legacy home anchors; English source/output stays intact.
   let next = html;
   if (lang === 'zh-CN') {
-    next = next.replaceAll('<a href="/">首页</a>', '<a href="/piano.html">在线钢琴</a>');
-    next = next.replaceAll('<a href="/">在线钢琴</a>', '<a href="/piano.html">在线钢琴</a>');
-    next = next.replaceAll('<a href="/" class="nav-logo">', '<a href="/piano.html" class="nav-logo">');
+    next = next.replaceAll('<a href="/">首页</a>', '<a href="/">在线钢琴</a>');
+    next = next.replaceAll('href="/piano.html"', 'href="/"');
   }
   next = stripAlternateLinks(next);
   next = setHtmlLang(next, lang);

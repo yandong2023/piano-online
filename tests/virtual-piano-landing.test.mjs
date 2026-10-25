@@ -20,7 +20,7 @@ test('English homepage is the virtual piano landing', () => {
   assert.match(landing, /href="\/midi\/"/);
   assert.match(landing, /<h2>Virtual piano with notes<\/h2>/);
   assert.match(landing, /href="\/with-notes\/"/);
-  assert.match(landing, /href="\/piano\.html" lang="zh-CN" hreflang="zh-CN">在线钢琴<\/a>/);
+  assert.match(landing, /href="\/" lang="zh-CN" hreflang="zh-CN">在线钢琴<\/a>/);
   assert.match(landing, /id="labels-toggle" checked/);
   assert.match(landing, /virtual-piano-home\.css/);
   assert.doesNotMatch(landing, /<form|type="password"/);
@@ -40,14 +40,14 @@ test('note and MIDI landings link back to the homepage', () => {
   assert.match(notes, /<h1>Virtual piano with notes<\/h1>/);
   assert.match(notes, /notes overlay/);
   assert.match(notes, /<h2>Computer key labels<\/h2>/);
-  assert.match(notes, /href="\/"/);
+  assert.match(notes, /href="\/en\/"/);
   assert.match(notes, /href="\/midi\/"/);
   assert.match(notes, /id="keyboard-viewport"/);
   assert.match(notes, /id="labels-toggle" checked/);
   assert.match(midi, /<h1>Piano MIDI online — drop file to play<\/h1>/);
   assert.match(midi, /id="midi-drop"/);
   assert.match(midi, /id="midi-file"/);
-  assert.match(midi, /href="\/"/);
+  assert.match(midi, /href="\/en\/"/);
   assert.match(midi, /href="\/with-notes\/"/);
   assert.match(midi, /id="keyboard-viewport"/);
   assert.match(midi, /midi-drop\.mjs/);
@@ -59,16 +59,18 @@ test('note and MIDI landings link back to the homepage', () => {
   }
 });
 
-test('published homepage file is English and ad rules protect the keyboard', async () => {
+test('published default is Chinese and English has an independent homepage', async () => {
   const html = await readFile('index.html', 'utf8');
   const css = await readFile('css/virtual-piano-home.css', 'utf8');
   const sitemap = await readFile('sitemap.xml', 'utf8');
-  assert.equal(html, landing);
+  assert.equal(html, renderStudioPage('zh', true));
+  assert.equal(await readFile('en/index.html', 'utf8'), landing);
+  assert.match(html, /<html lang="zh-CN">/);
   assert.match(css, /studio-instrument/);
   assert.match(css, /position:\s*static !important/);
   assert.match(sitemap, /<loc>https:\/\/pianoonline\.cc\/<\/loc>/);
   assert.match(sitemap, /<loc>https:\/\/pianoonline\.cc\/with-notes\/<\/loc>/);
   assert.match(sitemap, /<loc>https:\/\/pianoonline\.cc\/midi\/<\/loc>/);
-  assert.match(sitemap, /<loc>https:\/\/pianoonline\.cc\/piano\.html<\/loc>/);
-  assert.doesNotMatch(sitemap, /<loc>https:\/\/pianoonline\.cc\/en\/<\/loc>/);
+  assert.doesNotMatch(sitemap, /<loc>https:\/\/pianoonline\.cc\/piano\.html<\/loc>/);
+  assert.match(sitemap, /<loc>https:\/\/pianoonline\.cc\/en\/<\/loc>/);
 });
