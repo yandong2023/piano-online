@@ -1,11 +1,21 @@
 # PRD-STAF-69 · 补齐音频 / 键盘埋点：让首音与移动端交互可观测
 
-- 版本：v1（2026-10-23）
+- 版本：**v2（2026-10-26）**｜前版 v1（2026-10-23，随 PR #30 分支提交 `13a6d72`）
 - 作者：产品
 - 来源：STAF-63 复盘（`ANALYSIS-20261023-pianoonline-octave-audio.md` §4 提案 1，P1）
 - 上游 issue：STAF-69（Morgan 转需求）
 - 需求性质判定：**真需求（可复现的证据链，不是"加个按钮"）**。判定见 §1.2。
 - 一句话：**本轮不重做 STAF-63，只把它的两个 P0 从"人工脚本可测"变成"用户侧可测"。**
+
+### 改版记录（v1 → v2，2026-10-26）
+
+| # | 改了什么 | 为什么 | 性质 |
+|---|---|---|---|
+| 1 | **AC-9 文件白名单补 `package.json`**（仅允许追加一条测试接线，见 AC-9 原文限定） | v1 的 AC-8 要求"新测试进 `npm test`"，而 AC-9 的白名单又不含 `package.json`，而 `package.json` 的 `test` 是**逐项枚举链**（`generate:content` + 各文件 `node --check` + 6 个分项 `npm run test:*`），不追加就永远不会被执行 → **两条 AC 互相矛盾，开发无解**。这是我的文档缺陷 | 修文档缺陷，**不放宽任何行为要求** |
+| 2 | **AC-7 由"逐字段相同（1px / 1ms 容差）+ console 无 error"改写为 4 条可复现口径** | ①1ms 容差低于本站首音时延噪声底（实测 9.7–98.2ms，历史 0.5–98.2 / 115–774 双峰，见 §7.3），任何人重跑都得不出同一结论，违反 AC 可测性第 1 问；②v1 的"console 无 error"没有区分**测试自身 abort 外链**造成的 `net::ERR_FAILED` 资源错误，导致该条永远不可能为真 | 把不可测门槛换成可复现门槛；**实质要求不变**（埋点阻塞音频 → 跨档/无声/无高亮仍会被抓） |
+| 3 | **AC-4 补一句验证方法**：桌面 ≥1100px 时左右箭头是 `visibility:hidden`（`css/studio.css:16`） | v1 写"desktop 点 ◀▶"，实测该视口下按钮不可见，QA 按字面执行会卡住 | 补可执行细节 |
+
+**变更 2 的依据与边界（重要，请连同此段一起审）**：Morgan 2026-10-22 16:45 的决策单复核给出 AC-7 的 A/B 两项（A = 改为可复现口径；B = 保留 1ms 门槛、由质检先给测量方法），并写明「AC-8 由产品在 PRD v2 补白名单」。本 issue 于 **2026-10-26 09:04（revision 19）被改派给产品**——按 Morgan 文中路径，**选 B 会派质检、只有选 A 才派产品**，故本版按 **A** 落地。**用户未在 issue 留下文字答复**；若实际选的是 B，请一句话驳回，我立即回退变更 2 并改派质检。
 
 ---
 
@@ -247,6 +257,8 @@ free_play_entry: v1 2026-07-25 → 2026-10-01（点入口 CTA，旧壳）
 附事件序列 + `aria-label` 前后值 + 按钮 `disabled` 状态。
 
 > 判定要点：实现若把"点击箭头"当上报条件（而不是"`startOctave` 实际变化"），③④⑤ 会多出事件，AC 不通过。合法落点是 `js/piano.js:303` 的 `if (!force && next === this.startOctave) return;` **之后**。
+>
+> **⑤ 的执行细节（v2 补充）**：桌面 ≥1100px 时左右箭头是 `visibility:hidden`（`css/studio.css:16`），**看不见但仍存在**，真实点击会被遮挡；两种合法做法任选——把视口设到 641–1099px 真实点击（该区间按钮可见且走 `scrollBy()` 分支），或用 `page.evaluate` 对该按钮 `HTMLElement.click()`。两种情况都要求 `octave_shift` = 0。
 
 **AC-5 `free_play_entry` 恢复且口径为"free 模式首次按键"**
 操作：① 390px 打开 `/`，不按键 → 等 2s；② tap `C4`；③ 点 `[data-play-mode="guided"]` 再点回 `free`，再 tap `E4`；④ 另开 `/songs/twinkle-twinkle-little-star/`（`body[data-song-id="twinkle"]`，默认 guided，`js/studio.js:226`），tap `C4`。
@@ -256,17 +268,31 @@ free_play_entry: v1 2026-07-25 → 2026-10-01（点入口 CTA，旧壳）
 操作：读 AC-1 的全部事件参数；并 `grep -n "event_version" js/analytics.js`。
 期望：每条新事件都含 `event_version`（number，= `1`）与 `asset_version`（非空 string）；`asset_version` 与 `document.querySelector('script[src*="/js/studio.js"]').src` 的 `?v=` 值一致（当前应为 `20261001.1`）；解析失败路径返回 `unknown`（在测试里把该 script 的 `src` 改成无 query 后断言）。附对照。
 
-**AC-7 埋点失败不影响产品行为**
-操作：同 AC-1 脚本，在 `page.goto` **之后、按键之前**用 `page.evaluate` 覆盖（不能在 `add_init_script` 里注入——页面内联片段 `function gtag(){…}` 会把它覆盖掉）：① `window.gtag = undefined`；② `window.gtag = () => { throw new Error('boom'); }`。
-期望：两种情况下——按键**有声音**（`window.firstStart` 存在、`audio.pressedNotes` 变化正常）、键高亮正常、`[data-octave]` 切换后 `.keys[aria-label]` 正常变化、`pageerror` 事件数 = 0、`console` 无 error；首音/键宽/音区各项读数与对 `origin/main`（`9bcdcab`）跑同一脚本的读数**逐字段相同**（1px / 1ms 容差内）。附两份对比 JSON。
+**AC-7 埋点失败不影响产品行为（v2 重写：4 条可复现门槛）**
+操作：同 AC-1 脚本，在 `page.goto` **之后、按键之前**用 `page.evaluate` 覆盖（不能在 `add_init_script` 里注入——页面内联片段 `function gtag(){…}` 会把它覆盖掉）：① `window.gtag = undefined`；② `window.gtag = () => { throw new Error('boom'); }`。每个场景都要与 `origin/main`（`9bcdcab`）在**同一台机器、同一视口、同一次会话内**跑一份基线对照。
+期望（四条全部满足才算通过）：
+1. **行为字段逐项相同**（对基线比）：`before` / `after` 的 `range`、`keys`、白键宽度（1px 容差）、`[data-octave]` 按钮尺寸、`labelsHidden`、`buffers` 数量、按键后 `state=running`、按住时 `pressedNotes` 非空 / 释放后为空、键高亮 class 切换 —— 逐字段相同；按键必须有声音（`window.firstStart` 存在）；
+2. `pageerror` 事件数 = 0（两侧）；
+3. **应用级** `console.error` = 0。唯一允许排除的是**测试自身 `page.route(...).abort()` 造成的外链资源加载失败**（`net::ERR_FAILED`），且必须逐条列出被排除错误的 URL 并证明其 ∈ {`googletagmanager.com`、`google-analytics.com`、`googlesyndication.com`、`doubleclick.net`}（用 `page.on('requestfailed')` 抓）；来自 `127.0.0.1:8763` 或任何站内脚本的 console error **不得排除**；
+4. **首音时延不再比对 1ms 绝对值**：改为两侧 `latency_bucket` 同档（本次实测两侧均 `<50`）。两侧 `input_to_start_ms` 的原始数值与差值必须如实写进自测报告，绝对值由 AC-11 在上线后观测。
+
+> **为什么撤销 1ms（v2 变更 2 的展开）**：本站首音时延实测 9.7–98.2ms，历史还存在 0.5–98.2ms 与 115–774ms 双峰（§7.3），1ms 容差**低于噪声底**——同一份代码重跑两次就会"不通过"，换个人照做结果也不一样，违反 AC 可测性第 1 问。这是 v1 的写法缺陷，不是开发没做到。
+> **实质要求没放宽**：若埋点真的阻塞了音频路径，按键会无声 / 无高亮 / 首音跨档（≥100ms）/ `pressedNotes` 不释放 —— 第 1、4 条仍会失败。第 3 条排除的只是**测试自己制造的网络错误**，任何应用级 error 依旧零容忍。
 
 **AC-8 防退化断言进 `npm test`**
 操作：新增 `tests/studio-events.test.mjs`（风格对齐 `tests/song-analytics.test.mjs` 与 `tests/guided-onboarding.test.mjs` 的静态断言）。
-期望至少断言：① 四个事件名在源码中各出现 ≥1 次；② 每个发送点所在语句被 `typeof window.gtag` 守卫或经 `js/analytics.js` 的 `track()` 调用（即"直接裸调 `window.gtag`"出现在白名单之外时失败）；③ 每个事件名附近出现其字典必填参数名（`audio_first_attack` → `input_to_start_ms`/`latency_bucket`/`note`/`hit`/`cold_start`；`note_play` → `source`/`range`/`octaves`；`octave_shift` → `direction`/`from_range`/`to_range`；`free_play_entry` → `keys_visible`）；④ `js/analytics.js` 导出 `track` 且含 `try`/`catch`。`npm test` 全绿，**不得放宽或删除既有断言**（尤其 `tests/song-analytics.test.mjs` 的 GA 单例断言）。
+期望至少断言：① 四个事件名在源码中各出现 ≥1 次；② 每个发送点所在语句被 `typeof window.gtag` 守卫或经 `js/analytics.js` 的 `track()` 调用（即"直接裸调 `window.gtag`"出现在白名单之外时失败）；③ 每个事件名附近出现其字典必填参数名（`audio_first_attack` → `input_to_start_ms`/`latency_bucket`/`note`/`hit`/`cold_start`；`note_play` → `source`/`range`/`octaves`；`octave_shift` → `direction`/`from_range`/`to_range`；`free_play_entry` → `keys_visible`）；④ `js/analytics.js` 导出 `track` 且含 `try`/`catch`。**并把该文件接进 `npm test` 链路**（白名单已含 `package.json`，接线约束见 AC-9）。`npm test` 全绿，**不得放宽或删除既有断言**（尤其 `tests/song-analytics.test.mjs` 的 GA 单例断言）。
+证据要求：附 `npm test` 的完整输出尾部，且输出中必须出现 `tests/studio-events.test.mjs` 的用例结果（证明它真被执行，而不是只存在于目录里）。
 
 **AC-9 无回归与范围纪律**
-操作：`npm test`；`git diff --name-only origin/main...HEAD`；`grep -c "googletagmanager" index.html`。
-期望：`npm test` 全绿；改动文件 ⊆ {`js/analytics.js`,`js/studio.js`,`js/piano.js`,`js/piano-audio.js`,`tests/studio-events.test.mjs`,`tests/mobile-piano-browser.py`(可选),`docs/**`}；不含 `vercel.json`、`css/**`、广告相关、`js/main.js`、`js/guided-*.js`；`googletagmanager` 在 `index.html` 仍为 1 处；`js/piano-audio.js` 的 `console.info('[piano:first-attack]'` 仍在。附 diff 文件名清单。
+操作：`npm test`；`git diff --name-only origin/main...HEAD`；`git diff origin/main...HEAD -- package.json`；`grep -c "googletagmanager" index.html`。
+期望：
+- `npm test` 全绿，**且输出中出现 `tests/studio-events.test.mjs` 的用例结果**（AC-8 的接线真的生效）；
+- 改动文件 ⊆ {`js/analytics.js`,`js/studio.js`,`js/piano.js`,`js/piano-audio.js`,`tests/studio-events.test.mjs`,`tests/mobile-piano-browser.py`(可选),`package.json`(仅测试接线),`docs/**`}；
+- **`package.json` 的改动边界（v2 新增，可被逐字核对）**：只允许向 `scripts.test` 链路**追加**一条对 `tests/studio-events.test.mjs` 的调用（例如新增 `"test:events": "node --test tests/studio-events.test.mjs"` 并在 `test` 末尾接 `&& npm run test:events`，或直接追加 `&& node --test tests/studio-events.test.mjs`）。**不得**删改既有 `generate:content`、任何 `node --check`、任何 `test:*` 子命令；不得增删依赖；不得改 `scripts` 以外的字段；
+- 不含 `vercel.json`、`css/**`、广告相关、`js/main.js`、`js/guided-*.js`；
+- `googletagmanager` 在 `index.html` 仍为 1 处；`js/piano-audio.js` 的 `console.info('[piano:first-attack]'` 仍在。
+附：diff 文件名清单 + `git diff origin/main...HEAD -- package.json` 完整片段（用于逐字核对上面的边界）。
 
 **AC-10（上线后 48h 观测，非开发门槛）**
 上线满 48h，在 GA4（属性时区 America/Los_Angeles）核对：
@@ -319,6 +345,7 @@ free_play_entry: v1 2026-07-25 → 2026-10-01（点入口 CTA，旧壳）
 2. **GA4 侧注册项由谁执行**（依赖 D-1）：本单边界不动 GA4 配置，需要 admin 权限的人注册维度。
 3. **历史漏斗数字**：本单上线后 `free_play_entry` 口径变 v2。对外引用的"7.6% 进过自由弹奏"（Atlas §1.2 已证伪为分母错误 + 事件停报）必须撤下，且 v1/v2 之间不可比。是否需要对外发更正，需 Morgan/用户定（不阻塞开发）。
 4. **是否受 11-06 部署窗口约束**：STAF-66 的任务书提到"11-06 复盘前不合并会触发生产部署的变更"。本单 issue 未写此约束，但本单合并必然触发部署。开发完成 + PR + 自测后停在 `in_review`，合并时点由 Morgan/用户定。
+5. **AC-7 口径（v2 变更 2）的确认**：本版按 Morgan 决策单的**选项 A** 落地（可复现门槛），依据见文首「变更 2 的依据与边界」。**用户未在 issue 留文字答复**；若用户实际选 B（保留 1ms、由质检先给测量方法），本单需回退 AC-7 并改派质检 —— 这是一句话即可执行的回退，不影响其余 10 条 AC 与已完成的实现。
 
 ### 7.2 依赖
 
