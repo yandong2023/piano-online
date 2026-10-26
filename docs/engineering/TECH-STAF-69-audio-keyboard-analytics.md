@@ -1,6 +1,6 @@
 # TECH-STAF-69 · 音频与键盘埋点
 
-版本 v1，2026-10-23。对应 PRD-STAF-69 v1（13a6d72），交付 AC-1～AC-9；AC-10/11 属上线后观测。
+版本 v2，2026-10-26。对应 PRD-STAF-69 v2（e54da93），交付 AC-1～AC-9；AC-10/11 属上线后观测。v2 仅补测试接线、按产品新 AC-7 重测并更新文档，生产 JS 保持 24b94dd 的实现。
 
 ## 方案
 
@@ -29,9 +29,10 @@
 | js/piano.js | MIDI 来源、真实手动换区事件 |
 | tests/studio-events.test.mjs | 静态契约及动态失败/去重/取消验证 |
 | tests/mobile-piano-browser.py | --analytics 浏览器验收分支 |
+| package.json | 仅 scripts.test 末尾追加 node --test tests/studio-events.test.mjs |
 | docs/product/PRD-STAF-69-audio-keyboard-analytics.md | 产品原始定稿，随功能 PR 交付 |
 
-AC-8 接线与 AC-9 白名单冲突：package.json 枚举了测试文件，新增测试不会自动运行。已请求只追加一条测试命令的授权；授权前不修改白名单外文件。
+AC-8 接线与 AC-9 白名单冲突已由 PRD v2 修正。package.json 仅追加新测试调用，保留全部原脚本和依赖；完整 diff 随自测附件交付。
 
 ## 测试点与证据
 
@@ -43,15 +44,13 @@ AC-8 接线与 AC-9 白名单冲突：package.json 枚举了测试文件，新�
 | 4 | 上下边界、disabled、clamp、自动 teaching、resize、桌面箭头零误报 |
 | 5 | 加载/切模式零事件，首次 free 键一次，歌曲页 guided 零事件，guided→free 可恢复 |
 | 6 | 每次公共参数，动态删除/改写 query 与缺失 script 返回 unknown |
-| 7 | gtag 缺失/抛错下真实音源启动、pressedNotes、高亮与换区；与基线同脚本比较 |
-| 8 | 静态事件/必填参数/唯一通道，Node 动态验证版本及异常；npm test 接线待授权 |
+| 7 | 同浏览器会话基线对照：行为字段（1px）、pageerror、应用 console.error、时延同桶；排除错误必须逐条关联测试 abort 的白名单 URL 和 requestfailed |
+| 8 | 静态事件/必填参数/唯一通道，Node 动态验证版本及异常；npm test 末尾直接执行新增文件 |
 | 9 | npm test / build、白名单和 GA 单例、保留首音日志 |
 
 执行结果见 `docs/engineering/SELFTEST-STAF-69-audio-keyboard-analytics.md` 和随任务附上的 `analytics-browser.json`。无权限场景不适用；无参数/空版本、超长时延、并发 resume、异常中断由 Node 测试覆盖。上报时延限制到 0～9999.99ms，同时满足字典范围和 AC-2 的严格小于 10000；原 console 数值保留。
 
-自测结果：现有 `npm test` 95/95；新增独立 Node 测试 6/6；build 100 songs / 10 tutorials / 357 URLs；AC-1～AC-6 浏览器断言通过，AC-4 桌面箭头原本被 CSS 隐藏，使用 HTMLElement.click 验证 scrollBy 分支，未修改可见性。AC-7 真实首音跨基线差 11.6ms / 1.6ms，严格 ≤1ms 条件未通过；功能/几何相同且无 pageerror。两侧均有外网 abort 导致的两条资源 console error。AC-8 独立测试通过，但 npm test 接线因白名单冲突待授权。AC-9 现有回归及文件范围通过。未将以上两条判为通过，也未改变 PRD 的门槛。
-
-待决策：允许 package.json 仅添加新测试命令，或由产品提供既能遵守白名单又能接线的修订；AC-7 由产品/质检明确如何处理基线同样存在的外网拦截错误与宿主 cold resume 波动。在决策前只交付 draft PR，不申请合并。
+自测结果：`npm test` 101/101（含新事件文件6项）；build 100 songs / 10 tutorials / 357 URLs。浏览器 v2 的完整分桶、原始时延与 URL 逐条排除证据见 SELFTEST 与 analytics-browser.json；v1 历史失败留在原提交及原任务附件，不覆盖历史结论。
 
 ## 上线与回滚
 
@@ -62,7 +61,8 @@ AC-8 接线与 AC-9 白名单冲突：package.json 枚举了测试文件，新�
 
 ## 风险与未知
 
-- 独立运行的真实首音依赖宿主调度，AC-7 跨基线 1ms 容差不一定可复现，必须保留原始读数，不能据此放宽 AC。
+- 独立运行的真实首音依赖宿主调度；按 PRD v2 比较同桶并保留原始读数与差值，不重复采样凑通过。
+- PRD v2 文首保留产品对 AC-7 授权来源的说明（无 issue 内用户文字答复，产品按改派路径落地选项 A），质检须连同说明审阅；开发未自行修改 PRD 门槛。
 - gtag 缺失或抛错时事件静默丢弃；首音与首次进入都不重试，避免后续行为冒充首次。
 - free_play_entry 事件字典：v1 为 2026-07-25～2026-10-01 的旧 CTA；v2 从本单实际上线日开始，为 free 模式首次成功物理按键。event_version 仍为公共协议版本 1；旧新口径不可比较，中间断点无数据。
 - guided_song_entry / guided_fullscreen_result 标注 deprecated (2026-10-01)，本单不恢复也不删除旧代码。

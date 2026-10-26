@@ -21,6 +21,7 @@ def run_analytics():
     Run this file with --analytics; PIANO_EVIDENCE selects the JSON output folder.
     """
     from collections import Counter
+    from urllib.parse import urlsplit
 
     results = {}
     contexts = []
@@ -44,6 +45,32 @@ def run_analytics():
     def named(page, name):
         return [e['params'] for e in events(page) if e['name'] == name]
 
+    def latency_bucket(value):
+        return '<50' if value < 50 else '50-100' if value < 100 else '100-200' if value < 200 else '200-500' if value < 500 else '>=500'
+
+    def classify_console_errors(diagnostics):
+        allowed = {'googletagmanager.com', 'google-analytics.com', 'googlesyndication.com', 'doubleclick.net'}
+        application, excluded = [], []
+        for error in diagnostics['console_errors']:
+            url = error['location'].get('url', '')
+            host = urlsplit(url).hostname or ''
+            matches = [r for r in diagnostics['request_failed'] if r['url'] == url and r['aborted_by_test'] and r['failure'] == 'net::ERR_FAILED']
+            if ('net::ERR_FAILED' in error['text'] and matches
+                    and any(host == domain or host.endswith('.' + domain) for domain in allowed)):
+                excluded.append({**error, 'url': url, 'matching_failed_requests': matches})
+            else:
+                application.append(error)
+        return application, excluded
+
+    def same_metrics(a, b):
+        if a.keys() != b.keys() or len(a['whites']) != len(b['whites']) or len(a['buttons']) != len(b['buttons']):
+            return False
+        if any(abs(x-y) > 1 for x,y in zip(a['whites'], b['whites'])):
+            return False
+        if any(abs(x[k]-y[k]) > 1 for x,y in zip(a['buttons'], b['buttons']) for k in ['width','height']):
+            return False
+        return all(a[key] == b[key] for key in a if key not in ['whites','buttons'])
+
     def tap(page, note):
         page.locator(f'.key[data-note="{note}"]').tap(position={'x': 20, 'y': 170})
         page.wait_for_function('window.pianoStudio.piano.audio.pendingNotes.size===0')
@@ -56,21 +83,44 @@ def run_analytics():
             contexts.append(ctx)
             page = ctx.new_page()
             page.set_default_timeout(5000)
-            page.route('**/*', lambda route: route.continue_() if route.request.url.startswith(origin + '/') else route.abort())
-            errors, consoles = [], []
+            errors = []
+            diagnostics = {'console_errors': [], 'request_failed': [], 'aborted_urls': []}
+            def route_request(route):
+                if route.request.url.startswith(origin + '/'):
+                    route.continue_()
+                else:
+                    diagnostics['aborted_urls'].append(route.request.url)
+                    route.abort()
+            page.route('**/*', route_request)
             page.on('pageerror', lambda err: errors.append(str(err)))
-            page.on('console', lambda msg: consoles.append(msg.text) if msg.type == 'error' else None)
+            page.on('console', lambda msg: diagnostics['console_errors'].append({'text': msg.text, 'location': msg.location}) if msg.type == 'error' else None)
+            page.on('requestfailed', lambda request: diagnostics['request_failed'].append({
+                'url': request.url, 'failure': request.failure,
+                'aborted_by_test': request.url in diagnostics['aborted_urls'],
+            }))
             page.add_init_script(hooks)
             cdp = ctx.new_cdp_session(page)
             cdp.send('Network.enable')
             cdp.send('Network.setCacheDisabled', {'cacheDisabled': True})
             page.goto(origin + path, wait_until='networkidle')
             page.wait_for_function('window.pianoStudio?.piano.audio.buffers.size===19')
-            return page, cdp, errors, consoles
+            page.bring_to_front()
+            page.evaluate('''() => {
+              const audio=window.pianoStudio.piano.audio, play=audio.playNote.bind(audio);
+              window.playAttempts=[];
+              audio.playNote=async(...args)=>{
+                const at=performance.now(), state=audio.context.state;
+                const played=await play(...args);
+                window.playAttempts.push({note:args[0],state,played,elapsed:performance.now()-at});
+                return played;
+              };
+            }''')
+            return page, cdp, errors, diagnostics
 
         mobile, _, _, _ = new_page()
         assert not events(mobile)
         tap(mobile, 'C4')
+        assert len(named(mobile,'audio_first_attack')) == 1, mobile.evaluate('({attempts:window.playAttempts,firstStart:window.firstStart})')
         mobile.keyboard.press('a')
         mobile.wait_for_function('window.pianoStudio.piano.audio.pendingNotes.size===0')
         mobile.locator('[data-octave="1"]').click()
@@ -179,7 +229,7 @@ def run_analytics():
         for failure in ['missing','throw']:
             samples = {}
             for label, origin in [('baseline','http://127.0.0.1:8764'),('candidate',URL)]:
-                page, _, errors, consoles = new_page(origin=origin)
+                page, _, errors, diagnostics = new_page(origin=origin)
                 page.evaluate('() => { window.gtag=undefined; }' if failure=='missing' else '() => { window.gtag=()=>{throw Error("boom")}; }')
                 before = metrics(page)
                 page.locator('.key[data-note="C4"]').scroll_into_view_if_needed()
@@ -190,27 +240,40 @@ def run_analytics():
                 held = page.evaluate('''()=>({notes:[...window.pianoStudio.piano.audio.pressedNotes],active:document.querySelector('.key[data-note="C4"]').classList.contains('active'),state:window.pianoStudio.piano.audio.context.state})''')
                 assert held == {'notes':['C4'],'active':True,'state':'running'}, held
                 page.mouse.up()
-                assert page.evaluate('window.pianoStudio.piano.audio.pressedNotes.size') == 0
+                released = page.evaluate('''()=>({notes:[...window.pianoStudio.piano.audio.pressedNotes],active:document.querySelector('.key[data-note="C4"]').classList.contains('active'),state:window.pianoStudio.piano.audio.context.state})''')
+                assert released == {'notes':[],'active':False,'state':'running'}, released
                 page.locator('[data-octave="1"]').click()
                 assert page.locator('.keys').get_attribute('aria-label') == 'C4–C6'
-                assert errors == [], errors
-                app_errors = [e for e in consoles if 'net::ERR_FAILED' not in e]
-                assert app_errors == [], app_errors
-                samples[label] = {'before':before,'after':metrics(page),'first_start':page.evaluate('window.firstStart'),'held':held,'page_errors':errors,'console_errors':consoles,'events':events(page)}
+                app_errors, excluded = classify_console_errors(diagnostics)
+                first_start = page.evaluate('window.firstStart')
+                samples[label] = {
+                    'before':before, 'after':metrics(page), 'first_start':first_start,
+                    'latency_bucket':latency_bucket(first_start['inputToStartMs']),
+                    'held':held, 'released':released, 'page_errors':errors,
+                    **diagnostics, 'application_console_errors':app_errors,
+                    'excluded_console_errors':excluded, 'events':events(page),
+                }
             a,b = samples['baseline'],samples['candidate']
-            geometry = a['before']==b['before'] and a['after']==b['after']
+            behavior = same_metrics(a['before'],b['before']) and same_metrics(a['after'],b['after']) and a['held']==b['held'] and a['released']==b['released']
             latency_delta = abs(a['first_start']['inputToStartMs']-b['first_start']['inputToStartMs'])
-            comparisons[failure] = {**samples,'geometry_equal':geometry,'latency_delta_ms':latency_delta,'within_1ms':latency_delta<=1,'zero_console_errors':not a['console_errors'] and not b['console_errors']}
-            assert geometry
+            gates = {
+                'behavior_equal_1px':behavior,
+                'zero_page_errors':not a['page_errors'] and not b['page_errors'],
+                'zero_application_console_errors':not a['application_console_errors'] and not b['application_console_errors'],
+                'same_latency_bucket':a['latency_bucket']==b['latency_bucket'],
+            }
+            comparisons[failure] = {**samples, 'latency_delta_ms':latency_delta, 'gates':gates, 'pass':all(gates.values())}
         results['AC7'] = comparisons
-        results['AC7_strict_pass'] = all(c['within_1ms'] and c['zero_console_errors'] for c in comparisons.values())
+        results['prd_version'] = 2
+        results['baseline_commit'] = '9bcdcab'
+        results['AC7_pass'] = all(c['pass'] for c in comparisons.values())
         for ctx in contexts:
             ctx.close()
         browser.close()
     (OUT/'analytics-browser.json').write_text(json.dumps(results,ensure_ascii=False,indent=2)+'\n')
-    print(json.dumps({'AC1_to_AC6':'PASS','AC7_functional':'PASS','AC7_strict':results['AC7_strict_pass'],'evidence':str(OUT/'analytics-browser.json')},ensure_ascii=False))
-    if not results['AC7_strict_pass']:
-        raise AssertionError('AC-7 strict acceptance failed; see analytics-browser.json for baseline/candidate evidence')
+    print(json.dumps({'AC1_to_AC6':'PASS','AC7_v2':results['AC7_pass'],'evidence':str(OUT/'analytics-browser.json')},ensure_ascii=False))
+    if not results['AC7_pass']:
+        raise AssertionError('AC-7 v2 acceptance failed; see analytics-browser.json for baseline/candidate evidence')
 
 def metrics(page):
     return page.evaluate('''() => ({
