@@ -6,7 +6,7 @@ import path from 'node:path';
 import test from 'node:test';
 import { tutorialArticles, tutorialCategories } from '../data/tutorial-library.mjs';
 import { publicSongs, songs } from '../data/song-library.mjs';
-import { applyLegacyTutorialLocales } from '../scripts/apply-legacy-articles.mjs';
+import { applyArticleCta, applyLegacyTutorialCtas, applyLegacyTutorialLocales } from '../scripts/apply-legacy-articles.mjs';
 import { legacyTutorialAlternates, legacyTutorialSlugs, reservedZhHantTutorials } from '../scripts/locale-alternates.mjs';
 
 const newClassicIds = [
@@ -168,6 +168,62 @@ test('legacy language tags stay stable when applied again', async () => {
   await applyLegacyTutorialLocales(process.cwd());
   assert.equal(await readFile('articles/tutorials/piano-basics.html', 'utf8'), beforeZh);
   assert.equal(await readFile('en/articles/tutorials/piano-basics.html', 'utf8'), beforeEn);
+});
+
+test('legacy CTA covers both templates and all 26 pages without drifting when applied again', async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), 'piano-cta-'));
+  try {
+    await mkdir(path.join(root, 'css'), { recursive: true });
+    await writeFile(path.join(root, 'css/article.css'), await readFile('css/article.css', 'utf8'));
+    for (const prefix of ['', 'en/']) {
+      await mkdir(path.join(root, prefix, 'articles/tutorials'), { recursive: true });
+      for (const slug of legacyTutorialSlugs) {
+        const file = `${prefix}articles/tutorials/${slug}.html`;
+        await writeFile(path.join(root, file), await readFile(file, 'utf8'));
+      }
+    }
+    assert.equal((await applyLegacyTutorialCtas(root)).pages, 26);
+    const first = new Map();
+    for (const prefix of ['', 'en/']) {
+      for (const slug of legacyTutorialSlugs) {
+        const file = `${prefix}articles/tutorials/${slug}.html`;
+        const html = await readFile(path.join(root, file), 'utf8');
+        first.set(file, html);
+        assert.equal((html.match(/\sdata-article-cta(?=[\s>])/g) || []).length, 1, file);
+        assert.equal((html.match(/id="article-cta-tracking"/g) || []).length, 1, file);
+        assert.match(html, new RegExp(`href="/${prefix}#practice-start" data-article-cta-link data-article-slug="${slug}">${prefix ? 'Open the piano' : '打开在线钢琴'}</a>`));
+        assert.match(html, /<header class="article-header">[\s\S]*?<h1>[\s\S]*?class="article-cta"[\s\S]*?<\/header>/);
+        const stripped = html.replace(/<div class="article-cta" data-article-cta>[\s\S]*?<\/script>/, '').replace(/<style id="article-cta-styles">[\s\S]*?<\/style>/, '');
+        assert.equal(stripped, await readFile(file, 'utf8'), `${file} original content preserved`);
+      }
+    }
+    await applyLegacyTutorialCtas(root);
+    for (const [file, html] of first) assert.equal(await readFile(path.join(root, file), 'utf8'), html);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test('legacy CTA handles missing headers and independently deduplicates markup and tracking', () => {
+  const options = { slug: 'piano-basics', lang: 'en', styles: '.article-cta{margin:16px}' };
+  const warnings = [];
+  for (const html of ['', '<html><head></head><body>No header</body></html>']) {
+    assert.equal(applyArticleCta(html, { ...options, warn: (message) => warnings.push(message) }), html);
+  }
+  assert.equal(warnings.length, 2);
+  const original = '<html><head></head><body><header class="article-header"><h1>Title</h1></header><p>Original paragraph</p></body></html>';
+  assert.equal(applyArticleCta(original, { ...options, lang: 'zh-Hant' }), original);
+  const complete = applyArticleCta(original, options);
+  for (const partial of [
+    complete.replace(/<script id="article-cta-tracking">[\s\S]*?<\/script>/, ''),
+    complete.replace(/<div class="article-cta" data-article-cta>[\s\S]*?<\/div>/, '')
+  ]) {
+    const repaired = applyArticleCta(partial, options);
+    assert.equal((repaired.match(/\sdata-article-cta(?=[\s>])/g) || []).length, 1);
+    assert.equal((repaired.match(/id="article-cta-tracking"/g) || []).length, 1);
+    assert.equal(applyArticleCta(repaired, options), repaired);
+  }
+  assert.match(complete, /typeof window.gtag==='function'/);
 });
 
 test('piano-basics reserves a traditional route and emits hreflang only after the file exists', async () => {
