@@ -1,3 +1,4 @@
+import { track } from './analytics.js';
 import {
   midiToFrequency,
   nearestSampleNote,
@@ -111,13 +112,18 @@ class PianoAudio {
     return promise;
   }
 
-  async playNote(note, velocity = 0.9, inputStartedAt = performance.now()) {
+  async playNote(note, velocity = 0.9, inputStartedAt = performance.now(), playbackContext) {
     noteToMidi(note); // Reject invalid input without leaving a held key behind.
     if (this.disposed) return false;
     const nowMs = performance.now();
     const previous = this.lastTriggerAt.get(note);
     // Deduplicate simultaneous event paths, not a genuine release-and-repress.
     if (this.pressedNotes.has(note) && previous !== undefined && nowMs - previous < this.duplicateWindowMs) return false;
+    // Snapshot before resume/teaching can change mode or range. Direct audio
+    // callers (rhythm autoplay) use program; physical inputs pass their source.
+    let eventContext = { source: 'program', play_mode: 'free' };
+    try { eventContext = { ...eventContext, ...this.getPlaybackContext?.(), ...playbackContext }; } catch {}
+    const coldStart = this.context?.state !== 'running';
     this.lastTriggerAt.set(note, nowMs);
     this.pressedNotes.add(note);
     this.sustainedNotes.delete(note);
@@ -141,10 +147,18 @@ class PianoAudio {
       else this.playOscillatorFallback(note, velocity);
       if (!this.firstAttackLogged) {
         this.firstAttackLogged = true;
+        const inputToStartMs = Number((performance.now() - inputStartedAt).toFixed(2));
         console.info('[piano:first-attack]', {
-          note, inputToStartMs: Number((performance.now() - inputStartedAt).toFixed(2)),
+          note, inputToStartMs,
           audioStartTime: this.context.currentTime, state: this.context.state,
           loadedSamples: this.buffers.size,
+        });
+        const latency = Math.max(0, Math.min(9999.99, inputToStartMs));
+        track('audio_first_attack', {
+          input_to_start_ms: latency,
+          latency_bucket: latency < 50 ? '<50' : latency < 100 ? '50-100' : latency < 200 ? '100-200' : latency < 500 ? '200-500' : '>=500',
+          note, hit: sampleNote ? 'sample' : 'fallback',
+          cold_start: coldStart ? 'yes' : 'no', play_mode: eventContext.play_mode,
         });
       }
       // An initial resume may finish after pointerup. Give that tap a short attack
@@ -153,6 +167,8 @@ class PianoAudio {
         if (this.sustainEnabled) this.sustainedNotes.add(note);
         else this.releaseVoices(note);
       }
+      // Instrument only successful starts, never duplicates or cancelled taps.
+      try { this.onNoteStarted?.(eventContext); } catch {}
       return true;
     } catch (error) {
       if (this.pendingNotes.get(note) === request) {
