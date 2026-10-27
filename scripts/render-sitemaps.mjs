@@ -3,7 +3,7 @@ import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { publicSongs } from '../data/song-library.mjs';
 import { tutorialArticles } from '../data/tutorial-library.mjs';
-import { legacyTutorialAlternates, legacyTutorialSlugs } from './locale-alternates.mjs';
+import { HOME_HREFLANG, legacyTutorialAlternates, legacyTutorialSlugs } from './locale-alternates.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = path.resolve(HERE, '..');
@@ -30,6 +30,13 @@ function trilingualUrl(zhPath, enPath, zhHantPath, { priority = '0.8', changefre
   const alternates = `<xhtml:link rel="alternate" hreflang="zh-CN" href="${esc(zh)}"/><xhtml:link rel="alternate" hreflang="en" href="${esc(en)}"/><xhtml:link rel="alternate" hreflang="zh-Hant" href="${esc(zhHant)}"/><xhtml:link rel="alternate" hreflang="x-default" href="${esc(en)}"/>`;
   const row = (loc) => `<url><loc>${esc(loc)}</loc>${alternates}<lastmod>${lastmod}</lastmod><changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`;
   return [row(zh), row(en), row(zhHant)];
+}
+
+function homeCluster({ lastmod }) {
+  const alternates = HOME_HREFLANG.map(([lang, href]) => `<xhtml:link rel="alternate" hreflang="${lang}" href="${esc(href)}"/>`).join('');
+  return HOME_HREFLANG
+    .filter(([lang]) => lang !== 'x-default')
+    .map(([, href]) => `<url><loc>${esc(href)}</loc>${alternates}<lastmod>${lastmod}</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>`);
 }
 
 function singleUrl(pathname, { priority = '0.6', changefreq = 'monthly', lastmod = LASTMOD } = {}) {
@@ -67,7 +74,7 @@ export async function generateSitemaps(root = PROJECT_ROOT) {
   ];
 
   const mainUrls = [
-    ...trilingualUrl('/', '/en/', '/zh-hant/', { priority: '1.0', changefreq: 'daily', lastmod: '2026-10-26' }),
+    ...homeCluster({ lastmod: '2026-10-28' }),
     singleUrl('/with-notes/', { priority: '0.8', changefreq: 'weekly', lastmod: '2026-10-25' }),
     singleUrl('/midi/', { priority: '0.8', changefreq: 'weekly', lastmod: '2026-10-24' }),
     singleUrl('/practice.html', { priority: '0.8', changefreq: 'weekly' }),
