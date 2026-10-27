@@ -1,6 +1,12 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
+  "redirects": [
+    { "source": "/zh", "destination": "/", "statusCode": 301 },
+    { "source": "/zh/", "destination": "/", "statusCode": 301 },
+    { "source": "/es", "destination": "/en/", "statusCode": 301 },
+    { "source": "/es/", "destination": "/en/", "statusCode": 301 }
+  ],
   "headers": [
     {"source":"/","headers":[{"key":"Cache-Control","value":"no-cache, no-store, must-revalidate"}]},
     {"source":"/en/","headers":[{"key":"Cache-Control","value":"no-cache, no-store, must-revalidate"}]},

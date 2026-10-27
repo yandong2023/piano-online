@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import { createServer } from 'node:http';
 import test from 'node:test';
 import { renderStudioPage, renderTraditionalHome, studioInstrument } from '../scripts/studio-pages.mjs';
 import { toTraditionalText } from '../data/zh-hant.mjs';
@@ -8,7 +9,7 @@ const HOME_ALTERNATES = [
   '<link rel="alternate" hreflang="zh-CN" href="https://pianoonline.cc/">',
   '<link rel="alternate" hreflang="en" href="https://pianoonline.cc/en/">',
   '<link rel="alternate" hreflang="zh-Hant" href="https://pianoonline.cc/zh-hant/">',
-  '<link rel="alternate" hreflang="x-default" href="https://pianoonline.cc/">'
+  '<link rel="alternate" hreflang="x-default" href="https://pianoonline.cc/en/">'
 ];
 
 for (const locale of ['zh','en']) for (const home of [true,false]) {
@@ -36,10 +37,11 @@ for (const locale of ['zh','en']) for (const home of [true,false]) {
 }
 test('zh home adds simulator while piano page keeps its title', () => {
   const html = renderStudioPage('zh', true);
-  assert.ok(html.includes('<title>在线钢琴模拟器 · 跟着提示学歌 | Piano Online</title>'));
-  assert.match(html, /<h1>在线钢琴，打开就能弹。<\/h1>/);
-  assert.match(html, /<meta name="description" content="在线钢琴，/);
+  assert.ok(html.includes('<title>在线钢琴_免费模拟器·免下载免注册·简谱学歌</title>'));
+  assert.match(html, /<h1>在线钢琴，免下载，打开就能弹。<\/h1>/);
+  assert.match(html, /<meta name="description" content="在线钢琴模拟器，免下载、免注册/);
   assert.ok(renderStudioPage('zh', false).includes('<title>在线钢琴 · 打开就能弹，跟着提示学歌 | Piano Online</title>'));
+  assert.match(renderStudioPage('zh', false), /<h1>在线钢琴，打开就能弹。<\/h1>/);
 });
 
 test('zh home language menu links all locales and marks 简体中文 current', () => {
@@ -83,6 +85,74 @@ test('zh-hant home renders traditional content with correct head and nav', () =>
   assert.deepEqual(ld['@graph'].map((node) => node['@type']), ['WebSite', 'WebApplication']);
   assert.equal(ld['@graph'][0].inLanguage, 'zh-Hant');
   assert.ok(html.includes('/js/zh-hant-runtime.js'));
+});
+
+test('homepage hreflang matches sitemap and /zh /es redirect to real locales', async () => {
+  const sitemap = await readFile('sitemap.xml', 'utf8');
+  for (const loc of ['https://pianoonline.cc/', 'https://pianoonline.cc/en/', 'https://pianoonline.cc/zh-hant/']) {
+    const row = sitemap.split('\n').find((line) => line.includes(`<loc>${loc}</loc>`));
+    assert.ok(row, loc);
+    for (const link of HOME_ALTERNATES) {
+      const hreflang = link.match(/hreflang="([^"]+)"/)[1];
+      const href = link.match(/href="([^"]+)"/)[1];
+      assert.match(row, new RegExp(`hreflang="${hreflang}" href="${href.replaceAll('/', '\\/')}"`));
+    }
+  }
+  assert.doesNotMatch(sitemap, /<loc>https:\/\/pianoonline\.cc\/zh(?:\/|<)/);
+  assert.doesNotMatch(sitemap, /<loc>https:\/\/pianoonline\.cc\/es(?:\/|<)/);
+  assert.doesNotMatch(sitemap, /hreflang="(?:zh|es)"/);
+
+  const vercel = JSON.parse(await readFile('vercel.json', 'utf8'));
+  const netlify = await readFile('netlify.toml', 'utf8');
+  const aliases = [['/zh', '/'], ['/zh/', '/'], ['/es', '/en/'], ['/es/', '/en/']];
+  for (const [source, destination] of aliases) {
+    const rule = vercel.redirects.find((item) => item.source === source);
+    assert.equal(rule?.destination, destination, source);
+    assert.equal(rule.statusCode, 301);
+    assert.match(netlify, new RegExp(`from = "${source}"\\n  to = "${destination}"\\n  status = 301`));
+  }
+
+  const rules = new Map(vercel.redirects.map((rule) => [rule.source, rule]));
+  const server = createServer((request, response) => {
+    const pathname = new URL(request.url, 'http://127.0.0.1').pathname;
+    const rule = rules.get(pathname);
+    if (rule) {
+      response.writeHead(rule.statusCode, { Location: rule.destination });
+      response.end();
+      return;
+    }
+    if (pathname === '/' || pathname === '/en' || pathname === '/en/') {
+      response.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+      response.end(pathname.startsWith('/en') ? renderStudioPage('en', true) : renderStudioPage('zh', true));
+      return;
+    }
+    response.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+    response.end('missing');
+  });
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  try {
+    const port = server.address().port;
+    for (const [source, destination] of aliases) {
+      const response = await fetch(`http://127.0.0.1:${port}${source}`, { redirect: 'manual' });
+      assert.equal(response.status, 301, source);
+      assert.equal(response.headers.get('location'), destination);
+      await response.arrayBuffer();
+    }
+    for (const source of ['/', '/en', '/en/']) {
+      const response = await fetch(`http://127.0.0.1:${port}${source}`, { redirect: 'manual' });
+      assert.equal(response.status, 200, source);
+      const html = await response.text();
+      const title = html.match(/<title>([^<]*)<\/title>/)[1];
+      if (source === '/') {
+        assert.equal(title, '在线钢琴_免费模拟器·免下载免注册·简谱学歌');
+        assert.match(html, /免下载、免注册/);
+      } else {
+        assert.equal(title, 'Virtual Piano Online — Free Visual Piano');
+      }
+    }
+  } finally {
+    await new Promise((resolve) => server.close(resolve));
+  }
 });
 
 test('toTraditionalText converts runtime strings including 分钟 and 复制', () => {

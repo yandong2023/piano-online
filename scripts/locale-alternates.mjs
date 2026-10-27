@@ -3,6 +3,17 @@ import path from 'node:path';
 
 export const SITE_ORIGIN = 'https://pianoonline.cc';
 
+// Homepage cluster: `/` is simplified Chinese (Baidu), `/en/` is the English
+// virtual piano, `/zh-hant/` is Traditional. x-default follows English so
+// Google does not treat the Chinese root as the international page.
+// `/zh` and `/es` are not locales here — they 301 to `/` and `/en/`.
+export const HOME_HREFLANG = [
+  ['zh-CN', `${SITE_ORIGIN}/`],
+  ['en', `${SITE_ORIGIN}/en/`],
+  ['zh-Hant', `${SITE_ORIGIN}/zh-hant/`],
+  ['x-default', `${SITE_ORIGIN}/en/`]
+];
+
 export const legacyTutorialSlugs = [
   'piano-basics',
   'reading-notes',
