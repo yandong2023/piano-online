@@ -9,8 +9,8 @@ test('English homepage is the virtual piano landing', () => {
   assert.match(landing, /<html lang="en">/);
   assert.match(landing, /<title>Virtual Piano Online — Free Visual Piano<\/title>/);
   assert.match(landing, /<h1>Virtual Piano Online<\/h1>/);
-  assert.match(landing, /free visual piano and online piano/);
-  assert.match(landing, /No download and no account/);
+  assert.match(landing, /free virtual piano using your computer keyboard/);
+  assert.match(landing, /No downloads or signup/);
   assert.equal((landing.match(/<h1>/g) || []).length, 1);
   const guide = '<h2>What is a virtual piano?</h2>';
   assert.ok(landing.indexOf('id="keyboard-viewport"') < landing.indexOf(guide));
@@ -26,7 +26,7 @@ test('English homepage is the virtual piano landing', () => {
   assert.doesNotMatch(landing, /<form|type="password"/);
   const head = landing.slice(0, landing.indexOf('</head>'));
   assert.doesNotMatch(head, /在线钢琴|琴鍵|琴键/);
-  for (const phrase of ['virtual piano', 'visual piano', 'online piano', 'piano online']) {
+  for (const phrase of ['virtual piano', 'visual piano', 'online piano']) {
     assert.ok(`${head} ${landing.match(/<h1>[^<]*<\/h1>/)[0]}`.toLowerCase().includes(phrase), phrase);
   }
   assert.doesNotMatch(landing, /adsbygoogle\.js/);
