@@ -188,7 +188,7 @@ test('legacy homepage modules remain inert compatibility shims',async()=>{
 
 for (const [locale, html, keywords] of [
   ['zh', renderStudioPage('zh'), ['钢琴模拟器', '自由钢琴', '五线谱']],
-  ['en', renderStudioPage('en'), ['virtual piano', 'visual piano']],
+  ['en', renderStudioPage('en'), ['online piano', 'visual piano']],
   ['zh-Hant', renderTraditionalHome(), ['鋼琴模擬器', '自由鋼琴', '五線譜']]
 ]) test(`${locale} home has visible localized FAQ matching independent JSON-LD`, () => {
   const scripts = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map(match => JSON.parse(match[1]));
