@@ -44,7 +44,15 @@ async function strike(page,note,method) {
   const key=await page.evaluate(note=>Object.entries(window.pianoStudio.piano.keyMap).find(([,n])=>n===note)[0],note);
   await page.locator('[data-studio]').focus();await page.keyboard.press(key,{delay:10});
  } else {
-  await page.evaluate(note=>{const view=document.getElementById('keyboard-viewport'),key=window.pianoStudio.piano.keys[note];view.scrollLeft=key.offsetLeft-view.clientWidth/2;},note);
+  // Phones keep two octaves on screen (C3–C5 until the range moves). A note
+  // outside that window has no DOM node, so scroll via offsetLeft throws.
+  // ensureNoteVisible is the practice path that renders the target key first.
+  await page.evaluate(note=>{
+   const piano=window.pianoStudio.piano,view=document.getElementById('keyboard-viewport');
+   const key=piano.keys[note]||piano.ensureNoteVisible(note);
+   if(!key||!view) throw new Error('missing on-screen key '+note);
+   view.scrollLeft=key.offsetLeft-view.clientWidth/2;
+  },note);
   const key=page.locator(`.keys .key[data-note="${note}"]`),bounds=await key.boundingBox();
   await key[method]({position:{x:bounds.width/2,y:bounds.height-15}});
  }
