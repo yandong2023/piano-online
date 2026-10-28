@@ -30,7 +30,7 @@ for (const locale of ['zh','en']) for (const home of [true,false]) {
       assert.ok(!html.includes('<link rel="alternate"'), 'piano pages must not emit hreflang alternates');
       assert.ok(html.includes(`<meta property="og:url" content="${homeUrl}">`));
     }
-    assert.equal(html.includes('adsbygoogle.js'), false, 'interactive landing pages must stay free of auto-ad overlays');
+    assert.equal(html.includes('adsbygoogle.js'), home, 'homepage monetization must not be removed by UX changes');
     assert.ok(!html.includes('zh-hant-runtime'), 'zh/en pages must not load the traditional runtime');
     assert.equal((html.match(/<h1>/g)||[]).length,1);
   });
@@ -69,7 +69,7 @@ test('zh-hant home renders traditional content with correct head and nav', () =>
   assert.deepEqual(html.match(/<link rel="alternate"[^>]*>/g), HOME_ALTERNATES);
   assert.equal((html.match(/<h1>/g) || []).length, 1);
   assert.ok(html.includes('<h1>線上鋼琴，打開就能彈。</h1>'));
-  assert.ok(!html.includes('adsbygoogle.js'));
+  assert.ok(html.includes('adsbygoogle.js'));
   for (const id of ['song-select','sustain-toggle','labels-toggle','start-practice','stop-practice','start-rhythm-game','toggle-fullscreen','studio-volume','keyboard-viewport']) assert.ok(html.includes(`id="${id}"`));
   const texts = [/<title>([^<]*)<\/title>/, /<h1>([^<]*)<\/h1>/, /<meta name="description" content="([^"]*)">/]
     .map((pattern) => html.match(pattern)[1]);
@@ -199,5 +199,20 @@ for (const [locale, html, keywords] of [
     assert.match(html, /<title>Virtual Piano Online — Free Visual Piano<\/title>/);
     assert.match(html, /<h1>Virtual Piano Online<\/h1>/);
     for (const phrase of ['virtual piano', 'visual piano', 'online piano', 'piano online']) assert.ok(description.toLowerCase().includes(phrase), phrase);
+  }
+});
+
+// Guard the incident: all language homes must retain the real publisher loader exactly once.
+test('homepage advertising stays enabled with approved regular bottom anchors', async () => {
+  const publisher = 'ca-pub-4423187689700927';
+  const authorized = await readFile('ads.txt', 'utf8');
+  assert.ok(authorized.includes(publisher.replace('ca-', '')));
+  for (const html of [renderStudioPage('zh', true), renderStudioPage('en', true), renderTraditionalHome()]) {
+    const scripts = html.match(/<script[^>]+src="https:\/\/pagead2\.googlesyndication\.com\/pagead\/js\/adsbygoogle\.js[^>]*>/g) || [];
+    assert.equal(scripts.length, 1);
+    assert.ok(scripts[0].includes(publisher));
+    assert.ok(scripts[0].includes('data-overlays="collapsed-bottom"'));
+    assert.ok(html.includes('data-adsense-enabled'));
+    assert.ok(html.indexOf(scripts[0]) < html.indexOf('</head>'));
   }
 });

@@ -29,7 +29,7 @@ test('English homepage is the virtual piano landing', () => {
   for (const phrase of ['virtual piano', 'visual piano', 'online piano', 'piano online']) {
     assert.ok(`${head} ${landing.match(/<h1>[^<]*<\/h1>/)[0]}`.toLowerCase().includes(phrase), phrase);
   }
-  assert.doesNotMatch(landing, /adsbygoogle\.js/);
+  assert.match(landing, /adsbygoogle\.js/);
   assert.doesNotMatch(landing, /<section id="practice-start"[\s\S]*adsbygoogle/);
 });
 
@@ -66,8 +66,8 @@ test('published default is Chinese and English has an independent homepage', asy
   assert.equal(html, renderStudioPage('zh', true));
   assert.equal(await readFile('en/index.html', 'utf8'), landing);
   assert.match(html, /<html lang="zh-CN">/);
-  assert.match(css, /studio-instrument/);
-  assert.match(css, /position:\s*static !important/);
+  assert.doesNotMatch(css, /adsbygoogle|google-auto-placed|aswift_/);
+  assert.doesNotMatch(await readFile('css/studio.css', 'utf8'), /adsbygoogle|googlesyndication|google-auto-placed/);
   assert.match(sitemap, /<loc>https:\/\/pianoonline\.cc\/<\/loc>/);
   assert.match(sitemap, /<loc>https:\/\/pianoonline\.cc\/with-notes\/<\/loc>/);
   assert.match(sitemap, /<loc>https:\/\/pianoonline\.cc\/midi\/<\/loc>/);

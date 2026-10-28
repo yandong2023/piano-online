@@ -88,11 +88,9 @@ try {
     assert.equal(await page.evaluate(() => window.pianoStudio.practice.wrongNotes), 1);
     await page.screenshot({ path: `${output}/guided-1440.png`, fullPage: true });
   });
-  await check('fullscreen keeps guidance, hides ads and shows completion inside the instrument', async () => {
-    await page.evaluate(() => { const ad=document.createElement('ins'); ad.className='adsbygoogle'; ad.id='test-ad'; ad.style.display='block'; document.body.append(ad); });
+  await check('fullscreen keeps guidance and shows completion inside the instrument', async () => {
     await page.locator('#toggle-fullscreen').click();
     await page.waitForFunction(() => document.body.classList.contains('studio-focus'));
-    assert.equal(await page.locator('#test-ad').evaluate(el=>getComputedStyle(el).display), 'none');
     assert.ok(await page.locator('#key-hint').isVisible());
     await page.screenshot({ path: `${output}/fullscreen-1440.png` });
     const keys=await page.evaluate(()=>{const p=window.pianoStudio.practice;return p.currentSong.notes.slice(p.currentNoteIndex).map(n=>p.getKeyboardKeyForNote(n).toLowerCase());});
@@ -102,7 +100,6 @@ try {
     await page.locator('[data-action="close"]').click();
     await page.locator('#toggle-fullscreen').click();
     await page.waitForFunction(()=>!document.body.classList.contains('studio-focus'));
-    assert.equal(await page.locator('#test-ad').evaluate(el=>getComputedStyle(el).display),'block');
   });
   await check('fullscreen-denied fallback exits with Escape and restores focus', async () => {
     await page.evaluate(()=>{document.querySelector('[data-studio]').requestFullscreen=()=>Promise.reject(new DOMException('Test denied','NotAllowedError'));});

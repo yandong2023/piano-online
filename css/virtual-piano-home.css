@@ -1,24 +1,4 @@
-/* Virtual piano landing. Auto ads stay in normal flow so they cannot cover the keys. */
-body.virtual-piano-home .studio-instrument,
-body.virtual-piano-home .studio-keyboard-viewport {
-  position: relative;
-  z-index: 30;
-}
-
-body.virtual-piano-home .studio-instrument :is(ins.adsbygoogle, iframe[src*="googlesyndication"], [id^="aswift_"]) {
-  display: none !important;
-}
-
-body.virtual-piano-home :is(ins.adsbygoogle, .google-auto-placed, iframe[id^="google_ads_iframe"], [id^="aswift_"]) {
-  position: static !important;
-  top: auto !important;
-  right: auto !important;
-  bottom: auto !important;
-  left: auto !important;
-  z-index: 1 !important;
-  margin-top: 24px;
-}
-
+/* Virtual piano editorial sections. Ad placement uses AdSense controls, not CSS overrides. */
 .vp-sections {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
