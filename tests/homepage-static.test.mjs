@@ -157,7 +157,8 @@ test('homepage hreflang matches sitemap and /zh /es redirect to real locales', a
       const title = html.match(/<title>([^<]*)<\/title>/)[1];
       if (source === '/') {
         assert.equal(title, '在线钢琴_免费模拟器·免下载免注册·简谱学歌');
-        assert.match(html, /免下载、免注册/);
+        assert.match(html, /免费在线钢琴模拟器/);
+        assert.match(html, /不用下载软件/);
       } else {
         assert.equal(title, 'Virtual Piano Online — Free Visual Piano');
       }
