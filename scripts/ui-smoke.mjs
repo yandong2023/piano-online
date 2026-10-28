@@ -36,7 +36,8 @@ try {
         if ([390,1440].includes(width)) await page.screenshot({ path: `${output}/${name}-${width}.png`, fullPage: true });
         assert.equal(metrics.h1, 1);
         assert.ok(metrics.scrollWidth <= width + 1, `page overflow: ${metrics.scrollWidth} > ${width}`);
-        if (await page.locator('[data-studio]').count()) assert.equal(metrics.keys, 37);
+        // Phones mount two octaves (25 keys). Wider viewports keep all 37.
+        if (await page.locator('[data-studio]').count()) assert.equal(metrics.keys, width <= 640 ? 25 : 37);
         await page.close();
       });
     }
@@ -140,9 +141,14 @@ try {
   const touchPage=await mobile.newPage();
   await ready(touchPage,'/piano.html');
   await check('mobile touch, octave navigation and visible guided target', async () => {
-    const initial=await touchPage.locator('#keyboard-viewport').evaluate(el=>el.scrollLeft);
+    assert.equal(await touchPage.locator('.keys .key').count(),25);
+    assert.equal(await touchPage.locator('.key[data-note="C3"]').count(),1);
+    assert.equal(await touchPage.locator('.key[data-note="C6"]').count(),0);
     await touchPage.locator('[data-octave="1"]').tap();
-    await touchPage.waitForFunction(x=>document.getElementById('keyboard-viewport').scrollLeft>x,initial);
+    await touchPage.waitForFunction(()=>window.pianoStudio.piano.startOctave===4);
+    assert.equal(await touchPage.locator('.keys .key').count(),25);
+    assert.equal(await touchPage.locator('.key[data-note="C3"]').count(),0);
+    assert.equal(await touchPage.locator('.key[data-note="C6"]').count(),1);
     await touchPage.locator('[data-play-mode="guided"]').tap();
     await touchPage.locator('#start-practice').tap();
     const key=touchPage.locator('.key.current');
