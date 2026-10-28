@@ -8,9 +8,9 @@ const landing = renderStudioPage('en', true);
 test('English homepage is the virtual piano landing', () => {
   assert.match(landing, /<html lang="en">/);
   assert.match(landing, /<title>Virtual Piano Online — Free Visual Piano<\/title>/);
-  assert.match(landing, /<h1>Virtual Piano Online<\/h1>/);
-  assert.match(landing, /free visual piano and online piano/);
-  assert.match(landing, /No download and no account/);
+  assert.match(landing, /<h1>Play Piano Online with Your Computer Keyboard<\/h1>/);
+  assert.match(landing, /free virtual piano using your computer keyboard/);
+  assert.match(landing, /No downloads or signup/);
   assert.equal((landing.match(/<h1>/g) || []).length, 1);
   const guide = '<h2>What is a virtual piano?</h2>';
   assert.ok(landing.indexOf('id="keyboard-viewport"') < landing.indexOf(guide));
