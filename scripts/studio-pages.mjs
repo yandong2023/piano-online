@@ -51,19 +51,34 @@ export function studioInstrument(locale = 'zh', songId = 'happy-birthday', score
 
 const homeFaq = {
   zh: [
-    ['模拟钢琴需要下载吗？', '不需要。打开网页即可用鼠标、触屏或电脑键盘弹奏，首次按下琴键后浏览器会开启声音。'],
-    ['自由钢琴模式怎么使用？', '选择“自由弹奏”即可随心弹奏，无需注册。也可以切换到“跟着提示弹”，从熟悉的歌曲开始练习。'],
-    ['不会五线谱，可以跟着简谱学吗？', '可以。歌曲页提供数字简谱、音名与电脑按键字母谱；部分歌曲还支持五线谱视图。简化旋律适合入门，不能替代完整钢琴编曲。']
+    ['在线弹琴要下载软件或注册吗？', '不需要。打开网页就能使用模拟钢琴，第一次按下琴键时，浏览器可能需要启用音频。'],
+    ['可以直接用电脑键盘弹钢琴吗？', '可以。看钢琴键上显示的电脑按键标签，按对应按键即可。本站 K 对应中央 C（C4），W 对应 G4；鼠标和手机触屏也可以弹。'],
+    ['自由钢琴模式和跟着提示弹有什么区别？', '自由钢琴模式适合随意弹奏或练习键位；跟着提示弹会逐个高亮下一音符，适合学习熟悉的旋律。'],
+    ['钢琴模拟器可以替代真实钢琴吗？', '这里是提供 37 键音域的浏览器模拟钢琴，适合认识琴键和练习简化旋律。它无法代替真实钢琴的力度、踏板和完整 88 键训练。'],
+    ['完全不会钢琴，先学什么歌？', '建议从小星星或生日快乐开始。选择歌曲后点击开始跟弹，跟着亮起的琴键练习。'],
+    ['简谱、音名和电脑按键有什么区别？', '简谱用数字表示音级；音名用 C4、D4 等表示音高；电脑按键标签告诉你在本站实际按哪个键。'],
+    ['每首歌都有完整五线谱和伴奏吗？', '不是。歌曲以入门用的简化旋律为主，每首提供音名、电脑按键和数字简谱；只有部分歌曲提供五线谱视图。'],
+    ['钢琴没声音怎么办？', '先点击一次琴键，再检查系统媒体音量、静音模式、蓝牙音频输出和页面音量。']
   ],
   en: [
-    ['What is a virtual piano?', 'A virtual piano, also called a visual piano, is an online piano in the browser. Play piano online with a click, tap or your computer keys. There is no download and no account.'],
-    ['How do I play this virtual piano online?', 'Press the keys with a mouse or finger, or type the letters printed on them. A plays C3 and K plays middle C. Key labels shows or hides those letters. Note names stay on the keys.'],
-    ['Can I use MIDI?', 'Yes. Open More tools under the keyboard and choose Connect a MIDI keyboard. To hear a .mid file, open Piano MIDI online and drop the file. Playback stays in this browser.']
+    ['Can I play piano online for free?', 'Yes. You can play this virtual piano in your browser without creating an account or downloading an app.'],
+    ['Can I use my computer keyboard to play piano?', 'Yes. Press the computer-key label shown on each piano key. On PianoOnline, K plays middle C (C4), and W plays G4. You can also play with a mouse or touchscreen.'],
+    ['How do I learn a song if I cannot read sheet music?', 'Choose Learn a Song, select a melody, and follow the highlighted piano keys. Each song page also shows musical note names and the matching computer-key labels.'],
+    ['What is the difference between a piano note and a computer key?', 'A piano note such as C4 names the sound. A computer key such as K is what you press to play that sound on this website. Some mapped keys use numbers or punctuation.'],
+    ['Can I play on my phone?', 'Yes. Tap the on-screen keys and move the visible keyboard range using the on-screen controls. A landscape screen usually gives you more room.'],
+    ['Why is there no sound?', 'Click or tap a piano key to enable browser audio. Then check your device volume, silent mode, Bluetooth output, and the piano volume control.'],
+    ['Is this a piano simulator or a real 88-key piano?', 'It is a browser-based piano simulator with 37 playable keys (C3–C6). You can practise melodies and learn note positions, but it is not a physical 88-key piano.'],
+    ['Does every song include sheet music?', 'No. Song pages provide note names and computer-key labels. Some songs also include interactive staff notation. The versions here are simplified practice melodies.']
   ],
   'zh-hant': [
-    ['使用模擬鋼琴需要下載程式嗎？', '不需要。開啟網頁後，就能用滑鼠、觸控螢幕或電腦鍵盤彈奏。首次按下琴鍵後，瀏覽器便會開啟聲音。'],
-    ['自由鋼琴模式怎麼使用？', '選擇「自由彈奏」即可隨心彈奏，無需註冊。也可以切換到「跟著提示彈」，從熟悉的歌曲開始練習。'],
-    ['不會五線譜，可以看簡譜學琴嗎？', '可以。歌曲頁提供數字簡譜、音名與電腦按鍵字母譜；部分歌曲另有五線譜視圖。這些簡化旋律適合入門，不能取代完整的鋼琴編曲。']
+    ['使用線上鋼琴要下載或註冊嗎？', '不需要。打開網頁就可以使用模擬鋼琴，首次按下琴鍵時瀏覽器可能需要啟用音訊。'],
+    ['可以使用電腦鍵盤彈奏嗎？', '可以。按照琴鍵上顯示的電腦按鍵標籤彈奏；K 對應中央 C（C4），W 對應 G4。'],
+    ['自由鋼琴模式與提示練習有什麼不同？', '自由鋼琴適合隨意彈奏；跟著提示彈會逐個高亮下一個音符。'],
+    ['完全不會鋼琴，先學哪首歌？', '建議從小星星或生日快樂開始，依照高亮琴鍵逐音練習。'],
+    ['簡譜、音名與電腦按鍵有什麼不同？', '簡譜以數字表示音級；C4 等是音名；K 等標籤是本站實際使用的電腦按鍵。'],
+    ['模擬鋼琴可以代替真實鋼琴嗎？', '本站提供 37 鍵音域，適合認識琴鍵及練習簡化旋律，無法代替實體 88 鍵鋼琴。'],
+    ['每首歌曲都有完整五線譜嗎？', '不是。每首提供簡化旋律的音名與按鍵提示，部分曲目提供五線譜視圖。'],
+    ['為什麼沒有聲音？', '先點擊琴鍵啟用音訊，再檢查裝置音量、靜音模式、藍牙輸出與頁面音量。']
   ]
 };
 function faqSection(locale) {
