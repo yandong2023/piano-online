@@ -108,7 +108,7 @@ export function renderStudioPage(locale = 'zh', home = true) {
     ? (home ? '在线钢琴_免费模拟器·免下载免注册·简谱学歌' : '在线钢琴 · 打开就能弹，跟着提示学歌 | Piano Online')
     : (home ? 'Virtual Piano Online — Free Visual Piano' : 'Virtual Piano Online: Play Free with Your Computer Keyboard');
   const description = home
-    ? s('免费在线钢琴模拟器，用电脑键盘、鼠标或手机触屏就能弹。支持自由钢琴弹奏，也可跟着亮键练习熟悉旋律。100 首歌曲提供音名、电脑按键和数字简谱，部分歌曲有五线谱。', 'Play a free online piano using your computer keyboard, mouse or touchscreen. Follow highlighted keys on our visual piano to learn songs. No download or signup.')
+    ? s('免费在线钢琴模拟器，用电脑键盘、鼠标或手机触屏就能弹。支持自由钢琴弹奏，也可跟着亮键练习熟悉旋律。100 首歌曲提供音名、电脑按键和数字简谱，部分歌曲有五线谱。', 'Play a free online piano with your computer keyboard, mouse or touchscreen. Follow highlighted keys on the visual piano to learn songs. No signup.')
     : s('免费的在线钢琴，支持鼠标、触屏和电脑键盘。37 个琴键、逐键学歌提示、音量与延音控制，无需注册。', 'Play a free online piano with your keyboard, mouse or touchscreen. 37 keys, guided songs, volume, sustain and distraction-free full screen. No signup.');
   const hreflang = home ? HOME_HREFLANG.map(([lang, href]) => `<link rel="alternate" hreflang="${lang}" href="${href}">`).join('') : '';
   const jsonLd = home ? `<script type="application/ld+json">${JSON.stringify({
