@@ -251,14 +251,14 @@ function letterNotesSection(song, locale, title) {
   const block = (id, heading, format, lines) => `<div class="letter-notes-block"><div class="letter-notes-head"><h3>${heading}</h3><button type="button" class="studio-quiet" data-copy-target="${id}" data-copy-format="${format}">${zh ? '复制' : 'Copy'}</button></div><pre id="${id}" class="letter-notes-text">${esc(lines.map((line) => line.join(' ')).join('\n'))}</pre></div>`;
   const jianpuBlock = jp ? `<div class="letter-notes-block"><div class="letter-notes-head"><h3>数字简谱（${jp.keyLabel}）</h3><button type="button" class="studio-quiet" data-copy-target="letter-notes-jianpu" data-copy-format="jianpu">复制</button></div><pre id="letter-notes-jianpu" class="letter-notes-text jianpu-text" data-copy-text="${esc(jp.tokens.map((line) => line.join(' ')).join('\n'))}">${jp.tokens.map((line) => line.map(jianpuSpan).join(' ')).join('\n')}</pre></div>` : '';
   const legend = zh
-    ? `${jp.keyLabel} 表示把 ${jp.keyLabel.slice(2)} 唱作 1（do）。数字上方的点是高八度，下方的点是低八度；# 升半音，b 降半音。这里只标旋律音高，不含节奏时值。字母谱里每个字母代表一个音，带 # 的是右边紧挨着的黑键。`
-    : 'Each letter is one note, read left to right. A # means the black key just to the right of that letter. Below the note names you’ll find the matching computer keys for the piano on this page.';
+    ? `${jp.keyLabel} 表示把 ${jp.keyLabel.slice(2)} 唱作 1（do）。数字简谱表示音级；C4、G4 是钢琴音名；K、W、分号等是本站的电脑按键。上方或下方的点表示八度，# 升半音，b 降半音。这里只标出音高顺序，不含全部节奏时值。`
+    : 'Read the notes from left to right. Musical-note names such as C4 or D#5 identify the pitch. The computer-key row shows the actual key to press on PianoOnline; it may be a letter, number or symbol such as a semicolon.';
   return `<section class="song-letter-notes" id="letter-notes" aria-labelledby="letter-notes-title">
-<div class="section-kicker">${zh ? '简谱 · 字母谱' : 'Full letter notes'}</div>
-<h2 id="letter-notes-title">${zh ? `《${esc(title)}》简谱与钢琴字母谱` : `${esc(title)} piano letter notes`}</h2>
+<div class="section-kicker">${zh ? '简谱 · 音名 · 字母谱' : 'PIANO LETTER NOTES'}</div>
+<h2 id="letter-notes-title">${zh ? `《${esc(title)}》数字简谱、音名和电脑按键` : `${esc(title)} Piano Notes and Computer Keys`}</h2>
 <p>${esc(legend)}</p>
-${jianpuBlock}${block('letter-notes-names', zh ? '音名谱' : 'Note names', 'names', names)}
-${block('letter-notes-keys', zh ? '本页钢琴的电脑按键' : 'Computer keys on this piano', 'keys', keys)}
+${jianpuBlock}${block('letter-notes-names', zh ? '钢琴音名（如 C4）' : 'Musical notes (pitch)', 'names', names)}
+${block('letter-notes-keys', zh ? '电脑按键（本站映射）' : 'Computer keys (on PianoOnline)', 'keys', keys)}
 </section>`;
 }
 function songFactsSection(song, locale, title) {
@@ -269,26 +269,54 @@ function songFactsSection(song, locale, title) {
   const items = [
     ...(jp ? [[`《${title}》简谱开头是什么？`, `${jp.keyLabel}，开头是 ${jp.tokens.flat().slice(0, 8).join(' ')}。`]] : []),
     [zh ? `《${title}》开头是哪几个音？` : `What are the first notes of ${title}?`,
-      zh ? `开头是 ${facts.firstNotes.join(' ')}。` : `It starts with ${facts.firstNotes.join(' ')}.`],
+      zh ? `这个简化版本的开头是 ${facts.firstNotes.join(' ')}。` : `This simplified version starts with ${facts.firstNotes.join(' ')}.`],
+    [zh ? `《${title}》在电脑键盘上按哪些键？` : `Which computer keys play the start of ${title}?`,
+      zh ? `本站开头对应的电脑按键依次是 ${song.notes.slice(0, 8).map((pitch) => KEY_MAP[pitch]).join(' ')}。这是电脑按键，不是音名。` : `On PianoOnline, the opening computer keys are ${song.notes.slice(0, 8).map((pitch) => KEY_MAP[pitch]).join(' ')}. They are keyboard labels, not musical note names.`],
     [zh ? `《${title}》要弹黑键吗？` : `Does ${title} use black keys?`,
       facts.blackKeys.length
         ? (zh ? `要，会用到 ${facts.blackKeys.join('、')}。# 表示该字母右边的黑键。` : `Yes: ${facts.blackKeys.join(', ')}. Each # is the black key just to the right of that letter.`)
         : (zh ? '不用。这个简化版旋律只用白键，很适合入门。' : 'No. This simplified melody uses only white keys, which makes it a comfortable first song.')],
     [zh ? '音域有多宽？' : 'What range does it cover?',
       zh ? `从 ${markMiddleC(facts.lowest)} 到 ${markMiddleC(facts.highest)}，上方 37 键钢琴（C3–C6）都能弹到。` : `From ${markMiddleC(facts.lowest)} to ${markMiddleC(facts.highest)}. Everything fits on the 37-key piano above (C3–C6).`],
-    [zh ? '学会要多久？' : 'How long does it take to learn?',
-      zh ? `这个版本共 ${facts.noteCount} 个音，速度约 ${facts.tempo} BPM，跟着提示练大约 ${song.estimatedMinutes} 分钟就能弹完整。` : `This version has ${facts.noteCount} notes at about ${facts.tempo} BPM. Most beginners can play it through in about ${song.estimatedMinutes} minutes of guided practice.`]
+    [zh ? '建议练习多久？' : 'How long should I practise?',
+      zh ? `这个版本共 ${facts.noteCount} 个音，参考速度约 ${facts.tempo} BPM，建议先留出约 ${song.estimatedMinutes} 分钟练习，掌握时间因人而异。` : `This version has ${facts.noteCount} notes at around ${facts.tempo} BPM. Allow roughly ${song.estimatedMinutes} minutes for a first practice; learning time varies.`],
+    [zh ? '这是完整的原曲钢琴乐谱吗？' : 'Is this the full piano arrangement?',
+      zh ? '不是。这是简化练习旋律，主要展示音高顺序，不包含原曲完整双手编配或全部节奏时值。' : 'No. This is a simplified practice melody, not a complete two-hand arrangement or fully notated rhythm.']
   ];
   return `<section class="song-facts" aria-labelledby="song-facts-title">
 <h2 id="song-facts-title">${zh ? `关于《${esc(title)}》这段旋律` : `About the ${esc(title)} melody`}</h2>
 ${items.map(([question, answer]) => `<h3>${esc(question)}</h3><p>${esc(answer)}</p>`).join('\n')}
 </section>`;
 }
+const SAMPLE_SONG_COPY = {
+  'happy-birthday': {
+    zh: '不用先学会五线谱，也能用电脑键盘练《生日快乐》。简化旋律有 25 个音，开头 G4、G4、A4、G4、C5、B4 对应电脑按键 W、W、E、W、T、R。先跟着亮键弹，再尝试不看提示重复开头。',
+    en: 'Play a simplified Happy Birthday melody on a free online piano, even if you cannot read sheet music. Follow highlighted keys, then use note names and computer-key labels to practise the repeated opening on your own.'
+  },
+  twinkle: {
+    zh: '《小星星》适合作为第一次跟弹的熟悉旋律。本站的 31 音简化版本只用白键。开头 C4、C4、G4、G4、A4、A4、G4 对应电脑按键 K、K、W、W、E、E、W。',
+    en: 'Start with a familiar nursery melody. This simplified Twinkle Twinkle Little Star sequence uses only white keys, so focus on locating each note and repeating short patterns.'
+  },
+  'ode-to-joy': {
+    zh: '用电脑键盘练习贝多芬《欢乐颂》的简化主题。开头 E4、E4、F4、G4、G4、F4、E4、D4 对应分号、分号、Q、W、W、Q、分号、L；分号是电脑按键，不是乐理符号。',
+    en: 'Learn a simplified melody from Beethoven’s Ode to Joy using note names and highlighted keys. The opening repeats nearby notes; a semicolon (;) is the computer key for E4 here.'
+  },
+  'fur-elise': {
+    zh: '《致爱丽丝》的开头在 E5 与 D♯5 之间反复切换，对应电脑键盘的 U 与 C。这段简化练习有 63 个音，包含黑键，不建议作为完全零基础的第一首歌。',
+    en: 'Practise a simplified Für Elise theme. The opening switches between E5 and D-sharp5, so practise the black-key changes slowly before connecting the longer phrase.'
+  },
+  'jingle-bells': {
+    zh: '用电脑键盘弹《铃儿响叮当》的简化旋律。这个练习版共 25 个音，只用白键；开头重复 E4，对应分号键（;）。音名列表不包含全部节奏时值。',
+    en: 'Play a simplified Jingle Bells melody with a computer keyboard or touchscreen. This 25-note version uses only white keys and starts with repeated E4 notes (the semicolon key here).'
+  }
+};
 function renderSong(song, locale, tutorialLocale = locale) {
   const zh = locale === 'zh';
   const title = localeText(song, locale);
   const pageTitle = zh ? `${title}钢琴简谱与字母谱｜在线弹奏教程` : (song.difficulty <= 2 ? `${title} Piano Letter Notes (Easy) – Play Online` : `${title} Piano Letter Notes – Play Online`);
-  const description = zh ? `${song.description?.zh || ''}附完整数字简谱和字母谱，可一键复制。` : (song.description?.[locale] || '');
+  const description = zh ? `查看《${title}》简化旋律的数字简谱、钢琴音名和电脑按键，在在线钢琴上跟着高亮琴键练习，共 ${song.notes.length} 个音。` : `Play simplified ${title} piano notes online. See ${song.notes.length} note names, matching computer keys and guided practice with highlighted keys.`;
+  const lead = SAMPLE_SONG_COPY[song.id]?.[locale] || (zh ? `想用电脑弹出《${title}》？先看数字简谱、音名和电脑按键，再跟着亮起的琴键练习。这段${difficultyLabel(song.difficulty, locale)}旋律有 ${song.notes.length} 个音，开头是 ${song.notes.slice(0, 4).join(' ')}。` : `Learn a simplified ${title} melody with musical notes and matching computer keys. This ${difficultyLabel(song.difficulty, locale).toLowerCase()} version has ${song.notes.length} notes and starts with ${song.notes.slice(0, 4).join(' ')}.`);
+  const songHeading = zh ? `《${title}》钢琴简谱与字母谱：在线跟着弹` : `How to Play ${title} on Piano`;
   const canonical = `https://pianoonline.cc${songUrl(song, locale)}`;
   const graph = [
     { '@type': 'BreadcrumbList', itemListElement: [
@@ -300,16 +328,17 @@ function renderSong(song, locale, tutorialLocale = locale) {
       ...(song.composer && !song.composer.startsWith('Traditional') ? { composer: { '@type': 'Person', name: song.composer } } : {}) }
   ];
   const { related: rel, sameDifficulty } = songRecommendations(song);
-  const startLabel = zh ? '开始提示练习' : 'Start guided practice';
+  const startLabel = zh ? '开始跟弹' : 'Start Guided Practice';
   const scoreReady = hasScoreForSong(song.id);
   const scorePanel = scoreReady ? `<section class="score-stage" data-score-viewer data-locale="${locale}" data-score-ready="${scoreReady ? 'true' : 'false'}"><div class="score-stage-header"><div><div class="section-kicker">${zh ? '互动乐谱' : 'Interactive sheet music'}</div><h2>${zh ? '看着乐谱，也能直接开始弹。' : 'Read the score while you play.'}</h2><p data-score-caption>${scoreReady ? (zh ? '双视图会同时保留乐谱与键位提示，适合从提示练习逐步过渡到看谱弹奏。' : 'Dual view keeps the score and key prompts together so you can transition into reading notation.') : (zh ? '这首曲目的五线谱正在补充中，当前仍可直接使用上方提示练习。' : 'Sheet music for this song is still being prepared, but guided practice above is ready right now.')}</p></div><div class="score-stage-options"><span>${scoreReady ? (zh ? '已支持乐谱同步' : 'Score sync available') : (zh ? '更多乐谱陆续上线' : 'More scores coming soon')}</span></div></div><div class="score-stage-toolbar"><label class="score-follow"><input type="checkbox" data-score-follow checked>${zh ? '自动跟随当前音符' : 'Follow current note'}</label><div class="score-mode-group"><button type="button" class="score-mode-button" data-score-mode="guided">${zh ? '提示模式' : 'Guided'}</button><button type="button" class="score-mode-button is-active" data-score-mode="dual">${zh ? '双视图' : 'Dual view'}</button><button type="button" class="score-mode-button" data-score-mode="score">${zh ? '只看乐谱' : 'Score only'}</button></div><div class="section-kicker">${zh ? '先用提示熟悉旋律，再对照乐谱。' : 'Learn the melody first, then explore its notation.'}</div></div><div class="score-canvas-frame"><div class="score-canvas" data-score-canvas><div class="score-viewer-empty"><strong>${zh ? '正在准备互动乐谱…' : 'Preparing interactive sheet music…'}</strong><p>${zh ? '如果当前歌曲尚未支持五线谱，我们会在这里提示你继续使用上方练习区。' : 'If this song does not support notation yet, you will see a friendly fallback here.'}</p></div></div></div></section>` : '';
   return `<!DOCTYPE html><html lang="${zh ? 'zh-CN' : 'en'}"><head><base href="/">${sharedHead({ locale, title: pageTitle, description, canonical, alternates: songAlternates(`/songs/${song.slug}/`), jsonLd: jsonLdScript(graph) })}<script type="module" src="/js/studio.js?v=${STUDIO_VERSION}"></script><script type="module" src="/js/song-page.js?v=${ASSET_VERSION}"></script></head>
 <body class="secondary-page song-detail-page" data-song-id="${esc(song.id)}">${nav(locale, 'songs', song.slug)}
 <main class="song-page-main"><div class="container">
 <div class="song-breadcrumbs"><a href="${zh ? '/' : '/en/'}">${zh ? '在线钢琴' : 'Home'}</a><span>›</span><a href="${zh ? '/songs/' : '/en/songs/'}">${zh ? '曲库' : 'Songs'}</a><span>›</span><span>${esc(title)}</span></div>
-<section class="song-hero-panel"><div class="song-hero-copy"><div class="song-eyebrow">${zh ? '互动钢琴歌曲' : 'Interactive piano song'}</div><h1>${zh ? `在线学习弹奏《${esc(title)}》` : `Learn ${esc(title)} online`}</h1><p class="song-lead">${esc(description)}</p>${song.composer ? `<p class="song-composer">${zh ? '作曲/来源' : 'Composer / source'} · ${esc(song.composer)}</p>` : ''}<div class="song-meta-grid"><div class="song-meta-item"><strong>${difficultyLabel(song.difficulty, locale)}</strong><span>${zh ? '难度' : 'Difficulty'}</span></div><div class="song-meta-item"><strong>${song.estimatedMinutes} ${zh ? '分钟' : 'min'}</strong><span>${zh ? '预计时间' : 'Estimated time'}</span></div><div class="song-meta-item"><strong>${song.notes.length}</strong><span>${zh ? '音符数量' : 'Notes'}</span></div><div class="song-meta-item"><strong>${esc(song.keySignature)}</strong><span>${zh ? '调性' : 'Key'}</span></div></div><div class="song-primary-actions"><button type="button" class="btn primary" data-start-song>${startLabel}</button><a class="btn secondary" href="${songUrl(song, locale)}#letter-notes">${zh ? '查看完整字母谱' : 'See all letter notes'}</a></div></div><aside class="song-note-preview" id="keyboard-notes"><div class="section-kicker">${zh ? `前 20 个音（共 ${song.notes.length} 个）` : `First 20 of ${song.notes.length} notes`}</div><h2>${zh ? '电脑键盘预览' : 'Computer-key preview'}</h2><div class="note-chip-list">${keyboardPreview(song.notes)}</div><a class="song-notes-more" href="${songUrl(song, locale)}#letter-notes">${zh ? `查看全部 ${song.notes.length} 个音 ↓` : `See all ${song.notes.length} notes ↓`}</a><p>${zh ? '琴键上的字母与电脑键盘对应。进入练习后，系统会逐个提示。' : 'These letters match your computer keyboard. Guided practice reveals them one at a time.'}</p></aside></section>
+<section class="song-hero-panel"><div class="song-hero-copy"><div class="song-eyebrow">${zh ? '钢琴简谱 · 字母谱 · 在线跟弹' : 'PIANO NOTES & GUIDED PRACTICE'}</div><h1>${esc(songHeading)}</h1><p class="song-lead">${esc(lead)}</p><p class="song-version-note">${zh ? '本页是简化练习旋律，主要展示音高顺序，不等于完整节奏、伴奏或双手编配的原曲乐谱。' : 'Practice version: this note sequence is a simplified melody, not a complete two-hand piano arrangement.'}</p>${song.composer ? `<p class="song-composer">${zh ? '作曲/来源' : 'Composer / source'} · ${esc(song.composer)}</p>` : ''}<div class="song-meta-grid"><div class="song-meta-item"><strong>${difficultyLabel(song.difficulty, locale)}</strong><span>${zh ? '难度' : 'Difficulty'}</span></div><div class="song-meta-item"><strong>${song.estimatedMinutes} ${zh ? '分钟' : 'min'}</strong><span>${zh ? '预计时间' : 'Estimated time'}</span></div><div class="song-meta-item"><strong>${song.notes.length}</strong><span>${zh ? '音符数量' : 'Notes'}</span></div><div class="song-meta-item"><strong>${esc(song.keySignature)}</strong><span>${zh ? '调性' : 'Key'}</span></div></div><div class="song-primary-actions"><button type="button" class="btn primary" data-start-song>${startLabel}</button><a class="btn secondary" href="${songUrl(song, locale)}#letter-notes">${zh ? '查看简谱与按键' : 'See Notes & Keys'}</a></div></div><aside class="song-note-preview" id="keyboard-notes"><div class="section-kicker">${zh ? `前 20 个音（共 ${song.notes.length} 个）` : `First 20 of ${song.notes.length} notes`}</div><h2>${zh ? '电脑键盘预览' : 'Computer-key preview'}</h2><div class="note-chip-list">${keyboardPreview(song.notes)}</div><a class="song-notes-more" href="${songUrl(song, locale)}#letter-notes">${zh ? `查看全部 ${song.notes.length} 个音 ↓` : `See all ${song.notes.length} notes ↓`}</a><p>${zh ? '琴键上的字母与电脑键盘对应。进入练习后，系统会逐个提示。' : 'These letters match your computer keyboard. Guided practice reveals them one at a time.'}</p></aside></section>
 ${studioInstrument(locale, song.id, `${scoreReady ? `<details class="studio-score" open><summary>${zh ? '乐谱 · 与琴键同步' : 'Sheet music · follow along'}</summary>${scorePanel}</details>` : ''}`)}
 ${letterNotesSection(song, locale, title)}
+<section class="song-content-section song-practice-guide"><h2>${zh ? `怎么练《${esc(title)}》？` : `How to Practise ${esc(title)}`}</h2><ol><li>${zh ? '先找到开头四到八个音对应的电脑按键。' : 'Look at the first few musical notes and their computer-key labels.'}</li><li>${zh ? '点击“开始跟弹”，按亮起的琴键逐音练习。' : 'Start guided practice and play each highlighted key.'}</li><li>${zh ? '熟悉后再尝试不看提示，弹出开头一小句。' : 'Try the opening phrase again without prompts when familiar.'}</li></ol><p>${zh ? (song.notes.some(pitch => pitch.includes('#')) ? '这首简化旋律包含黑键，建议先慢慢练熟音与音之间的切换。' : '这首简化旋律只用白键，可以先专注记住位置和相邻音。') : (song.notes.some(pitch => pitch.includes('#')) ? 'This version includes black keys. Practise those changes slowly before playing longer phrases.' : 'This simplified version uses only white keys. Focus on locating notes before speeding up.')}</p></section>
 ${songFactsSection(song, locale, title)}
 
 ${zh ? '<p class="song-home-cta">弹完这一段，可以回到<a href="/#practice-start">免费的在线钢琴</a>，从这首歌的第一句开始跟提示练。</p>\n' : ''}<section class="song-content-section"><div class="song-category-heading"><div><div class="section-kicker">${zh ? '继续演奏' : 'Keep playing'}</div><h2>${zh ? '下一首经典旋律' : 'Your next classic melody'}</h2></div></div><div class="song-card-grid">${rel.map((item) => card(item, locale)).join('')}</div></section>
