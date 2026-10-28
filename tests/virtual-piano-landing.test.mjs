@@ -38,7 +38,7 @@ test('note and MIDI landings link back to the homepage', () => {
   const midi = renderFocusedLanding('midi');
   assert.match(notes, /<title>Virtual Piano with Notes – Labeled Keys Online<\/title>/);
   assert.match(notes, /<h1>Virtual Piano with Notes on Every Key<\/h1>/);
-  assert.match(notes, /notes overlay/);
+  assert.match(notes, /What do the labels mean\?/);
   assert.match(notes, /<h2>Computer key labels<\/h2>/);
   assert.match(notes, /href="\/en\/"/);
   assert.match(notes, /href="\/midi\/"/);
