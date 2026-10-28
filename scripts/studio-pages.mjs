@@ -133,7 +133,7 @@ ${englishLanding ? virtualPianoSections() : ''}
 export function renderTraditionalHome() {
   const url = 'https://pianoonline.cc/zh-hant/';
   const title = '線上鋼琴模擬器 · 跟著提示學歌 | Piano Online';
-  const description = '免費線上鋼琴模擬器，用電腦鍵盤、滑鼠或手機觸控即可彈奏。跟著亮起的琴鍵練習熟悉旋律，探索 100 首歌曲的音名、電腦按鍵與簡譜；部分歌曲另有五線譜，無需下載或註冊。';
+  const description = '免費線上鋼琴模擬器，用電腦鍵盤、滑鼠或手機觸控自由彈奏，體驗自由鋼琴。跟著亮起的琴鍵練習熟悉旋律，探索 100 首歌曲的音名、電腦按鍵與簡譜；部分歌曲另有五線譜，無需下載或註冊。';
   let html = toTraditionalHtml(renderStudioPage('zh', true))
     .replace('<html lang="zh-CN">', '<html lang="zh-Hant">')
     .replaceAll('href="/songs/', 'href="/zh-hant/songs/')
