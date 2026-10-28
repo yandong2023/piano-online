@@ -269,7 +269,7 @@ function songFactsSection(song, locale, title) {
   const items = [
     ...(jp ? [[`《${title}》简谱开头是什么？`, `${jp.keyLabel}，开头是 ${jp.tokens.flat().slice(0, 8).join(' ')}。`]] : []),
     [zh ? `《${title}》开头是哪几个音？` : `What are the first notes of ${title}?`,
-      zh ? `这个简化版本的开头是 ${facts.firstNotes.join(' ')}。` : `This simplified version starts with ${facts.firstNotes.join(' ')}.`],
+      zh ? `这个简化版本的开头是 ${song.notes.slice(0, 8).join(' ')}。` : `This simplified version starts with ${song.notes.slice(0, 8).join(' ')}.`],
     [zh ? `《${title}》在电脑键盘上按哪些键？` : `Which computer keys play the start of ${title}?`,
       zh ? `本站开头对应的电脑按键依次是 ${song.notes.slice(0, 8).map((pitch) => KEY_MAP[pitch]).join(' ')}。这是电脑按键，不是音名。` : `On PianoOnline, the opening computer keys are ${song.notes.slice(0, 8).map((pitch) => KEY_MAP[pitch]).join(' ')}. They are keyboard labels, not musical note names.`],
     [zh ? `《${title}》要弹黑键吗？` : `Does ${title} use black keys?`,
@@ -310,13 +310,45 @@ const SAMPLE_SONG_COPY = {
     en: 'Play a simplified Jingle Bells melody with a computer keyboard or touchscreen. This 25-note version uses only white keys and starts with repeated E4 notes (the semicolon key here).'
   }
 };
+const SAMPLE_SONG_TITLES = {
+  "happy-birthday": {
+    "en": "Happy Birthday Piano Notes & Computer Keys | Play Online",
+    "zh": "生日快乐钢琴简谱、音名与字母谱｜在线跟弹",
+    "enH1": "How to Play Happy Birthday on Piano",
+    "zhH1": "《生日快乐》钢琴简谱与字母谱：跟着亮键弹"
+  },
+  "twinkle": {
+    "en": "Twinkle Twinkle Little Star Piano Notes | Play Online",
+    "zh": "小星星钢琴简谱、音名与字母谱｜在线跟弹",
+    "enH1": "Twinkle Twinkle Little Star Piano Notes & Keys",
+    "zhH1": "《小星星》钢琴简谱与字母谱：零基础练习"
+  },
+  "ode-to-joy": {
+    "en": "Ode to Joy Piano Notes & Keyboard Keys | Play Online",
+    "zh": "欢乐颂钢琴简谱、音名与电脑按键｜在线跟弹",
+    "enH1": "How to Play Ode to Joy on Piano",
+    "zhH1": "《欢乐颂》钢琴简谱与字母谱：电脑键盘练习"
+  },
+  "fur-elise": {
+    "en": "Für Elise Piano Notes & Guided Practice | Play Online",
+    "zh": "致爱丽丝钢琴简谱、音名与字母谱｜主题练习",
+    "enH1": "Learn the Für Elise Opening on Piano",
+    "zhH1": "《致爱丽丝》钢琴简谱与字母谱：练习经典主题"
+  },
+  "jingle-bells": {
+    "en": "Jingle Bells Piano Notes & Keyboard Keys | Play Online",
+    "zh": "铃儿响叮当钢琴简谱、音名与字母谱｜在线跟弹",
+    "enH1": "How to Play Jingle Bells on Piano",
+    "zhH1": "《铃儿响叮当》钢琴简谱与字母谱：节日跟弹"
+  }
+};
 function renderSong(song, locale, tutorialLocale = locale) {
   const zh = locale === 'zh';
   const title = localeText(song, locale);
-  const pageTitle = zh ? `${title}钢琴简谱与字母谱｜在线弹奏教程` : (song.difficulty <= 2 ? `${title} Piano Letter Notes (Easy) – Play Online` : `${title} Piano Letter Notes – Play Online`);
+  const pageTitle = SAMPLE_SONG_TITLES[song.id]?.[locale] || (zh ? `${title}钢琴简谱、音名与字母谱｜在线跟弹` : `${title} Piano Notes & Keyboard Keys | Play Online`);
   const description = zh ? `查看《${title}》简化旋律的数字简谱、钢琴音名和电脑按键，在在线钢琴上跟着高亮琴键练习，共 ${song.notes.length} 个音。` : `Play simplified ${title} piano notes online. See ${song.notes.length} note names, matching computer keys and guided practice with highlighted keys.`;
   const lead = SAMPLE_SONG_COPY[song.id]?.[locale] || (zh ? `想用电脑弹出《${title}》？先看数字简谱、音名和电脑按键，再跟着亮起的琴键练习。这段${difficultyLabel(song.difficulty, locale)}旋律有 ${song.notes.length} 个音，开头是 ${song.notes.slice(0, 4).join(' ')}。` : `Learn a simplified ${title} melody with musical notes and matching computer keys. This ${difficultyLabel(song.difficulty, locale).toLowerCase()} version has ${song.notes.length} notes and starts with ${song.notes.slice(0, 4).join(' ')}.`);
-  const songHeading = zh ? `《${title}》钢琴简谱与字母谱：在线跟着弹` : `How to Play ${title} on Piano`;
+  const songHeading = SAMPLE_SONG_TITLES[song.id]?.[zh ? 'zhH1' : 'enH1'] || (zh ? `《${title}》钢琴简谱与字母谱：在线跟着弹` : `How to Play ${title} on Piano`);
   const canonical = `https://pianoonline.cc${songUrl(song, locale)}`;
   const graph = [
     { '@type': 'BreadcrumbList', itemListElement: [
