@@ -162,17 +162,17 @@ export function renderTraditionalHome() {
 const focusedCopy = {
   notes: {
     path: '/with-notes/',
-    title: 'Virtual Piano with Notes — Labeled Keys',
-    description: 'Virtual piano with notes labeled on every key. See note names, then play this visual piano online. No download or signup.',
-    h1: 'Virtual piano with notes',
-    lead: 'Note names sit on the keys of this virtual piano with notes. Show or hide the computer letters with Key labels. No download and no account.'
+    title: 'Virtual Piano with Notes – Labeled Keys Online',
+    description: 'Play a free virtual piano with note names labeled on the keys. See C4, D4 and other notes, show computer-key labels and practise in your browser.',
+    h1: 'Virtual Piano with Notes on Every Key',
+    lead: 'See the musical note name on each piano key while you play. Want to use your computer keyboard? Keep the key labels visible to learn which key presses each note on PianoOnline.'
   },
   midi: {
     path: '/midi/',
-    title: 'Piano MIDI Online — Drop a File to Play',
-    description: 'Piano MIDI online. Drop a .mid file and hear it on the virtual piano in your browser. No download or signup.',
-    h1: 'Piano MIDI online — drop file to play',
-    lead: 'Drop a .mid or .midi file on the piano. It plays in your browser and is not uploaded. You can also play along with the mouse, touch or computer keys.'
+    title: 'Play MIDI Files Online on a Virtual Piano',
+    description: 'Open a .mid or .midi file and hear it play on a virtual piano in your browser. No installation required. Use the on-screen keys to play along.',
+    h1: 'Play a MIDI File on a Virtual Piano',
+    lead: 'Drop a .mid or .midi file here, or choose one from your computer. The file plays in your browser without being uploaded to our server.'
   }
 };
 
@@ -180,10 +180,10 @@ export function renderFocusedLanding(variant) {
   const copy = focusedCopy[variant];
   const url = `https://pianoonline.cc${copy.path}`;
   const midi = variant === 'midi';
-  const drop = midi ? `<div id="midi-drop" class="midi-drop"><p class="studio-kicker">DROP A FILE</p><p>Drop a MIDI file here, or choose one from your computer.</p><input id="midi-file" type="file" accept=".mid,.midi,audio/midi,audio/mid"><button type="button" id="midi-stop" class="studio-quiet">Stop</button><p id="midi-status" role="status">Nothing is playing yet.</p></div>` : '';
+  const drop = midi ? `<div id="midi-drop" class="midi-drop"><p class="studio-kicker">DROP A FILE</p><p>Drop a MIDI file here or choose a file</p><input id="midi-file" type="file" accept=".mid,.midi,audio/midi,audio/mid"><button type="button" id="midi-stop" class="studio-quiet">Stop playback</button><p id="midi-status" role="status">No MIDI file is playing yet.</p></div>` : '';
   const extra = midi
-    ? '<p class="vp-links"><a href="/en/">Back to the virtual piano</a> · <a href="/with-notes/">Virtual piano with notes</a></p>'
-    : `<section class="vp-sections" aria-label="Labeled keys"><article><h2>Notes on every key</h2><p>Each key shows its note name, such as C4 or D#4. That notes overlay stays on while you play this virtual piano with notes.</p></article><article><h2>Computer key labels</h2><p>Key labels shows the computer letter for each note. Turn it off when you only want the note names.</p></article><article><h2>Back to the piano</h2><p><a href="/en/">Back to the virtual piano</a>. To hear a file, open <a href="/midi/">Piano MIDI online</a>.</p></article></section>`;
+    ? '<section class="vp-sections"><article><h2>How to play a MIDI file</h2><p>Choose a MIDI file, wait for it to load, then listen on the virtual piano. You can use your mouse, touchscreen or computer keyboard to play along.</p></article><article><p><a href="/en/">Back to the virtual piano</a> · <a href="/with-notes/">Virtual piano with notes</a></p></article></section>'
+    : `<section class="vp-sections" aria-label="Labeled keys"><article><h2>What do the labels mean?</h2><p>C4 is the pitch called middle C. K is the computer key that plays C4 here. The note name and computer-key label are different kinds of information.</p></article><article><h2>Computer key labels</h2><p>Key labels shows which computer key plays each pitch; it may be a letter, number or symbol. Turn it off when you want only the musical note names.</p></article><article><h2>Keep practising</h2><p><a href="/en/#practice-start">Play the labeled piano</a> or <a href="/en/songs/">Explore piano songs</a>. To hear a file, open <a href="/midi/">Piano MIDI online</a>.</p></article></section>`;
   return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${copy.title}</title><meta name="description" content="${copy.description}"><link rel="canonical" href="${url}"><link rel="icon" href="/images/favicon.svg"><meta property="og:type" content="website"><meta property="og:title" content="${copy.title}"><meta property="og:description" content="${copy.description}"><meta property="og:url" content="${url}"><meta property="og:image" content="https://pianoonline.cc/images/og-image.jpg"><link rel="stylesheet" href="/css/studio.css?v=${STUDIO_VERSION}"><link rel="stylesheet" href="/css/virtual-piano-home.css?v=20261028.2"><script type="module" src="/js/studio.js?v=${STUDIO_VERSION}"></script>${midi ? '<script type="module" src="/js/midi-drop.mjs?v=20261024.1"></script>' : ''}<script async src="https://www.googletagmanager.com/gtag/js?id=G-EYGD99YB4Y"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-EYGD99YB4Y');</script><meta name="google-site-verification" content="Fii3zK2l54f0uFP7RPwdn7BEqB4OjC2jc_07JxSs1uI"></head>
 <body class="studio-page virtual-piano-home"><a class="skip-link" href="#practice-start">Skip to piano</a>${studioNav('en', 'piano', '', true)}<main class="studio-main"><header class="studio-intro"><div><p class="studio-kicker">PLAY IN THE BROWSER</p><h1>${copy.h1}</h1><p>${copy.lead}</p></div><div class="studio-promise"><span>Free</span><span>No signup</span><span>No download</span></div></header>${drop}${studioInstrument('en')}${extra}</main><footer class="studio-footer"><span>Piano Online <span class="brand-light">© 2026</span></span><a href="/en/">Virtual piano</a></footer></body></html>`;
 }
