@@ -361,7 +361,7 @@ test('zh-hant fur-elise title is fully converted to traditional characters', asy
   const html = await readFile('zh-hant/songs/fur-elise/index.html', 'utf8');
   const title = html.match(/<title>([^<]*)<\/title>/)[1];
   assert.ok(title.includes('致愛麗絲'), title);
-  assert.ok(title.includes('彈奏'), title);
+  assert.ok(title.includes('練習'), title);
   assert.ok(!title.includes('丝'), title);
   assert.ok(!title.includes('弹'), title);
 });
@@ -379,4 +379,33 @@ test('song interaction stylesheet hides inactive status space and supports fulls
   assert.match(css, /practice-status-panel\.is-active/);
   assert.match(css, /practice-layout\.has-active-status/);
   assert.match(css, /song-practice-shell\.fullscreen/);
+});
+
+test('representative V2.1 piano song pages show real first-eight pitches and mapped computer keys', async () => {
+  const samples = [
+    ['happy-birthday', 'Happy Birthday Piano Notes & Computer Keys'],
+    ['twinkle', 'Twinkle Twinkle Little Star Piano Notes'],
+    ['ode-to-joy', 'Ode to Joy Piano Notes & Keyboard Keys'],
+    ['fur-elise', 'Für Elise Piano Notes & Guided Practice'],
+    ['jingle-bells', 'Jingle Bells Piano Notes & Keyboard Keys']
+  ];
+  for (const [id, titleFragment] of samples) {
+    const song = publicSongs.find((candidate) => candidate.id === id);
+    assert.ok(song, id);
+    const expectedPitches = song.notes.slice(0, 8).join(' ');
+    const expectedKeys = song.notes.slice(0, 8).map((note) => KEY_MAP[note]).join(' ');
+    const en = await readFile(`en/songs/${song.slug}/index.html`, 'utf8');
+    const zh = await readFile(`songs/${song.slug}/index.html`, 'utf8');
+    const traditional = await readFile(`zh-hant/songs/${song.slug}/index.html`, 'utf8');
+    assert.ok(en.includes(titleFragment.replaceAll('&', '&amp;')), `${id} English title`);
+    assert.ok(en.includes(expectedPitches), `${id} pitch with octaves`);
+    assert.ok(en.includes(expectedKeys), `${id} actual computer keys`);
+    assert.ok(zh.includes(expectedPitches), `${id} Chinese pitch list`);
+    assert.ok(zh.includes(expectedKeys), `${id} Chinese computer keys`);
+    for (const [locale, html] of [['en', en], ['zh', zh], ['zh-Hant', traditional]]) {
+      assert.equal((html.match(/<h1>/g) || []).length, 1, `${id} ${locale} unique H1`);
+      assert.equal((html.match(/<link rel="canonical" /g) || []).length, 1, `${id} ${locale} unique canonical`);
+      assert.match(html.toLowerCase(), /simplified|简化|簡化/, `${id} ${locale} practice scope`);
+    }
+  }
 });

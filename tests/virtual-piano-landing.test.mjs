@@ -8,9 +8,9 @@ const landing = renderStudioPage('en', true);
 test('English homepage is the virtual piano landing', () => {
   assert.match(landing, /<html lang="en">/);
   assert.match(landing, /<title>Virtual Piano Online — Free Visual Piano<\/title>/);
-  assert.match(landing, /<h1>Virtual Piano Online<\/h1>/);
-  assert.match(landing, /free visual piano and online piano/);
-  assert.match(landing, /No download and no account/);
+  assert.match(landing, /<h1>Play Piano Online with Your Computer Keyboard<\/h1>/);
+  assert.match(landing, /free virtual piano using your computer keyboard/);
+  assert.match(landing, /No downloads or signup/);
   assert.equal((landing.match(/<h1>/g) || []).length, 1);
   const guide = '<h2>What is a virtual piano?</h2>';
   assert.ok(landing.indexOf('id="keyboard-viewport"') < landing.indexOf(guide));
@@ -36,15 +36,15 @@ test('English homepage is the virtual piano landing', () => {
 test('note and MIDI landings link back to the homepage', () => {
   const notes = renderFocusedLanding('notes');
   const midi = renderFocusedLanding('midi');
-  assert.match(notes, /<title>Virtual Piano with Notes — Labeled Keys<\/title>/);
-  assert.match(notes, /<h1>Virtual piano with notes<\/h1>/);
-  assert.match(notes, /notes overlay/);
+  assert.match(notes, /<title>Virtual Piano with Notes – Labeled Keys Online<\/title>/);
+  assert.match(notes, /<h1>Virtual Piano with Notes on Every Key<\/h1>/);
+  assert.match(notes, /What do the labels mean\?/);
   assert.match(notes, /<h2>Computer key labels<\/h2>/);
   assert.match(notes, /href="\/en\/"/);
   assert.match(notes, /href="\/midi\/"/);
   assert.match(notes, /id="keyboard-viewport"/);
   assert.match(notes, /id="labels-toggle" checked/);
-  assert.match(midi, /<h1>Piano MIDI online — drop file to play<\/h1>/);
+  assert.match(midi, /<h1>Play a MIDI File on a Virtual Piano<\/h1>/);
   assert.match(midi, /id="midi-drop"/);
   assert.match(midi, /id="midi-file"/);
   assert.match(midi, /href="\/en\/"/);
