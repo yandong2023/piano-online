@@ -397,7 +397,7 @@ test('representative V2.1 piano song pages show real first-eight pitches and map
     const en = await readFile(`en/songs/${song.slug}/index.html`, 'utf8');
     const zh = await readFile(`songs/${song.slug}/index.html`, 'utf8');
     const traditional = await readFile(`zh-hant/songs/${song.slug}/index.html`, 'utf8');
-    assert.ok(en.includes(titleFragment), `${id} English title`);
+    assert.ok(en.includes(titleFragment.replaceAll('&', '&amp;')), `${id} English title`);
     assert.ok(en.includes(expectedPitches), `${id} pitch with octaves`);
     assert.ok(en.includes(expectedKeys), `${id} actual computer keys`);
     assert.ok(zh.includes(expectedPitches), `${id} Chinese pitch list`);
