@@ -38,10 +38,22 @@ for (const locale of ['zh','en']) for (const home of [true,false]) {
 test('zh home adds simulator while piano page keeps its title', () => {
   const html = renderStudioPage('zh', true);
   assert.ok(html.includes('<title>在线钢琴_免费模拟器·免下载免注册·简谱学歌</title>'));
-  assert.match(html, /<h1>在线钢琴，免下载，打开就能弹。<\/h1>/);
-  assert.match(html, /<meta name="description" content="在线钢琴模拟器，免下载、免注册/);
+  assert.match(html, /<h1>在线钢琴：打开就能弹，跟着亮键学歌曲<\/h1>/);
+  assert.match(html, /<meta name="description" content="免费在线钢琴模拟器/);
   assert.ok(renderStudioPage('zh', false).includes('<title>在线钢琴 · 打开就能弹，跟着提示学歌 | Piano Online</title>'));
   assert.match(renderStudioPage('zh', false), /<h1>在线钢琴，打开就能弹。<\/h1>/);
+});
+
+test('V2.1 answers user tasks while preserving priority SEO phrases', () => {
+  const zh = renderStudioPage('zh', true);
+  const en = renderStudioPage('en', true);
+  const traditional = renderTraditionalHome();
+  assert.match(zh, /在线弹钢琴，三步就够了/);
+  assert.match(en, /How to Play Piano Online in 3 Steps/);
+  assert.match(en, /piano simulator/);
+  assert.match(traditional, /線上鋼琴：打開就能彈，跟著亮鍵學歌曲/);
+  for (const phrase of ['钢琴模拟器', '自由钢琴']) assert.ok(zh.includes(phrase), phrase);
+  for (const phrase of ['virtual piano', 'visual piano', 'online piano', 'play piano online']) assert.ok(en.toLowerCase().includes(phrase), phrase);
 });
 
 test('zh home language menu links all locales and marks 简体中文 current', () => {
@@ -68,7 +80,7 @@ test('zh-hant home renders traditional content with correct head and nav', () =>
   assert.ok(html.includes('<link rel="canonical" href="https://pianoonline.cc/zh-hant/">'));
   assert.deepEqual(html.match(/<link rel="alternate"[^>]*>/g), HOME_ALTERNATES);
   assert.equal((html.match(/<h1>/g) || []).length, 1);
-  assert.ok(html.includes('<h1>線上鋼琴，打開就能彈。</h1>'));
+  assert.ok(html.includes('<h1>線上鋼琴：打開就能彈，跟著亮鍵學歌曲</h1>'));
   assert.ok(html.includes('adsbygoogle.js'));
   for (const id of ['song-select','sustain-toggle','labels-toggle','start-practice','stop-practice','start-rhythm-game','toggle-fullscreen','studio-volume','keyboard-viewport']) assert.ok(html.includes(`id="${id}"`));
   const texts = [/<title>([^<]*)<\/title>/, /<h1>([^<]*)<\/h1>/, /<meta name="description" content="([^"]*)">/]
@@ -183,7 +195,7 @@ for (const [locale, html, keywords] of [
   const faqs = scripts.filter(item => item['@type'] === 'FAQPage');
   assert.equal(faqs.length, 1);
   assert.equal(faqs[0].inLanguage, locale === 'zh' ? 'zh-CN' : locale);
-  assert.equal(faqs[0].mainEntity.length, 3);
+  assert.equal(faqs[0].mainEntity.length, 8);
   const section = html.match(/<section class="home-faq"[\s\S]*?<\/section>/)[0];
   for (const { name, acceptedAnswer } of faqs[0].mainEntity) {
     assert.ok(section.includes(name));
@@ -197,8 +209,9 @@ for (const [locale, html, keywords] of [
     assert.ok([...title].reduce((n, char) => n + (char.charCodeAt(0) > 127 ? 2 : 1), 0) <= 60);
   } else {
     assert.match(html, /<title>Virtual Piano Online — Free Visual Piano<\/title>/);
-    assert.match(html, /<h1>Virtual Piano Online<\/h1>/);
-    for (const phrase of ['virtual piano', 'visual piano', 'online piano', 'piano online']) assert.ok(description.toLowerCase().includes(phrase), phrase);
+    assert.match(html, /<h1>Play Piano Online with Your Computer Keyboard<\/h1>/);
+    for (const phrase of ['visual piano', 'online piano']) assert.ok(description.toLowerCase().includes(phrase), phrase);
+    for (const phrase of ['virtual piano', 'play piano online']) assert.ok(html.toLowerCase().includes(phrase), phrase);
   }
 });
 
