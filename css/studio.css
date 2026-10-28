@@ -98,6 +98,3 @@ body.studio-focus{overflow:hidden!important}:root body .studio-instrument:fullsc
   .studio-lang>summary{min-width:44px;justify-content:center;padding:8px;gap:5px}
   .studio-lang-menu{top:calc(100% + 8px)}
 }
-
-/* Keep scroll space available beneath a standard bottom anchor without moving or hiding ads. */
-body.studio-page[data-adsense-enabled]{padding-bottom:calc(140px + env(safe-area-inset-bottom,0px))}

@@ -203,7 +203,7 @@ for (const [locale, html, keywords] of [
 });
 
 // Guard the incident: all language homes must retain the real publisher loader exactly once.
-test('homepage advertising stays enabled with approved regular bottom anchors', async () => {
+test('homepage advertising stays enabled and respects dashboard format settings', async () => {
   const publisher = 'ca-pub-4423187689700927';
   const authorized = await readFile('ads.txt', 'utf8');
   assert.ok(authorized.includes(publisher.replace('ca-', '')));
@@ -211,8 +211,7 @@ test('homepage advertising stays enabled with approved regular bottom anchors', 
     const scripts = html.match(/<script[^>]+src="https:\/\/pagead2\.googlesyndication\.com\/pagead\/js\/adsbygoogle\.js[^>]*>/g) || [];
     assert.equal(scripts.length, 1);
     assert.ok(scripts[0].includes(publisher));
-    assert.ok(scripts[0].includes('data-overlays="collapsed-bottom"'));
-    assert.ok(html.includes('data-adsense-enabled'));
+    assert.ok(!scripts[0].includes('data-overlays'));
     assert.ok(html.indexOf(scripts[0]) < html.indexOf('</head>'));
   }
 });
