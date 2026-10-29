@@ -160,7 +160,7 @@ test('homepage hreflang matches sitemap and /zh /es redirect to real locales', a
         assert.match(html, /免费在线钢琴模拟器/);
         assert.match(html, /不用下载软件/);
       } else {
-        assert.equal(title, 'Virtual Piano Online — Free Visual Piano');
+        assert.equal(title, 'Free Online Piano & Piano Simulator — Virtual Piano');
       }
     }
   } finally {
@@ -189,7 +189,7 @@ test('legacy homepage modules remain inert compatibility shims',async()=>{
 
 for (const [locale, html, keywords] of [
   ['zh', renderStudioPage('zh'), ['钢琴模拟器', '自由钢琴', '五线谱']],
-  ['en', renderStudioPage('en'), ['online piano', 'visual piano']],
+  ['en', renderStudioPage('en'), ['online piano', 'piano simulator']],
   ['zh-Hant', renderTraditionalHome(), ['鋼琴模擬器', '自由鋼琴', '五線譜']]
 ]) test(`${locale} home has visible localized FAQ matching independent JSON-LD`, () => {
   const scripts = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map(match => JSON.parse(match[1]));
@@ -209,9 +209,9 @@ for (const [locale, html, keywords] of [
     const title = html.match(/<title>(.*?)<\/title>/)[1];
     assert.ok([...title].reduce((n, char) => n + (char.charCodeAt(0) > 127 ? 2 : 1), 0) <= 60);
   } else {
-    assert.match(html, /<title>Virtual Piano Online — Free Visual Piano<\/title>/);
-    assert.match(html, /<h1>Play Piano Online with Your Computer Keyboard<\/h1>/);
-    for (const phrase of ['visual piano', 'online piano']) assert.ok(description.toLowerCase().includes(phrase), phrase);
+    assert.match(html, /<title>Free Online Piano & Piano Simulator — Virtual Piano<\/title>/);
+    assert.match(html, /<h1>Free Online Piano Simulator — Play Instantly<\/h1>/);
+    for (const phrase of ['piano simulator', 'online piano']) assert.ok(description.toLowerCase().includes(phrase), phrase);
     for (const phrase of ['virtual piano', 'play piano online']) assert.ok(html.toLowerCase().includes(phrase), phrase);
   }
 });

@@ -5,10 +5,25 @@ import { renderFocusedLanding, renderStudioPage } from '../scripts/studio-pages.
 
 const landing = renderStudioPage('en', true);
 
+test('English homepage SEO copy stays consistent in source and published HTML', async () => {
+  const title = 'Free Online Piano & Piano Simulator — Virtual Piano';
+  const description = 'Free online piano and piano simulator in your browser. Play with keyboard, mouse or touch. Follow highlighted keys to learn songs — no download, no signup.';
+  for (const html of [landing, await readFile('en/index.html', 'utf8')]) {
+    assert.ok(html.includes(`<title>${title}</title>`));
+    assert.ok(html.includes(`<meta name="description" content="${description}">`));
+    assert.ok(html.includes(`<meta property="og:title" content="${title}">`));
+    assert.ok(html.includes(`<meta property="og:description" content="${description}">`));
+    assert.ok(html.includes('<h1>Free Online Piano Simulator — Play Instantly</h1>'));
+    const graph = JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1])['@graph'];
+    assert.equal(graph.find(node => node['@type'] === 'WebSite').name, title);
+    assert.equal(graph.find(node => node['@type'] === 'WebApplication').description, description);
+  }
+});
+
 test('English homepage is the virtual piano landing', () => {
   assert.match(landing, /<html lang="en">/);
-  assert.match(landing, /<title>Virtual Piano Online — Free Visual Piano<\/title>/);
-  assert.match(landing, /<h1>Play Piano Online with Your Computer Keyboard<\/h1>/);
+  assert.match(landing, /<title>Free Online Piano & Piano Simulator — Virtual Piano<\/title>/);
+  assert.match(landing, /<h1>Free Online Piano Simulator — Play Instantly<\/h1>/);
   assert.match(landing, /free virtual piano using your computer keyboard/);
   assert.match(landing, /No downloads or signup/);
   assert.equal((landing.match(/<h1>/g) || []).length, 1);
@@ -26,7 +41,7 @@ test('English homepage is the virtual piano landing', () => {
   assert.doesNotMatch(landing, /<form|type="password"/);
   const head = landing.slice(0, landing.indexOf('</head>'));
   assert.doesNotMatch(head, /在线钢琴|琴鍵|琴键/);
-  for (const phrase of ['virtual piano', 'visual piano', 'online piano', 'piano online']) {
+  for (const phrase of ['virtual piano', 'piano simulator', 'online piano']) {
     assert.ok(`${head} ${landing.match(/<h1>[^<]*<\/h1>/)[0]}`.toLowerCase().includes(phrase), phrase);
   }
   assert.match(landing, /adsbygoogle\.js/);
