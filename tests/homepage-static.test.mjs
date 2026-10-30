@@ -4,13 +4,9 @@ import { createServer } from 'node:http';
 import test from 'node:test';
 import { renderStudioPage, renderTraditionalHome, studioInstrument } from '../scripts/studio-pages.mjs';
 import { toTraditionalText } from '../data/zh-hant.mjs';
+import { HOME_HREFLANG } from '../scripts/locale-alternates.mjs';
 
-const HOME_ALTERNATES = [
-  '<link rel="alternate" hreflang="zh-CN" href="https://pianoonline.cc/">',
-  '<link rel="alternate" hreflang="en" href="https://pianoonline.cc/en/">',
-  '<link rel="alternate" hreflang="zh-Hant" href="https://pianoonline.cc/zh-hant/">',
-  '<link rel="alternate" hreflang="x-default" href="https://pianoonline.cc/en/">'
-];
+const HOME_ALTERNATES = HOME_HREFLANG.map(([lang, href]) => `<link rel="alternate" hreflang="${lang}" href="${href}">`);
 
 for (const locale of ['zh','en']) for (const home of [true,false]) {
   test(`${locale} ${home ? 'home' : 'piano'} has a playable first paint and accurate content`, () => {
@@ -99,7 +95,7 @@ test('zh-hant home renders traditional content with correct head and nav', () =>
   assert.ok(html.includes('/js/zh-hant-runtime.js'));
 });
 
-test('homepage hreflang matches sitemap and /zh /es redirect to real locales', async () => {
+test('homepage hreflang matches sitemap and /zh redirects while /es is a real locale', async () => {
   const sitemap = await readFile('sitemap.xml', 'utf8');
   for (const loc of ['https://pianoonline.cc/', 'https://pianoonline.cc/en/', 'https://pianoonline.cc/zh-hant/']) {
     const row = sitemap.split('\n').find((line) => line.includes(`<loc>${loc}</loc>`));
@@ -111,12 +107,13 @@ test('homepage hreflang matches sitemap and /zh /es redirect to real locales', a
     }
   }
   assert.doesNotMatch(sitemap, /<loc>https:\/\/pianoonline\.cc\/zh(?:\/|<)/);
-  assert.doesNotMatch(sitemap, /<loc>https:\/\/pianoonline\.cc\/es(?:\/|<)/);
-  assert.doesNotMatch(sitemap, /hreflang="(?:zh|es)"/);
+  assert.match(sitemap, /<loc>https:\/\/pianoonline\.cc\/es\/<\/loc>/);
+  assert.doesNotMatch(sitemap, /hreflang="zh"/);
+  assert.match(sitemap, /hreflang="es"/);
 
   const vercel = JSON.parse(await readFile('vercel.json', 'utf8'));
   const netlify = await readFile('netlify.toml', 'utf8');
-  const aliases = [['/zh', '/'], ['/zh/', '/'], ['/es', '/en/'], ['/es/', '/en/']];
+  const aliases = [['/zh', '/'], ['/zh/', '/']];
   for (const [source, destination] of aliases) {
     const rule = vercel.redirects.find((item) => item.source === source);
     assert.equal(rule?.destination, destination, source);

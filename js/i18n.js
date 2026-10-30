@@ -1,3 +1,5 @@
+import { NEW_PIANO_LOCALES, translatePiano } from '../data/piano-locales.mjs';
+
 const dictionaries = {
     zh: {
         practice: {
@@ -41,8 +43,20 @@ const dictionaries = {
     }
 };
 
+for (const locale of NEW_PIANO_LOCALES) {
+    dictionaries[locale] = { practice: Object.fromEntries(Object.entries(dictionaries.en.practice)
+        .map(([key, en]) => [key, translatePiano(locale, dictionaries.zh.practice[key], en)])) };
+}
+
 export function getLocale() {
-    return document.documentElement.lang?.toLowerCase().startsWith('en') ? 'en' : 'zh';
+    const lang = document.documentElement.lang?.toLowerCase() || 'zh';
+    if (lang === 'zh-hant') return lang;
+    const base = lang.split('-')[0];
+    return dictionaries[base] ? base : 'zh';
+}
+
+export function pianoText(zh, en) {
+    return translatePiano(getLocale(), zh, en);
 }
 
 export function t(key, params = {}) {

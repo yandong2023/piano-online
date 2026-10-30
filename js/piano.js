@@ -3,6 +3,7 @@ import { PracticeMode } from './practice-mode.js';
 import { PianoRecorder } from './recorder.js';
 import { createPracticeEntryController } from './practice-entry.mjs';
 import { keyboardNotes, mobileRangeForNote, keyboardMapForRange } from './keyboard-range.mjs';
+import { pianoText } from './i18n.js';
 
 console.log('piano.js loaded');
 
@@ -285,11 +286,11 @@ class Piano {
         const range = `C${this.startOctave}–C${this.startOctave + this.octaves}`;
         if (this.rangeLabel) {
             const language = document.documentElement.lang.toLowerCase();
-            const english = language.startsWith('en'), traditional = language === 'zh-hant';
-            this.rangeLabel.textContent = `${this.octaves * 12 + 1} ${english ? 'keys' : traditional ? '鍵' : '键'} · ${range}`;
+            const traditional = language === 'zh-hant';
+            this.rangeLabel.textContent = `${this.octaves * 12 + 1} ${traditional ? '鍵' : pianoText('键', 'keys')} · ${range}`;
             const hint = document.createElement('span');
             hint.className = 'mobile-only';
-            hint.textContent = ` · ${english ? 'Use arrows to change range' : traditional ? '用兩側箭頭切換音區' : '用两侧箭头切换音区'}`;
+            hint.textContent = ` · ${traditional ? '用兩側箭頭切換音區' : pianoText('用两侧箭头切换音区', 'Use arrows to change range')}`;
             this.rangeLabel.append(hint);
         }
         document.querySelector('.keys')?.setAttribute('aria-label', range);

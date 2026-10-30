@@ -1,16 +1,18 @@
 import { existsSync } from 'node:fs';
 import path from 'node:path';
+import { NEW_PIANO_LOCALES } from '../data/piano-locales.mjs';
 
 export const SITE_ORIGIN = 'https://pianoonline.cc';
 
 // Homepage cluster: `/` is simplified Chinese (Baidu), `/en/` is the English
 // virtual piano, `/zh-hant/` is Traditional. x-default follows English so
 // Google does not treat the Chinese root as the international page.
-// `/zh` and `/es` are not locales here — they 301 to `/` and `/en/`.
+// `/zh` remains an alias for `/`. New locales have independent language homes.
 export const HOME_HREFLANG = [
   ['zh-CN', `${SITE_ORIGIN}/`],
   ['en', `${SITE_ORIGIN}/en/`],
   ['zh-Hant', `${SITE_ORIGIN}/zh-hant/`],
+  ...NEW_PIANO_LOCALES.map(locale => [locale, `${SITE_ORIGIN}/${locale}/`]),
   ['x-default', `${SITE_ORIGIN}/en/`]
 ];
 

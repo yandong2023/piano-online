@@ -2,37 +2,305 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "redirects": [
-    { "source": "/zh", "destination": "/", "statusCode": 301 },
-    { "source": "/zh/", "destination": "/", "statusCode": 301 },
-    { "source": "/es", "destination": "/en/", "statusCode": 301 },
-    { "source": "/es/", "destination": "/en/", "statusCode": 301 }
+    {
+      "source": "/zh",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/zh/",
+      "destination": "/",
+      "statusCode": 301
+    }
   ],
   "headers": [
-    {"source":"/","headers":[{"key":"Cache-Control","value":"no-cache, no-store, must-revalidate"}]},
-    {"source":"/en/","headers":[{"key":"Cache-Control","value":"no-cache, no-store, must-revalidate"}]},
-    {"source":"/songs/(.*)","headers":[{"key":"Cache-Control","value":"no-cache, must-revalidate"}]},
-    {"source":"/en/songs/(.*)","headers":[{"key":"Cache-Control","value":"no-cache, must-revalidate"}]},
-    {"source":"/zh-hant/songs/(.*)","headers":[{"key":"Cache-Control","value":"no-cache, must-revalidate"}]},
-    {"source":"/articles/guides/(.*)","headers":[{"key":"Cache-Control","value":"no-cache, must-revalidate"}]},
-    {"source":"/en/articles/guides/(.*)","headers":[{"key":"Cache-Control","value":"no-cache, must-revalidate"}]},
-    {"source":"/tutorials.html","headers":[{"key":"Cache-Control","value":"no-cache, must-revalidate"}]},
-    {"source":"/en/tutorials.html","headers":[{"key":"Cache-Control","value":"no-cache, must-revalidate"}]},
-    {"source":"/js/main.js","headers":[{"key":"Cache-Control","value":"no-cache, must-revalidate"}]},
-    {"source":"/js/song-discovery.js","headers":[{"key":"Cache-Control","value":"no-cache, must-revalidate"}]},
-    {"source":"/js/song-page.js","headers":[{"key":"Cache-Control","value":"no-cache, must-revalidate"}]},
-    {"source":"/js/score-viewer.js","headers":[{"key":"Cache-Control","value":"no-cache, must-revalidate"}]},
-    {"source":"/data/song-scores.mjs","headers":[{"key":"Cache-Control","value":"no-cache, must-revalidate"}]},
-    {"source":"/css/home-premium.css","headers":[{"key":"Cache-Control","value":"no-cache, must-revalidate"}]},
-    {"source":"/css/homepage-detail-fixes.css","headers":[{"key":"Cache-Control","value":"no-cache, must-revalidate"}]},
-    {"source":"/css/song-pages.css","headers":[{"key":"Cache-Control","value":"no-cache, must-revalidate"}]},
-    {"source":"/css/secondary-pages.css","headers":[{"key":"Cache-Control","value":"no-cache, must-revalidate"}]},
-    {"source":"/css/tutorial-guide.css","headers":[{"key":"Cache-Control","value":"no-cache, must-revalidate"}]},
-    {"source":"/css/score-viewer.css","headers":[{"key":"Cache-Control","value":"no-cache, must-revalidate"}]},
-    {"source":"/piano.html","headers":[{"key":"Cache-Control","value":"no-cache, must-revalidate"}]},
-    {"source":"/en/piano.html","headers":[{"key":"Cache-Control","value":"no-cache, must-revalidate"}]},
-    {"source":"/js/piano-audio.js","headers":[{"key":"Cache-Control","value":"no-cache, must-revalidate"}]},
-    {"source":"/js/studio.js","headers":[{"key":"Cache-Control","value":"no-cache, must-revalidate"}]},
-    {"source":"/js/zh-hant-runtime.js","headers":[{"key":"Cache-Control","value":"no-cache, must-revalidate"}]},
-    {"source":"/js/keyboard-input.mjs","headers":[{"key":"Cache-Control","value":"no-cache, must-revalidate"}]}
+    {
+      "source": "/",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/en/",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/ko/",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/it/",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/ja/",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/es/",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/fr/",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/ru/",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/songs/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/en/songs/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/zh-hant/songs/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/articles/guides/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/en/articles/guides/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/tutorials.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/en/tutorials.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/js/main.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/js/song-discovery.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/js/song-page.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/js/score-viewer.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/data/song-scores.mjs",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/css/home-premium.css",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/css/homepage-detail-fixes.css",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/css/song-pages.css",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/css/secondary-pages.css",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/css/tutorial-guide.css",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/css/score-viewer.css",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/piano.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/en/piano.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/js/piano-audio.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/js/studio.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/js/zh-hant-runtime.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/js/keyboard-input.mjs",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
+      ]
+    }
   ]
 }
