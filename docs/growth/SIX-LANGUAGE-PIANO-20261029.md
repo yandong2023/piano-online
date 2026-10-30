@@ -7,7 +7,7 @@ The user supplied global keyword evidence on 2026-10-29. Country filters in that
 | 1 | `/ru/` | пианино онлайн | фортепиано онлайн, виртуальное пианино, пианино на клавиатуре |
 | 2 | `/fr/` | piano en ligne | piano virtuel, piano en ligne gratuit, clavier de piano virtuel |
 | 3 | `/es/` | piano virtual online | piano online gratis, piano en línea, tocar piano online, piano virtual para PC |
-| 4 | `/ja/` | バーチャルピアノ | Webピアノ, オンラインピアノ, ブラウザでピアノを弾く |
+| 4 | `/ja/` | オンラインピアノ | バーチャルピアノ, Webピアノ, ピアノ web, ピアノ ブラウザ |
 | 5 | `/it/` | pianoforte online | pianoforte virtuale, piano virtuale, tastiera di pianoforte online |
 | 6 | `/ko/` | 가상 피아노 | 가상피아노, 온라인 피아노, 웹피아노, 피아노 사이트 |
 

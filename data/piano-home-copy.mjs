@@ -77,9 +77,9 @@ export const pianoHomeCopy = {
     libraryNote: 'El catálogo completo y las lecciones todavía están en inglés. Estos enlaces abren las páginas en inglés.',
   },
   ja: {
-    title: 'ブラウザで弾けるWebピアノ — 無料のオンラインピアノ',
+    title: 'オンラインピアノ — ブラウザで弾ける無料のWebピアノ',
     description: 'ダウンロード不要のバーチャルピアノ。パソコンのキーボード、マウス、スマホで演奏し、光る鍵盤で練習。録音・再生・WAV保存も無料です。',
-    h1: 'ブラウザで弾くバーチャルピアノ',
+    h1: 'オンラインピアノ：ブラウザで今すぐ弾く',
     lead: 'まずは一音、弾いてみましょう。パソコンのキーボードでも、マウスでも、スマホのタッチ操作でも使える無料のWebピアノです。アプリのインストールや登録は不要です。',
     badges: ['無料', '登録不要', 'インストール不要'],
     skip: 'ピアノへ移動',
