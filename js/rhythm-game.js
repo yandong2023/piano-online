@@ -1,3 +1,5 @@
+import { pianoText as text } from './i18n.js';
+
 // 节奏大师游戏类
 export class RhythmGame {
     constructor(piano) {
@@ -200,7 +202,7 @@ export class RhythmGame {
     startGame() {
         const selectedSong = this.songSelect.value;
         if (!selectedSong || !this.songData[selectedSong]) {
-            alert('请先选择一首歌曲！');
+            alert(text('请先选择一首歌曲！', 'Choose a song first'));
             return;
         }
 
@@ -543,7 +545,7 @@ export class RhythmGame {
         if (this.combo > 1) {
             const effect = document.createElement('div');
             effect.className = 'combo-effect';
-            effect.textContent = `${this.combo} COMBO!`;
+            effect.textContent = `${this.combo} ${text('连击', 'Combo')}!`;
             this.noteDropZone.appendChild(effect);
             
             setTimeout(() => {

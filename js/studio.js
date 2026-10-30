@@ -2,9 +2,9 @@ import { keyboardNote, keyboardIdentity } from './keyboard-input.mjs';
 import { Piano } from './piano.js';
 import { PracticeMode } from './practice-mode.js';
 import { RhythmGame } from './rhythm-game.js';
+import { mountStudioRecorder } from './studio-recorder.mjs';
+import { pianoText as text } from './i18n.js';
 
-const english = document.documentElement.lang.toLowerCase().startsWith('en');
-const text = (zh, en) => english ? en : zh;
 const $ = (id) => document.getElementById(id);
 const root = document.querySelector('[data-studio]');
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -158,7 +158,8 @@ async function initialize() {
   };
   const rhythm = new RhythmGame(piano);
   window.pianoPracticeMode = practice;
-  window.pianoStudio = { piano, practice, rhythm };
+  const recorder = mountStudioRecorder(piano.audio, root);
+  window.pianoStudio = { piano, practice, rhythm, recorder };
   let mode = 'free';
   const songSelect = $('song-select');
   const settings = readSettings();

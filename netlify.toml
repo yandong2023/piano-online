@@ -21,16 +21,6 @@
   to = "/"
   status = 301
 
-[[redirects]]
-  from = "/es"
-  to = "/en/"
-  status = 301
-
-[[redirects]]
-  from = "/es/"
-  to = "/en/"
-  status = 301
-
 [[headers]]
   for = "/*.html"
   [headers.values]

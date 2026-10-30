@@ -3,8 +3,10 @@ import path from 'node:path';
 import { publicSongs } from '../data/song-library.mjs';
 import { toTraditionalHtml } from '../data/zh-hant.mjs';
 import { HOME_HREFLANG } from './locale-alternates.mjs';
+import { NEW_PIANO_LOCALES, pianoLocaleNames, pianoSongName, starterSongNames, translatePiano } from '../data/piano-locales.mjs';
+import { renderLocalizedHome } from './render-localized-home.mjs';
 
-export const STUDIO_VERSION = '20261028.2';
+export const STUDIO_VERSION = '20261030.1';
 // Keep stable language homes: Chinese at /, English at /en/, Traditional at /zh-hant/.
 export const ZH_PIANO_HOME = '/';
 export const EN_VIRTUAL_HOME = '/en/';
@@ -15,11 +17,12 @@ export function studioLanguageMenu(current = 'zh', active = 'piano', songSlug = 
   const options = [
     ['zh', 'zh-CN', '简体中文', home ? ZH_PIANO_HOME : page],
     ['zh-hant', 'zh-Hant', '繁體中文', active === 'songs' ? `/zh-hant/songs/${song}` : '/zh-hant/'],
-    ['en', 'en', 'English', home ? EN_VIRTUAL_HOME : `/en${page}`]
+    ['en', 'en', 'English', home ? EN_VIRTUAL_HOME : `/en${page}`],
+    ...NEW_PIANO_LOCALES.map(locale => [locale, locale, pianoLocaleNames[locale], `/${locale}/`])
   ];
-  const label = { zh: '切换语言', 'zh-hant': '切換語言', en: 'Change language' }[current];
-  const currentName = { zh: '简体中文', 'zh-hant': '繁體中文', en: 'English' }[current];
-  const short = { zh: '中文', 'zh-hant': '繁體', en: 'EN' }[current];
+  const label = { zh: '切换语言', 'zh-hant': '切換語言', en: 'Change language' }[current] || translatePiano(current, '', 'Change language');
+  const currentName = { zh: '简体中文', 'zh-hant': '繁體中文', en: 'English', ...pianoLocaleNames }[current];
+  const short = { zh: '中文', 'zh-hant': '繁體', en: 'EN', ru: 'RU', fr: 'FR', es: 'ES', ja: '日本語', it: 'IT', ko: '한국어' }[current];
   const items = options.map(([id, lang, name, href]) => id === current
     ? `<span class="studio-lang-option" lang="${lang}" aria-current="true">${name}</span>`
     : `<a class="studio-lang-option" href="${href}" lang="${lang}" hreflang="${lang}">${name}</a>`).join('');
@@ -27,17 +30,24 @@ export function studioLanguageMenu(current = 'zh', active = 'piano', songSlug = 
 }
 
 export function studioNav(locale = 'zh', active = 'piano', songSlug = '', home = false) {
+  if (NEW_PIANO_LOCALES.includes(locale)) {
+    const t = en => esc(translatePiano(locale, '', en));
+    return `<nav class="nav-bar" aria-label="${t('Main navigation')}"><div class="nav-container"><a class="studio-brand" href="/${locale}/" aria-label="Piano Online"><span class="brand-keys" aria-hidden="true"><i></i><i></i><i></i></span><span>Piano<span class="brand-light">Online</span><small>${t('MAKE A LITTLE MUSIC')}</small></span></a><div class="nav-links"><a href="/${locale}/" class="active" aria-current="page">${t('Piano')}</a><a href="/en/songs/" hreflang="en">${t('Songs (English)')}</a><a href="/en/tutorials.html" hreflang="en">${t('Learn (English)')}</a>${studioLanguageMenu(locale, active, songSlug, true)}</div></div><script type="module" src="/js/language-menu.js?v=${STUDIO_VERSION}"></script></nav>`;
+  }
   const zh = locale === 'zh', base = zh ? '' : '/en';
   const homeHref = zh ? ZH_PIANO_HOME : EN_VIRTUAL_HOME;
   return `<nav class="nav-bar" aria-label="${zh ? '主导航' : 'Main navigation'}"><div class="nav-container"><a class="studio-brand" href="${homeHref}" aria-label="Piano Online"><span class="brand-keys" aria-hidden="true"><i></i><i></i><i></i></span><span>Piano<span class="brand-light">Online</span><small>${zh ? '让音乐发生' : 'MAKE A LITTLE MUSIC'}</small></span></a><div class="nav-links"><a href="${zh ? ZH_PIANO_HOME : `${base}/piano.html`}"${active === 'piano' ? ' class="active" aria-current="page"' : ''}>${zh ? '弹钢琴' : 'Piano'}</a><a href="${base}/songs/"${active === 'songs' ? ' class="active" aria-current="page"' : ''}>${zh ? '找首歌' : 'Songs'}</a><a href="${base}/tutorials.html"${active === 'learn' ? ' class="active" aria-current="page"' : ''}>${zh ? '学一点' : 'Learn'}</a>${studioLanguageMenu(locale, active, songSlug, home)}</div></div><script type="module" src="/js/language-menu.js?v=${STUDIO_VERSION}"></script></nav>`;
 }
 
 export function studioInstrument(locale = 'zh', songId = 'happy-birthday', scorePanel = '') {
-  const zh = locale === 'zh', s = (a, b) => zh ? a : b;
-  const options = publicSongs.map(song => `<option value="${esc(song.id)}"${song.id === songId ? ' selected' : ''}>${esc(song.title[locale])}</option>`).join('');
+  const zh = locale === 'zh', s = (a, b) => translatePiano(locale, a, b);
+  const option = song => `<option value="${esc(song.id)}"${song.id === songId ? ' selected' : ''}>${esc(pianoSongName(song, locale))}</option>`;
+  const options = NEW_PIANO_LOCALES.includes(locale)
+    ? `<optgroup label="${s('入门歌曲', 'Starter songs')}">${publicSongs.filter(song => starterSongNames[song.id]).map(option).join('')}</optgroup><optgroup label="${s('更多曲目（英语）', 'More songs (English)')}">${publicSongs.filter(song => !starterSongNames[song.id]).map(option).join('')}</optgroup>`
+    : publicSongs.map(option).join('');
   return `<section id="practice-start" class="practice-section studio-instrument song-practice-shell" tabindex="-1" aria-label="${s('在线钢琴', 'Interactive piano')}" data-studio>
   <div class="studio-toolbar"><div class="studio-modes" role="group" aria-label="${s('演奏模式', 'Playing mode')}"><button type="button" data-play-mode="free" aria-pressed="true">${s('自由弹奏', 'Free play')}</button><button type="button" data-play-mode="guided" aria-pressed="false">${s('跟着提示弹', 'Learn a song')}</button></div><button type="button" id="toggle-fullscreen" class="studio-quiet" aria-pressed="false"><span aria-hidden="true">⛶</span> <span data-fullscreen-label>${s('专注全屏', 'Full screen')}</span></button></div>
-  <div class="studio-song-bar" id="studio-song-bar" hidden><label for="song-select">${s('选择歌曲', 'Choose a song')}</label><select id="song-select">${options}</select><button type="button" id="start-practice" class="studio-primary" disabled>${s('开始跟弹', 'Start learning')}</button><button type="button" id="stop-practice" class="studio-primary" style="display:none">${s('停止练习', 'Stop practice')}</button><a href="${zh ? '/songs/' : '/en/songs/'}">${s('浏览曲库', 'Browse songs')} ↗</a></div>
+  <div class="studio-song-bar" id="studio-song-bar" hidden><label for="song-select">${s('选择歌曲', 'Choose a song')}</label><select id="song-select">${options}</select><button type="button" id="start-practice" class="studio-primary" disabled>${s('开始跟弹', 'Start learning')}</button><button type="button" id="stop-practice" class="studio-primary" style="display:none">${s('停止练习', 'Stop practice')}</button><a href="${zh ? '/songs/' : '/en/songs/'}"${NEW_PIANO_LOCALES.includes(locale) ? ' hreflang="en"' : ''}>${s('浏览曲库', 'Browse songs')} ↗</a></div>
   ${scorePanel}<div class="studio-surface"><div class="studio-display"><div class="studio-display-copy"><span class="studio-eyebrow">PIANO ONLINE <span class="studio-dot"></span></span><h2 id="studio-message">${s('随手按下一个音符。', 'Make yourself a little music.')}</h2><p id="studio-submessage">${s('点击琴键，或按电脑键盘上的 A、S、D。', 'Click a key, or press A, S, D on your keyboard.')}</p></div><div class="studio-readout"><span id="studio-note">—</span><small id="studio-note-caption">${s('当前音符', 'CURRENT NOTE')}</small></div><div id="key-hint" class="key-hint" style="display:none"><span class="hint-text">${s('下一键', 'NEXT KEY')}</span><span class="hint-key"></span><span class="hint-note"></span></div></div>
   <div id="studio-upcoming" class="studio-upcoming" aria-label="${s('接下来的音符', 'Upcoming notes')}" hidden></div>
   <div id="practice-stats" class="studio-progress" style="display:none"><span id="correct-notes"></span><span id="wrong-notes"></span><span id="progress"></span><progress id="studio-progressbar" max="100" value="0" aria-label="${s('练习进度', 'Practice progress')}"></progress></div>
@@ -45,6 +55,7 @@ export function studioInstrument(locale = 'zh', songId = 'happy-birthday', score
   <div class="studio-keyboard-viewport" id="keyboard-viewport"><div class="piano-container"><div class="keys" role="group" aria-label="${s('37 个琴键，C3 到 C6', '37 piano keys, C3 to C6')}"></div></div></div>
   <div class="studio-range"><button type="button" data-octave="-1" aria-label="${s('向低音区移动', 'Move to lower notes')}">← <span>${s('低音', 'Lower')}</span></button><span>${s('37 键 · C3—C6', '37 keys · C3—C6')}<span class="mobile-only"> · ${s('用两侧箭头切换音区', 'Use arrows to change range')}</span></span><button type="button" data-octave="1" aria-label="${s('向高音区移动', 'Move to higher notes')}"><span>${s('高音', 'Higher')}</span> →</button></div></div>
   <div class="studio-bottom"><div class="studio-settings"><label class="studio-volume" for="studio-volume"><span aria-hidden="true">◖))</span><span class="sr-only">${s('音量', 'Volume')}</span><input id="studio-volume" type="range" min="0" max="100" value="62"><output for="studio-volume" id="studio-volume-value">62%</output></label><label class="studio-toggle"><input type="checkbox" id="sustain-toggle">${s('延音', 'Sustain')}</label><label class="studio-toggle"><input type="checkbox" id="labels-toggle" checked>${s('字母提示', 'Key labels')}</label></div><span id="studio-audio-status" role="status">${s('按下琴键开启声音', 'Press a key to enable sound')}</span></div>
+  <div class="studio-recorder" role="group" aria-label="${s('录音与回放', 'Record and replay')}"><div class="studio-record-heading"><span class="studio-record-icon" aria-hidden="true">●</span><strong>${s('留住你的演奏', 'Keep your music')}</strong><span class="studio-record-time" data-record-time aria-hidden="true">00:00</span><button type="button" class="studio-quiet" data-record-toggle aria-pressed="false">${s('开始录音', 'Record')}</button></div><p class="studio-record-status" data-record-status role="status">${s('录下这段旋律，听见自己的进步。', 'Capture a little music. Hear your progress.')}</p><div class="studio-record-playback" data-record-playback hidden><span>${s('回放', 'Replay')}</span><audio controls preload="metadata" aria-label="${s('回放你的演奏', 'Replay your performance')}"></audio><button type="button" class="studio-quiet studio-record-download" data-record-wav title="${s('通用音频格式，文件较大', 'Widely supported audio format; larger file')}">${s('下载 WAV', 'Download WAV')}</button><a class="studio-record-download" data-record-download title="${s('浏览器原始格式，文件较小', 'Original browser format; smaller file')}">${s('下载录音', 'Download audio')}</a></div><p class="studio-record-hint">${s('只录网页琴声，无需麦克风。每段最长 5 分钟，切到后台会自动停止。录音只在本页临时保留，离开前请下载；重新录音会替换上一段。', 'Records the piano, no microphone needed. Up to 5 minutes per take; stops when you switch away. Download before leaving this page. A new take replaces the previous one.')}</p></div>
   <details class="studio-more"><summary>${s('更多工具与快捷键', 'More tools & keyboard help')}</summary><div class="studio-more-content"><p>${s('字母是电脑按键，小字是实际音名。按住空格键可临时延音；松开即恢复。手机上用两侧箭头切换音区。', 'Large letters are computer keys; small labels are musical notes. Hold Space for sustain. On mobile, use the arrows to change the visible range.')}</p><button type="button" id="studio-midi" class="studio-quiet">${s('连接 MIDI 键盘', 'Connect a MIDI keyboard')}</button><span id="studio-midi-status" role="status"></span><div class="studio-rhythm-tools"><button type="button" id="start-rhythm-game" class="studio-quiet">${s('节奏模式', 'Rhythm mode')}</button><button type="button" id="stop-rhythm-game" class="studio-quiet" style="display:none">${s('结束节奏模式', 'Stop rhythm mode')}</button><div id="game-instructions" style="display:none">${s('音符到达底部时，按对应的电脑按键。', 'Press the matching computer key when a note reaches the bottom.')}</div><div id="game-stats" style="display:none"><span id="game-score">0</span> · <span id="game-combo">0</span> · <span id="game-lives">3</span></div></div><a href="${zh ? '/practice.html' : '/en/tutorials.html'}">${s('音阶、和弦与节拍练习', 'Scales, chords & rhythm practice')} ↗</a></div></details>
   <p class="studio-error" id="studio-error" role="alert" hidden></p><noscript><p>${s('请开启 JavaScript 来弹奏。歌曲的按键谱仍可在曲库中阅读。', 'Enable JavaScript to play. You can still read the keyboard letters in the song library.')}</p></noscript></section>`;
 }
@@ -100,6 +111,7 @@ function faqJsonLd(locale) {
 }
 
 export function renderStudioPage(locale = 'zh', home = true) {
+  if (NEW_PIANO_LOCALES.includes(locale)) return renderLocalizedHome(locale, { instrument: studioInstrument, nav: studioNav, version: STUDIO_VERSION });
   const zh = locale === 'zh', s = (a,b) => zh ? a : b, base = zh ? '' : '/en';
   const englishLanding = !zh && home;
   const url = `https://pianoonline.cc${zh ? ZH_PIANO_HOME : EN_VIRTUAL_HOME}`;
@@ -193,6 +205,10 @@ export async function generateStudioPages(root) {
   await mkdir(path.join(root,'zh-hant'),{recursive:true});
   await mkdir(path.join(root,'with-notes'),{recursive:true});
   await mkdir(path.join(root,'midi'),{recursive:true});
+  for (const locale of NEW_PIANO_LOCALES) {
+    await mkdir(path.join(root, locale), { recursive: true });
+    await writeFile(path.join(root, locale, 'index.html'), renderStudioPage(locale));
+  }
   await writeFile(path.join(root,'index.html'), renderStudioPage('zh', true));
   await writeFile(path.join(root,'en','index.html'), renderStudioPage('en', true));
   await writeFile(path.join(root,'piano.html'), renderStudioPage('zh', false));
