@@ -105,7 +105,7 @@ export function renderStudioPage(locale = 'zh', home = true) {
   const url = `https://pianoonline.cc${zh ? ZH_PIANO_HOME : EN_VIRTUAL_HOME}`;
   // Alias piano pages canonicalize to the matching language home.
   const title = zh
-    ? (home ? '在线钢琴_免费模拟器·免下载免注册·简谱学歌' : '在线钢琴 · 打开就能弹，跟着提示学歌 | Piano Online')
+    ? '在线钢琴・免安装网页版'
     : (home ? 'Free Online Piano & Piano Simulator — Virtual Piano' : 'Virtual Piano Online: Play Free with Your Computer Keyboard');
   const description = home
     ? s('免费在线钢琴模拟器，用电脑键盘、鼠标或手机触屏就能弹。支持自由钢琴弹奏，也可跟着亮键练习熟悉旋律。100 首歌曲提供音名、电脑按键和数字简谱，部分歌曲有五线谱。', 'Free online piano and piano simulator in your browser. Play with keyboard, mouse or touch. Follow highlighted keys to learn songs — no download, no signup.')
