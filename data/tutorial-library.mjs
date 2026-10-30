@@ -1,5 +1,38 @@
 export const tutorialArticles = [
   {
+    slug: 'xiaoxingxing-piano-numbered-notation',
+    category: 'songs', difficulty: 1, minutes: 5,
+    publishedAt: '2026-10-30', updatedAt: '2026-10-30',
+    title: { zh: '小星星鋼琴譜數字：完整六句数字简谱与入门练习', en: 'Twinkle Twinkle Little Star: Numbered Piano Notation for Beginners' },
+    description: { zh: '查看小星星鋼琴譜數字：C 大调完整六句数字简谱、音名对照与节奏说明，再打开在线钢琴逐音跟弹。', en: 'Read all six phrases of Twinkle Twinkle Little Star in C major with numbered notation, note names and a guided online piano practice link.' },
+    intro: { zh: '寻找“小星星鋼琴譜數字”？下面是适合右手入门的 C 大调数字简谱（数字簡譜）。先读懂 1 到 6 对应的琴键，再按 A、A、B、B、A、A 的顺序弹完六句。这里是单声部主旋律，不是完整双手编配。', en: 'Start with this C-major numbered melody for the right hand. Match each number to a piano note, then play the six phrases in A, A, B, B, A, A order. This is a single melody, not a two-hand arrangement.' },
+    outcomes: { zh: ['读懂 1=C 与数字音级', '弹完小星星六句主旋律', '区分简谱数字、指法和电脑按键'], en: ['Read 1=C and scale degrees', 'Play all six melody phrases', 'Distinguish note numbers, fingers and computer keys'] },
+    sections: [
+      {
+        heading: { zh: '数字简谱怎么看：1=C，4/4 拍', en: 'How to read the numbers: 1=C, 4/4 time' },
+        paragraphs: { zh: ['1=C 表示把 C 唱作 do。这里 1、2、3、4、5、6、7 分别对应 C、D、E、F、G、A、B；本曲只用 1 到 6。可以从中央 C（C4）开始，用右手弹白键。', '下面每个数字是一拍，短横线“—”把前一个音延长一拍；竖线“|”分隔小节。每小节四拍。数字是音级，不是手指编号，也不是要按电脑上的数字键。'], en: ['1=C means C is do. Numbers 1 through 7 mean C, D, E, F, G, A, B. This melody uses only 1 through 6. Start at middle C (C4) and use the white keys.', 'Each number below lasts one beat; an em dash extends the previous note by one beat. A bar line separates measures of four beats. These numbers are scale degrees, not finger numbers or computer keys.'] },
+        example: { label: { zh: '音级与钢琴音名', en: 'Scale degrees and piano notes' }, keys: ['1', '2', '3', '4', '5', '6', '7'], notes: ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4'] }
+      },
+      {
+        heading: { zh: '小星星完整数字简谱：六句主旋律', en: 'Complete numbered notation: all six phrases' },
+        paragraphs: { zh: ['第一句（A）：1 1 5 5 | 6 6 5 — |', '第二句（A）：4 4 3 3 | 2 2 1 — |', '第三句（B）：5 5 4 4 | 3 3 2 — |', '第四句（B）：5 5 4 4 | 3 3 2 — |', '第五句（A）：1 1 5 5 | 6 6 5 — |', '第六句（A）：4 4 3 3 | 2 2 1 — |'], en: ['Phrase 1 (A): 1 1 5 5 | 6 6 5 — |', 'Phrase 2 (A): 4 4 3 3 | 2 2 1 — |', 'Phrase 3 (B): 5 5 4 4 | 3 3 2 — |', 'Phrase 4 (B): 5 5 4 4 | 3 3 2 — |', 'Phrase 5 (A): 1 1 5 5 | 6 6 5 — |', 'Phrase 6 (A): 4 4 3 3 | 2 2 1 — |'] },
+        tip: { zh: '每句七个音、八拍；末尾的 5、1 或 2 持续两拍。第三句和第四句相同，第五、六句重复开头。', en: 'Each phrase has seven notes over eight beats. Hold its final 5, 1 or 2 for two beats. Phrases three and four match; five and six repeat the opening.' }
+      },
+      {
+        heading: { zh: '电脑键盘怎么弹开头一句？', en: 'Play the opening phrase on a computer keyboard' },
+        paragraphs: { zh: ['本站默认键位中，C4 对应 K，G4 对应 W，A4 对应 E。所以简谱 1 1 5 5 6 6 5 可以按 K K W W E E W。手机上直接点对应琴键即可。', '下面显示的是本站电脑按键，不是简谱音级。打开下方“小星星”互动歌曲，点击“开始跟弹”，再跟着高亮琴键练习。歌曲页主要提示音高顺序；这里的横线补充延音时值。'], en: ['On this site, K plays C4, W plays G4 and E plays A4. The opening 1 1 5 5 6 6 5 becomes K K W W E E W. On a phone, tap the piano keys.', 'The example below shows computer keys rather than scale degrees. Open the related Twinkle song and start guided practice. The song page primarily guides pitch order; the dashes here add note-length information.'] },
+        example: { label: { zh: '第一句电脑按键与音名', en: 'Opening computer keys and pitches' }, keys: ['K', 'K', 'W', 'W', 'E', 'E', 'W'], notes: ['C4', 'C4', 'G4', 'G4', 'A4', 'A4', 'G4'] }
+      },
+      {
+        heading: { zh: '分句练习，再连成完整旋律', en: 'Practise phrases, then connect the melody' },
+        steps: { zh: ['先以每分钟 60 拍慢练第一句，每个数字一拍，末音两拍。', '练第二句从 4 逐步下行到 1，再把前两句连起来。', '第三、四句重复练两次，熟悉 5 到 2 的下行。', '最后重复开头两句。能稳定数拍后，再试着不看数字弹完整首。'], en: ['Start at 60 beats per minute: one beat per number, two for the final note.', 'Practise phrase two descending from 4 to 1, then connect the first two phrases.', 'Repeat the middle phrase twice, descending from 5 to 2.', 'Finish by repeating the opening two phrases. Once the pulse is steady, try the melody from memory.'] },
+        tip: { zh: '先保持均匀节拍，不必一开始就加左手伴奏。需要看琴键位置时，可打开下方互动歌曲边看边练。', en: 'Keep a steady pulse before adding any left-hand accompaniment. Use the related interactive song to find each key.' }
+      }
+    ],
+    relatedSongs: ['twinkle', 'happy-birthday', 'hot-cross-buns'],
+    relatedTutorials: ['piano-keyboard-letters', 'learn-piano-without-sheet-music', 'metronome-for-beginners']
+  },
+  {
     slug: 'computer-keyboard-piano',
     category: 'start',
     difficulty: 1,

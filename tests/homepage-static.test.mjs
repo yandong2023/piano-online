@@ -35,12 +35,12 @@ for (const locale of ['zh','en']) for (const home of [true,false]) {
     assert.equal((html.match(/<h1>/g)||[]).length,1);
   });
 }
-test('zh home adds simulator while piano page keeps its title', () => {
+test('zh home and main piano entry use the exact requested title', () => {
   const html = renderStudioPage('zh', true);
-  assert.ok(html.includes('<title>在线钢琴_免费模拟器·免下载免注册·简谱学歌</title>'));
+  assert.ok(html.includes('<title>在线钢琴・免安装网页版</title>'));
   assert.match(html, /<h1>在线钢琴：打开就能弹，跟着亮键学歌曲<\/h1>/);
   assert.match(html, /<meta name="description" content="免费在线钢琴模拟器/);
-  assert.ok(renderStudioPage('zh', false).includes('<title>在线钢琴 · 打开就能弹，跟着提示学歌 | Piano Online</title>'));
+  assert.ok(renderStudioPage('zh', false).includes('<title>在线钢琴・免安装网页版</title>'));
   assert.match(renderStudioPage('zh', false), /<h1>在线钢琴，打开就能弹。<\/h1>/);
 });
 
@@ -156,7 +156,7 @@ test('homepage hreflang matches sitemap and /zh /es redirect to real locales', a
       const html = await response.text();
       const title = html.match(/<title>([^<]*)<\/title>/)[1];
       if (source === '/') {
-        assert.equal(title, '在线钢琴_免费模拟器·免下载免注册·简谱学歌');
+        assert.equal(title, '在线钢琴・免安装网页版');
         assert.match(html, /免费在线钢琴模拟器/);
         assert.match(html, /不用下载软件/);
       } else {

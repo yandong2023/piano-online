@@ -140,7 +140,7 @@ export function songRecommendations(song, songs = publicSongs) {
 }
 export const SONG_TUTORIALS = {
   'happy-birthday': ['happy-birthday-piano-guide', 'basic-piano-chords'],
-  twinkle: ['piano-keyboard-letters', 'learn-piano-without-sheet-music'],
+  twinkle: ['xiaoxingxing-piano-numbered-notation', 'piano-keyboard-letters', 'learn-piano-without-sheet-music'],
   'hot-cross-buns': ['piano-keyboard-letters'],
   'ode-to-joy': ['classic-piano-pieces-for-beginners', 'metronome-for-beginners'],
   'jingle-bells': ['basic-piano-chords', 'metronome-for-beginners'],
