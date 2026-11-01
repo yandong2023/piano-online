@@ -2,54 +2,64 @@
 // describe actual piano features; search volumes are not product claims.
 export const pianoHomeCopy = {
   ru: {
-    title: 'Пианино онлайн — виртуальное фортепиано бесплатно',
-    description: 'Играйте на пианино онлайн с клавиатуры компьютера, мышью или на телефоне. Виртуальное пианино с подсказками, записью и скачиванием WAV. Без регистрации.',
-    h1: 'Пианино онлайн — играйте прямо в браузере',
-    lead: 'Нажмите на клавишу и начните играть. Бесплатное виртуальное пианино работает с клавиатурой компьютера, мышью и сенсорным экраном — без установки и регистрации.',
+    title: 'Пианино онлайн бесплатно — играйте без регистрации',
+    description: 'Нет пианино под рукой? Играйте бесплатно с клавиатуры компьютера или на телефоне. Подсветка нот, запись и скачивание WAV — без установки и регистрации.',
+    h1: 'Пианино онлайн — начните играть бесплатно',
+    lead: 'Нет инструмента под рукой или пока не знаете нот? Нажмите на клавишу и послушайте первый звук. Это онлайн пианино работает с клавиатурой компьютера, мышью и на телефоне — без установки и регистрации. Выберите свободную игру или начните с подсвеченных нот.',
     badges: ['Бесплатно', 'Без регистрации', 'Без установки'],
     skip: 'Перейти к пианино',
     starterTitle: 'Начните со знакомой мелодии',
-    starterIntro: 'Выберите мелодию: подсветка покажет, какую клавишу нажать. Упрощённые партии подходят для первых шагов, а не заменяют полную аранжировку.',
-    guideTitle: 'Фортепиано онлайн: клавиши, мелодии и запись',
+    starterIntro: 'Не знаете, с чего начать? Выберите знакомую мелодию и нажимайте подсвеченные клавиши. Можно повторять короткие фразы в своём темпе. Здесь упрощённые мелодии для первых шагов, а не полные аранжировки для двух рук.',
+    guideTitle: 'Как играть на виртуальном пианино',
     sections: [
-      ['Пианино на клавиатуре компьютера', 'Крупные буквы на пианино обозначают клавиши компьютера, а C4 и G4 — музыкальные ноты. K играет центральную до (C4), W — G4. Следуйте подписям: для некоторых нот нужны цифры и знаки. На компьютере доступны 37 клавиш от C3 до C6.'],
-      ['Разучивайте мелодию в своём темпе', 'Переключитесь на обучение и выберите мелодию. Нажимайте подсвеченную клавишу: следующая нота появится после правильного нажатия. На телефоне двигайте диапазон стрелками; во время обучения нужная клавиша выводится на экран.'],
+      ['Фортепиано онлайн с клавиатуры компьютера', 'Щёлкните по клавише мышью или нажмите указанную на ней клавишу компьютера. Крупные латинские буквы — это подсказки для ввода, а C4 и G4 — названия нот. K играет центральную до (C4), W — соль (G4). Для некоторых нот нужны цифры и знаки. На компьютере доступны 37 клавиш от C3 до C6; удерживайте пробел, чтобы продлить звучание.'],
+      ['Следуйте подсветке, даже если не читаете ноты', 'Переключитесь на обучение и выберите мелодию. Нажимайте подсвеченную клавишу: следующая нота появится после правильного нажатия. На телефоне двигайте диапазон стрелками; во время обучения нужная клавиша выводится на экран.'],
       ['Запишите и послушайте свою игру', 'Нажмите «Записать», сыграйте фрагмент и остановите запись. Прослушайте результат и скачайте WAV для проигрывателя или исходный формат браузера для файла поменьше. Записывается только виртуальное пианино, без микрофона.']
     ],
     faqTitle: 'Вопросы о виртуальном пианино',
     faq: [
-      ['Можно играть на пианино онлайн бесплатно?', 'Да. Свободная игра, подсказки, запись, прослушивание и скачивание доступны без регистрации.'],
+      ['Можно играть на пианино онлайн бесплатно и без регистрации?', 'Да. Свободная игра, подсказки, запись, прослушивание и скачивание доступны без регистрации.'],
       ['Как играть на телефоне?', 'Касайтесь клавиш на экране. Стрелки под клавиатурой меняют диапазон; в горизонтальном положении помещается больше клавиш.'],
       ['Что делать, если нет звука?', 'Нажмите на клавишу, чтобы включить звук в браузере. Проверьте громкость устройства и страницы, беззвучный режим и Bluetooth-наушники.'],
       ['Где сохраняется запись?', 'Запись временно хранится на этой странице. Скачайте её перед закрытием или обновлением. Одна запись длится до 5 минут; переход в другую вкладку или приложение останавливает запись. Новая запись заменяет предыдущую.'],
-      ['Это замена настоящему фортепиано?', 'Нет. Это виртуальное фортепиано для знакомства с нотами и простыми мелодиями, а не полный 88-клавишный инструмент с механикой и педалями.']
+      ['Симулятор пианино заменяет настоящий инструмент с 88 клавишами?', 'Нет. Этот симулятор пианино даёт 37 клавиш от C3 до C6 для знакомства с нотами, подбора мелодий и первых упражнений. Клавиатура компьютера и экран не передают механику, чувствительность к силе нажатия и работу педалей настоящего 88-клавишного фортепиано.']
     ],
-    libraryNote: 'Полный каталог мелодий и уроки пока доступны на английском. Эти ссылки ведут на английские страницы.',
+    libraryNote: 'Хотите разучить больше мелодий или разобраться с клавишами? Полный каталог и пошаговые уроки пока доступны на английском.',
+    learningLinks: [
+      ['/en/articles/guides/computer-keyboard-piano/', 'Как играть с клавиатуры компьютера (на английском)'],
+      ['/en/articles/guides/piano-keyboard-letters/', 'Буквы на клавишах и названия нот (на английском)'],
+    ],
+    homeLinks: [['/en/', 'English', 'en'], ['/fr/', 'Français', 'fr']],
   },
   fr: {
-    title: 'Piano en ligne gratuit — jouez sur un piano virtuel',
-    description: 'Jouez du piano en ligne avec votre clavier, une souris ou votre téléphone. Piano virtuel gratuit, notes guidées, enregistrement et téléchargement WAV.',
-    h1: 'Piano en ligne : jouez sur un piano virtuel gratuit',
-    lead: 'Une touche suffit pour commencer. Jouez au clavier de votre ordinateur, avec la souris ou sur un écran tactile, sans application à installer ni compte à créer.',
+    title: 'Piano en ligne gratuit — jouez au clavier sans inscription',
+    description: 'Pas de piano sous la main ? Jouez gratuitement au clavier ou sur téléphone, sans inscription. Suivez les touches éclairées, enregistrez et téléchargez en WAV.',
+    h1: 'Piano en ligne gratuit : à vous de jouer',
+    lead: 'Pas de piano sous la main, ou pas encore à l’aise avec les notes ? Jouez votre premier son au clavier de votre ordinateur, à la souris ou sur téléphone. Ce piano virtuel est gratuit, sans installation ni inscription : improvisez librement ou suivez les touches éclairées.',
     badges: ['Gratuit', 'Sans inscription', 'Sans installation'],
     skip: 'Aller au piano',
     starterTitle: 'Commencez par une mélodie familière',
-    starterIntro: 'Choisissez un morceau et suivez les touches éclairées. Ce sont des mélodies simplifiées pour débuter, pas des arrangements complets à deux mains.',
-    guideTitle: 'Votre clavier de piano virtuel dans le navigateur',
+    starterIntro: 'Vous ne savez pas quoi jouer ? Choisissez un air connu et suivez les touches éclairées, phrase par phrase. Ces mélodies simplifiées permettent de débuter sans lire de partition ; ce ne sont pas des arrangements complets à deux mains.',
+    guideTitle: 'Comment utiliser ce piano en ligne au clavier',
     sections: [
-      ['Comment jouer du piano en ligne ?', 'Cliquez sur une touche ou appuyez sur la lettre indiquée. K joue le do central (C4) et W joue G4. Les noms C4, D4 ou G4 désignent les notes ; les grandes lettres indiquent les touches à utiliser sur votre ordinateur. Le piano propose 37 touches de C3 à C6 sur ordinateur.'],
+      ['Quelles touches du clavier pour jouer du piano ?', 'Cliquez sur une touche du piano ou appuyez sur la touche indiquée à l’écran. K joue le do central (C4) et W le sol (G4). Les petites indications C4, D4 ou G4 sont les noms des notes ; les grandes lettres, chiffres et symboles correspondent aux touches de l’ordinateur. Vous disposez de 37 touches, de C3 à C6. Maintenez la barre d’espace pour prolonger les sons.'],
       ['Un piano virtuel pour apprendre à votre rythme', 'Passez au mode d’apprentissage, choisissez un morceau et jouez la touche dorée. La mélodie attend la bonne note. Sur téléphone, utilisez les flèches pour changer de registre ; le mode guidé affiche automatiquement la prochaine touche.'],
-      ['Enregistrez votre interprétation', 'Lancez l’enregistrement, jouez quelques mesures puis arrêtez la prise. Écoutez-la et téléchargez un WAV compatible avec les lecteurs et logiciels de montage, ou le format du navigateur, plus léger. Le micro n’est pas utilisé.']
+      ['Enregistrez votre interprétation', 'Lancez l’enregistrement, jouez quelques mesures puis arrêtez la prise. Écoutez-la et téléchargez un WAV compatible avec les lecteurs et logiciels de montage, ou le format du navigateur, plus léger. Seul le son du piano est enregistré, sans utiliser le micro.']
     ],
     faqTitle: 'Questions sur le piano en ligne',
     faq: [
-      ['Ce piano en ligne est-il gratuit ?', 'Oui. Le jeu libre, les notes guidées, l’enregistrement, l’écoute et le téléchargement sont accessibles sans inscription.'],
+      ['Ce piano en ligne est-il gratuit et sans inscription ?', 'Oui. Le jeu libre, les notes guidées, l’enregistrement, l’écoute et le téléchargement sont accessibles sans inscription.'],
       ['Puis-je jouer sur mon téléphone ?', 'Oui. Touchez les touches à l’écran et changez de registre avec les flèches. Le mode paysage offre davantage de place.'],
       ['Pourquoi le piano ne produit-il aucun son ?', 'Jouez d’abord une note pour activer l’audio du navigateur. Vérifiez ensuite le volume de l’appareil, le volume du piano, le mode silencieux et la sortie Bluetooth.'],
       ['Comment conserver mon enregistrement ?', 'Téléchargez-le avant de fermer ou recharger la page : il n’est conservé que temporairement sur cette page. Une prise dure au maximum 5 minutes et s’arrête si vous changez d’onglet ou d’application. Une nouvelle prise remplace la précédente.'],
-      ['Ce piano virtuel remplace-t-il un vrai piano ?', 'Non. Il permet de découvrir les notes et de pratiquer des mélodies simples. Il ne remplace pas le toucher, les pédales et les 88 touches d’un piano acoustique.']
+      ['Ce piano virtuel remplace-t-il un vrai piano ?', 'Non. Ce piano virtuel propose 37 touches de C3 à C6 pour repérer les notes, chercher une mélodie et faire ses premiers exercices. Le clavier de l’ordinateur et l’écran tactile ne reproduisent ni le toucher sensible à la force de frappe, ni les pédales, ni les 88 touches d’un vrai piano.']
     ],
-    libraryNote: 'Le catalogue complet et les leçons sont encore en anglais. Les liens ci-dessous mènent aux pages anglaises.',
+    libraryNote: 'Envie de jouer d’autres morceaux ou de mieux comprendre les touches ? Le catalogue complet et les guides pas à pas sont disponibles en anglais.',
+    learningLinks: [
+      ['/en/articles/guides/computer-keyboard-piano/', 'Débuter au clavier de l’ordinateur (en anglais)'],
+      ['/en/articles/guides/piano-keyboard-letters/', 'Comprendre les lettres et les noms des notes (en anglais)'],
+    ],
+    homeLinks: [['/en/', 'English', 'en'], ['/ru/', 'Русский', 'ru']],
   },
   es: {
     title: 'Piano virtual online gratis — toca en tu navegador',
