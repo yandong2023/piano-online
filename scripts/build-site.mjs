@@ -20,7 +20,7 @@ for (const entry of await readdir(ROOT, { withFileTypes: true })) {
 
 await generateStudioPages(DIST);
 const songs = await generateSongSite(DIST);
-const tutorials = await generateTutorialSite(DIST);
+const tutorials = await generateTutorialSite(DIST, { includeLegacyCta: true });
 const sitemaps = await generateSitemaps(DIST);
 
 console.log(`Built static site in dist with ${songs.count} public songs, ${tutorials.articles} new tutorials and ${sitemaps.total} sitemap URLs.`);
