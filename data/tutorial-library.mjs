@@ -271,7 +271,7 @@ export const tutorialArticles = [
       }
     ],
     relatedSongs: ['ode-to-joy', 'minuet-in-g', 'jingle-bells'],
-    relatedTutorials: ['rhythm-basics', 'beginner-30-day-plan', 'practice-methods'],
+    relatedTutorials: ['rhythm-basics', 'beginner-30-day-plan', 'practice-methods', 'computer-keyboard-piano'],
     faq: [
       { q: { zh: '节拍器声音让我更紧张怎么办？', en: 'What if the click makes me tense?' }, a: { zh: '降低音量，先拍手或只练两小节。也可以每两拍点击一次，减少追赶感。', en: 'Lower the volume, clap first, or practise only two measures. You can also use one click every two beats.' } }
     ]
@@ -346,7 +346,7 @@ export const tutorialArticles = [
       }
     ],
     relatedSongs: ['happy-birthday', 'jingle-bells', 'canon'],
-    relatedTutorials: ['left-hand-piano-basics', 'music-theory', 'advanced-music-theory'],
+    relatedTutorials: ['left-hand-piano-basics', 'music-theory', 'advanced-music-theory', 'piano-keyboard-letters'],
     faq: [
       { q: { zh: '手太小按不到三个音怎么办？', en: 'What if my hand cannot reach the chord?' }, a: { zh: '把和弦拆开弹，或者使用根音与五度。不要为了同时按下而扭曲手腕。', en: 'Break the chord into separate notes or use root and fifth. Do not twist the wrist just to hold all notes.' } }
     ]
@@ -420,7 +420,7 @@ export const tutorialArticles = [
       }
     ],
     relatedSongs: ['fur-elise', 'moonlight', 'minuet-in-g'],
-    relatedTutorials: ['metronome-for-beginners', 'practice-methods', 'hand-coordination'],
+    relatedTutorials: ['metronome-for-beginners', 'practice-methods', 'hand-coordination', 'classic-piano-pieces-for-beginners'],
     faq: [
       { q: { zh: '零基础第一天适合弹《致爱丽丝》吗？', en: 'Is Für Elise suitable on day one?' }, a: { zh: '可以体验开头几个音，但不建议把它作为第一首完整曲目。先建立键位与节奏更有效。', en: 'You may try a few opening notes, but it is not an ideal first complete piece. Build landmarks and rhythm first.' } }
     ]
