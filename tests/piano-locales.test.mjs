@@ -6,8 +6,8 @@ import { pianoHomeCopy } from '../data/piano-home-copy.mjs';
 import { renderStudioPage, renderTraditionalHome, studioLanguageMenu } from '../scripts/studio-pages.mjs';
 import { getLocale, pianoText, t } from '../js/i18n.js';
 
-const expectedHomes = ['zh-CN', 'en', 'zh-Hant', 'ru', 'fr', 'es', 'ja', 'it', 'ko', 'tr', 'vi', 'x-default'];
-const keywords = { ru: 'пианино онлайн', fr: 'piano en ligne', es: 'piano virtual online', ja: 'オンラインピアノ', it: 'pianoforte online', ko: '가상 피아노', tr: 'online piyano', vi: 'đàn piano online' };
+const expectedHomes = ['zh-CN', 'en', 'zh-Hant', 'ru', 'fr', 'es', 'ja', 'it', 'ko', 'tr', 'vi', 'nl', 'x-default'];
+const keywords = { ru: 'пианино онлайн', fr: 'piano en ligne', es: 'piano virtual online', ja: 'オンラインピアノ', it: 'pianoforte online', ko: '가상 피아노', tr: 'online piyano', vi: 'đàn piano online', nl: 'online piano' };
 const esc = value => value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
 
 test('every interactive translation has all supported locales', async () => {
@@ -84,7 +84,7 @@ test('all language homes have reciprocal alternates and working native language 
   for (const locale of NEW_PIANO_LOCALES) {
     const menu = studioLanguageMenu(locale, 'piano', '', true);
     assert.ok(menu.includes(`lang="${locale}" aria-current="true">${pianoLocaleNames[locale]}</span>`));
-    assert.equal((menu.match(/class="studio-lang-option"/g) || []).length, ['ru', 'fr'].includes(locale) ? 9 : 11);
+    assert.equal((menu.match(/class="studio-lang-option"/g) || []).length, ['ru', 'fr'].includes(locale) ? 10 : 12);
   }
 });
 
@@ -92,7 +92,7 @@ test('Spanish home no longer redirects to English on either hosting configuratio
   const config = JSON.parse(await readFile('vercel.json', 'utf8'));
   assert.ok(!config.redirects.some(rule => /^\/es\/?$/.test(rule.source)));
   assert.doesNotMatch(await readFile('netlify.toml', 'utf8'), /from = "\/es\/?"/);
-  assert.equal((await readFile('sitemap.xml', 'utf8')).match(/<loc>/g).length, 369);
+  assert.equal((await readFile('sitemap.xml', 'utf8')).match(/<loc>/g).length, 370);
 });
 
 for (const locale of ['tr', 'vi']) {
@@ -109,4 +109,5 @@ test('English hub visibly links both new locales in its main content', () => {
   const main = renderStudioPage('en').split('<main')[1].split('</main>')[0];
   assert.ok(main.includes('href="/tr/" lang="tr" hreflang="tr"'));
   assert.ok(main.includes('href="/vi/" lang="vi" hreflang="vi"'));
+  assert.ok(main.includes('href="/nl/" lang="nl" hreflang="nl"'));
 });
