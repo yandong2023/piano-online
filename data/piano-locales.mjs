@@ -1,6 +1,8 @@
-export const NEW_PIANO_LOCALES = ['ru', 'fr', 'es', 'ja', 'it', 'ko', 'tr', 'vi'];
+import { pianoNl } from './piano-nl.mjs';
+
+export const NEW_PIANO_LOCALES = ['ru', 'fr', 'es', 'ja', 'it', 'ko', 'tr', 'vi', 'nl'];
 export const pianoLocaleNames = {
-  ru: 'Русский', fr: 'Français', es: 'Español', ja: '日本語', it: 'Italiano', ko: '한국어', tr: 'Türkçe', vi: 'Tiếng Việt',
+  ru: 'Русский', fr: 'Français', es: 'Español', ja: '日本語', it: 'Italiano', ko: '한국어', tr: 'Türkçe', vi: 'Tiếng Việt', nl: 'Nederlands',
 };
 
 // Columns follow NEW_PIANO_LOCALES. The same dictionary renders the initial
@@ -113,6 +115,14 @@ export const starterSongNames = {
   'fur-elise': ['К Элизе', 'La Lettre à Élise', 'Para Elisa', 'エリーゼのために', 'Per Elisa', '엘리제를 위하여', "Für Elise", "Für Elise"],
   canon: ['Канон Пахельбеля', 'Canon de Pachelbel', 'Canon de Pachelbel', 'パッヘルベルのカノン', 'Canone di Pachelbel', '파헬벨의 캐논', "Pachelbel Kanonu", "Canon của Pachelbel"],
 };
+
+for (const [key, values] of Object.entries(pianoUi)) {
+  if (!pianoNl[key]) throw new Error(`Missing Dutch piano translation: ${key}`);
+  values.push(pianoNl[key]);
+}
+for (const [id, name] of Object.entries({ 'happy-birthday': 'Happy Birthday', twinkle: 'Altijd is Kortjakje ziek', 'ode-to-joy': 'Ode aan de vreugde', 'jingle-bells': 'Jingle Bells', 'fur-elise': 'Für Elise', canon: 'Canon van Pachelbel' })) {
+  starterSongNames[id].push(name);
+}
 
 export function translatePiano(locale, zh, en) {
   if (locale === 'zh' || locale === 'zh-hant') return zh;

@@ -1,6 +1,37 @@
 // Market priorities and seed terms were supplied by the user. These pages
 // describe actual piano features; search volumes are not product claims.
 export const pianoHomeCopy = {
+  nl: {
+    title: 'Online piano spelen — gratis virtueel pianotoetsenbord',
+    description: 'Speel gratis online piano met je toetsenbord, muis of touchscreen. Oefen liedjes met oplichtende toetsen, neem op en download je spel.',
+    h1: 'Online piano spelen op een virtueel pianotoetsenbord',
+    lead: 'Speel direct in je browser met je computertoetsenbord, muis of touchscreen. Je hoeft niets te installeren of een account aan te maken. Speel vrij of oefen een liedje stap voor stap met de oplichtende toetsen.',
+    badges: ['Gratis spelen', 'Geen account nodig', 'Toetsenbord en touchscreen'],
+    skip: 'Ga naar de piano',
+    starterTitle: 'Begin met een bekende melodie',
+    starterIntro: 'Kies hieronder een melodie om op deze pagina begeleid te oefenen. Dit zijn vereenvoudigde melodieën voor beginners, geen volledige arrangementen voor twee handen.',
+    guideTitle: 'Hoe speel je online piano?',
+    sections: [
+      ['Speel met toetsenbord, muis of touchscreen', 'Klik of tik op een pianotoets, of druk op de aangegeven computertoets. De grote letters zijn computertoetsen; labels zoals C4 zijn nootnamen. K speelt de centrale C (C4), W speelt G4. De piano heeft 37 toetsen van C3 tot C6.'],
+      ['Oefen met oplichtende toetsen', 'Kies Leer een liedje, selecteer een melodie en begin met oefenen. Speel de gouden toets; na de juiste noot verschijnt de volgende. Op mobiel verander je het zichtbare bereik met de pijlen.'],
+      ['Neem je spel op', 'Druk op Opnemen, speel een stukje en stop de opname. Je kunt deze terugluisteren en downloaden als WAV of in het oorspronkelijke browserformaat. Alleen de piano wordt opgenomen, zonder microfoon.'],
+    ],
+    faqTitle: 'Veelgestelde vragen over online piano spelen',
+    faq: [
+      ['Is deze online piano gratis?', 'Ja. Vrij spelen, begeleid oefenen, opnemen en downloaden zijn gratis. Je hoeft geen account aan te maken of app te installeren.'],
+      ['Kan ik op mijn telefoon spelen?', 'Ja. Tik op de toetsen op het scherm en gebruik de pijlen om het bereik te veranderen. In de liggende stand heb je meer ruimte.'],
+      ['Waarom hoor ik geen geluid?', 'Tik eerst op een pianotoets om geluid in de browser te activeren. Controleer daarna het volume, de stille modus, de Bluetooth-uitvoer en het volume op de pagina.'],
+      ['Hoe bewaar ik mijn opname?', 'Download de opname voordat je de pagina sluit of vernieuwt. Een opname duurt maximaal vijf minuten en stopt als je naar een ander tabblad of een andere app gaat. Een nieuwe opname vervangt de vorige.'],
+      ['Vervangt deze virtuele piano een echte piano?', 'De simulator helpt je noten en eenvoudige melodieën te oefenen. Een computertoetsenbord of touchscreen geeft niet het aanslaggevoel, de pedalen en de volledige 88 toetsen van een echte piano weer.'],
+    ],
+    libraryNote: 'Ontdek meer melodieën en lessen via de links hieronder. De liedjespagina’s en deze hulpmiddelen zijn in het Engels.',
+    learningLinks: [
+      ['/en/', 'Engelse pianopagina'],
+      ['/with-notes/', 'Piano met nootnamen (Engels)'],
+      ['/midi/', 'MIDI-bestand afspelen (Engels)'],
+      ['/en/articles/guides/computer-keyboard-piano/', 'Handleiding voor spelen met je toetsenbord (Engels)'],
+    ],
+  },
   tr: {
     title: 'Online piyano — ücretsiz çal, ışıklı tuşlarla öğren',
     description: 'Ücretsiz online piyano ile bilgisayar klavyesi, fare veya dokunmatik ekranda çal. Işıklı tuşlarla şarkı öğren, kaydet ve WAV indir. Kayıt olmak gerekmez.',
