@@ -189,7 +189,7 @@ test('generated song pages include working practice, fullscreen and score contro
     assert.match(html, /data-score-ready="true"/);
     assert.match(html, /score-viewer\.css\?v=20260711\.10/);
     assert.match(html, /song-interactions\.css\?v=20260711\.10/);
-    assert.match(html, /song-page\.js\?v=20260711\.10/);
+    assert.match(html, /song-page\.js\?v=20261106\.1/);
   }
 });
 
@@ -408,4 +408,45 @@ test('representative V2.1 piano song pages show real first-eight pitches and map
       assert.match(html.toLowerCase(), /simplified|简化|簡化/, `${id} ${locale} practice scope`);
     }
   }
+});
+
+test('library analytics reports filtered clicks, debounce, privacy and deep links without changing navigation', async () => {
+  const element = (props = {}) => ({ value: '', hidden: false, dataset: {}, events: {}, textContent: '',
+    addEventListener(type, fn) { this.events[type] = fn; }, setAttribute() {}, focus() {}, ...props });
+  const search = element(), difficulty = element(), reset = element(), count = element(), empty = element();
+  const cards = [element({ dataset: { difficulty: '1', category: 'kids', songId: 'twinkle' }, textContent: 'Twinkle' }),
+    element({ dataset: { difficulty: '1', category: 'kids', songId: 'two-tigers' }, textContent: 'Two Tigers' }),
+    element({ dataset: { difficulty: '2', category: 'classical', songId: 'fur-elise' }, textContent: 'Fur Elise' })];
+  const button = element({ dataset: { libraryFilter: 'kids' } });
+  const heading = element();
+  const group = element({ querySelectorAll: () => cards, querySelector: () => heading });
+  const nodes = { 'library-search': search, 'library-difficulty': difficulty, 'library-reset': reset, 'library-count': count, 'library-empty': empty };
+  const calls = [], events = {}; let pending;
+  const window = { location: { hash: '#difficulty-2', pathname: '/songs/', search: '' },
+    history: { replaceState(_a, _b, url) { window.location.hash = url.includes('#') ? url.slice(url.indexOf('#')) : ''; } },
+    addEventListener(type, fn) { events[type] = fn; }, gtag(...args) { calls.push(JSON.parse(JSON.stringify(args))); } };
+  const document = { documentElement: { lang: 'zh-Hant' }, getElementById: id => nodes[id],
+    querySelectorAll: selector => selector === '[data-library-filter]' ? [button] : selector === '.song-category-section' ? [group] : cards };
+  runInNewContext(await readFile('js/library-browser.js', 'utf8'), { document, window, setTimeout(fn, delay) { assert.equal(delay, 800); pending = fn; return 1; }, clearTimeout() { pending = null; } });
+  assert.deepEqual(calls.shift().slice(1), ['library_filter_apply', { filter_type: 'deep_link', filter_value: '2', result_count: 1, language: 'zh-Hant', transport_type: 'beacon' }]);
+  difficulty.value = 'all'; difficulty.events.change(); button.events.click();
+  cards[1].events.click({ type: 'click', button: 0 });
+  assert.deepEqual(calls.at(-1).slice(1), ['library_song_click', { song_id: 'two-tigers', position: 2, filter_state: 'cat=kids;diff=all;q=', language: 'zh-Hant', transport_type: 'beacon' }]);
+  reset.events.click(); search.value = '  fur  '; search.events.input(); search.value = 'fur'; search.events.input(); pending();
+  assert.equal(calls.at(-1)[2].filter_value, 'fur'); assert.equal(calls.at(-1)[2].result_count, 1);
+  const n = calls.length; search.events.input(); pending(); assert.equal(calls.length, n);
+  search.value = 'test@example.com'; search.events.input(); pending(); assert.equal(calls.at(-1)[2].filter_value, '(redacted)');
+  cards[0].events.click({ type: 'click', button: 0 }); assert.equal(calls.length, n + 1); // hidden cards cannot report
+  search.value = ''; search.events.input(); pending(); assert.equal(calls.at(-1)[2].filter_value, '(empty)');
+  window.location.hash = '#difficulty-99'; events.hashchange(); assert.equal(calls.at(-1)[2].filter_value, '(empty)');
+});
+
+test('related tutorial clicks report the source, localized slug and language', async () => {
+  const script = await readFile('js/song-page.js', 'utf8');
+  const block = script.slice(script.indexOf("document.querySelectorAll('[data-related-tutorials] a')"), script.indexOf('\nbindLetterNotesCopy();'));
+  const handlers = {}, calls = [];
+  const link = { getAttribute: () => '/en/articles/guides/example-guide/', addEventListener(type, fn) { handlers[type] = fn; } };
+  runInNewContext(block, { document: { documentElement: { lang: 'en' }, querySelectorAll: () => [link] }, songId: 'twinkle', window: { gtag(...args) { calls.push(JSON.parse(JSON.stringify(args))); } } });
+  handlers.click({ type: 'click', button: 0 });
+  assert.deepEqual(calls[0], ['event', 'related_tutorial_click', { source_song_id: 'twinkle', target_slug: 'example-guide', language: 'en', transport_type: 'beacon' }]);
 });
