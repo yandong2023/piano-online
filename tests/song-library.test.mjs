@@ -83,8 +83,8 @@ test('difficulty, category, search and reset keep category counts and totals in 
   const cases = ['zh-CN', 'en', 'zh-Hant'].flatMap(lang =>
     ['#difficulty-2', '#difficulty-99', '#kids'].map(hash => [lang, hash]));
   for (const [lang, initialHash] of cases) {
-    const totalText = count => `${count} ${lang === 'en' ? 'songs' : '首歌曲'}`;
-    const categoryText = count => `${count} ${lang === 'en' ? 'songs' : '首'}`;
+    const totalText = count => `${count} ${lang === 'en' ? (count === 1 ? 'song' : 'songs') : '首歌曲'}`;
+    const categoryText = count => `${count} ${lang === 'en' ? (count === 1 ? 'song' : 'songs') : '首'}`;
     const search = element(), difficulty = element(), reset = element(), count = element(), empty = element();
     const cards = [element({ dataset: { difficulty: '1', category: 'kids' }, textContent: 'Twinkle' }),
       element({ dataset: { difficulty: '2', category: 'kids' }, textContent: 'Birthday' }),
@@ -98,7 +98,14 @@ test('difficulty, category, search and reset keep category counts and totals in 
       for (const [index, group] of groups.entries()) {
         const visible = group.querySelectorAll().filter(card => !card.hidden).length;
         assert.equal(group.hidden, visible === 0);
-        if (visible) assert.equal(headings[index].textContent, categoryText(visible));
+        if (visible) {
+          assert.equal(headings[index].textContent, categoryText(visible));
+          assert.equal(headings[index].dataset.stale, undefined);
+        } else {
+          // STAF-72 AC2: a hidden category must not keep a readable build-time count.
+          assert.equal(headings[index].textContent, '');
+          assert.equal(headings[index].dataset.stale, 'true');
+        }
       }
     };
     const nodes = { 'library-search': search, 'library-difficulty': difficulty, 'library-reset': reset, 'library-count': count, 'library-empty': empty };
@@ -122,6 +129,64 @@ test('difficulty, category, search and reset keep category counts and totals in 
     window.location.hash = '#difficulty-1'; events.hashchange();
     assert.equal(count.textContent, totalText(1)); checkGroups();
   }
+});
+
+test('every generated song category heading exposes a count span the browser script can update', async () => {
+  for (const [file, zh] of [['songs/index.html', true], ['en/songs/index.html', false]]) {
+    const html = await readFile(file, 'utf8');
+    const sections = html.split('<section class="song-category-section"').slice(1);
+    assert.ok(sections.length > 1, `${file}: expected several song categories`);
+    for (const section of sections) {
+      const gridAt = section.indexOf('<div class="song-card-grid">');
+      assert.ok(gridAt > 0, `${file}: category section without a card grid`);
+      const counter = section.slice(0, gridAt).match(/<div class="song-category-heading">[\s\S]*?<span>(\d+) ([a-z\u4e00-\u9fa5]+)<\/span><\/div>/);
+      assert.ok(counter, `${file}: a .song-category-heading is missing its count span (STAF-72 AC1)`);
+      const [, amount, unit] = counter;
+      // STAF-72 AC3: English never renders "1 songs".
+      assert.equal(unit, zh ? '首' : Number(amount) === 1 ? 'song' : 'songs');
+    }
+    assert.ok(!/(^|[^\d])1 songs/.test(html), `${file}: English singular must read "1 song"`);
+  }
+});
+
+test('missing category count span and singular English counts keep filtering alive', async () => {
+  const element = (props = {}) => ({ value: '', hidden: false, dataset: {}, events: {}, textContent: '',
+    addEventListener(type, fn) { this.events[type] = fn; }, setAttribute() {}, focus() {}, ...props });
+  const search = element(), difficulty = element(), reset = element(), count = element(), empty = element();
+  const kids = element({ dataset: { category: 'kids' }, textContent: 'Twinkle' });
+  const classical = element({ dataset: { category: 'classical' }, textContent: 'Minuet' });
+  // The "your next classic melody" heading on song pages has no count span; the library must survive the same shape.
+  const brokenHeading = element({ dataset: {}, textContent: '2 songs' });
+  const kidsHeading = element(), classicalHeading = element();
+  const broken = element({ querySelectorAll: () => [kids], querySelector: () => null });
+  const kidsGroup = element({ querySelectorAll: () => [kids], querySelector: () => kidsHeading });
+  const classicalGroup = element({ querySelectorAll: () => [classical], querySelector: () => classicalHeading });
+  const nodes = { 'library-search': search, 'library-difficulty': difficulty, 'library-reset': reset, 'library-count': count, 'library-empty': empty };
+  const document = { documentElement: { lang: 'en' }, getElementById: id => nodes[id],
+    querySelectorAll: selector => selector === '[data-library-filter]' ? [] : selector === '.song-category-section' ? [broken, kidsGroup, classicalGroup] : [kids, classical] };
+  const window = { location: { hash: '', pathname: '/en/songs/', search: '' },
+    history: { replaceState() {} }, addEventListener() {} };
+  const script = await readFile('js/library-browser.js', 'utf8');
+  assert.doesNotThrow(() => runInNewContext(script, { document, window }));
+  assert.equal(count.textContent, '2 songs');
+  assert.equal(kidsHeading.textContent, '1 song');
+  assert.equal(classicalHeading.textContent, '1 song');
+  search.value = 'zzz';
+  assert.doesNotThrow(() => search.events.input());
+  assert.equal(count.textContent, '0 songs');
+  assert.equal(kidsHeading.textContent, '');
+  assert.equal(kidsHeading.dataset.stale, 'true');
+  assert.equal(brokenHeading.textContent, '2 songs', 'a heading without a count span is left untouched');
+  search.value = '';
+  search.events.input();
+  assert.equal(count.textContent, '2 songs');
+  assert.equal(kidsHeading.textContent, '1 song');
+  assert.equal(kidsHeading.dataset.stale, undefined);
+  kidsGroup.querySelectorAll = () => [kids, classical];
+  classicalGroup.querySelectorAll = () => [];
+  search.events.input();
+  assert.equal(kidsHeading.textContent, '2 songs');
+  assert.equal(classicalHeading.textContent, '');
 });
 
 test('classic library includes at least 100 public songs', () => {
