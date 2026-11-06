@@ -14,15 +14,16 @@ const esc = (v = '') => String(v).replaceAll('&', '&amp;').replaceAll('<', '&lt;
 export function studioLanguageMenu(current = 'zh', active = 'piano', songSlug = '', home = false) {
   const song = songSlug ? `${songSlug}/` : '';
   const page = home ? ZH_PIANO_HOME : active === 'songs' ? `/songs/${song}` : active === 'learn' ? '/tutorials.html' : '/piano.html';
+  // Add TR/VI to home menus; keep RU/FR content unchanged apart from alternates.
   const options = [
     ['zh', 'zh-CN', '简体中文', home ? ZH_PIANO_HOME : page],
     ['zh-hant', 'zh-Hant', '繁體中文', active === 'songs' ? `/zh-hant/songs/${song}` : '/zh-hant/'],
     ['en', 'en', 'English', home ? EN_VIRTUAL_HOME : `/en${page}`],
-    ...NEW_PIANO_LOCALES.map(locale => [locale, locale, pianoLocaleNames[locale], `/${locale}/`])
+    ...NEW_PIANO_LOCALES.filter(locale => !['tr', 'vi'].includes(locale) || (home && !['ru', 'fr'].includes(current))).map(locale => [locale, locale, pianoLocaleNames[locale], `/${locale}/`])
   ];
   const label = { zh: '切换语言', 'zh-hant': '切換語言', en: 'Change language' }[current] || translatePiano(current, '', 'Change language');
   const currentName = { zh: '简体中文', 'zh-hant': '繁體中文', en: 'English', ...pianoLocaleNames }[current];
-  const short = { zh: '中文', 'zh-hant': '繁體', en: 'EN', ru: 'RU', fr: 'FR', es: 'ES', ja: '日本語', it: 'IT', ko: '한국어' }[current];
+  const short = { zh: '中文', 'zh-hant': '繁體', en: 'EN', ru: 'RU', fr: 'FR', es: 'ES', ja: '日本語', it: 'IT', ko: '한국어', tr: 'TR', vi: 'VI' }[current];
   const items = options.map(([id, lang, name, href]) => id === current
     ? `<span class="studio-lang-option" lang="${lang}" aria-current="true">${name}</span>`
     : `<a class="studio-lang-option" href="${href}" lang="${lang}" hreflang="${lang}">${name}</a>`).join('');
@@ -96,7 +97,7 @@ function faqSection(locale) {
   return `<section class="home-faq" aria-labelledby="home-faq-title"><h2 id="home-faq-title">${{ zh: '在线弹琴常见问题', en: 'Virtual piano questions', 'zh-hant': '線上彈琴常見問題' }[locale]}</h2>${homeFaq[locale].map(([q,a]) => `<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join('')}</section>`;
 }
 function virtualPianoSections() {
-  return `<section class="vp-sections" aria-label="Virtual piano guide"><article><h2>What is a virtual piano?</h2><p>A virtual piano is an online piano keyboard you can play in your browser. This free visual piano lets you use a mouse, touchscreen or computer keys without downloading software. Prefer Chinese? Open <a href="/" lang="zh-CN" hreflang="zh-CN">在线钢琴</a>.</p></article><article><h2>Virtual piano with notes</h2><p>Musical notes such as C4 name the pitch; computer-key labels tell you what to press here. K plays middle C (C4). Explore the <a href="/with-notes/">virtual piano with notes</a> for labeled keys.</p></article><article><h2>How to play</h2><p>Click a piano key to enable sound. On a computer, press its matching key label. Switch from Free Play to Learn a Song when you want to follow highlighted notes. For MIDI playback, open <a href="/midi/">Piano MIDI online</a>.</p></article></section>`;
+  return `<section class="vp-sections" aria-label="Virtual piano guide"><article><h2>Play piano in your language</h2><p><a href="/tr/" lang="tr" hreflang="tr">Online piyano — Türkçe</a> · <a href="/vi/" lang="vi" hreflang="vi">Đàn piano online — Tiếng Việt</a></p></article><article><h2>What is a virtual piano?</h2><p>A virtual piano is an online piano keyboard you can play in your browser. This free visual piano lets you use a mouse, touchscreen or computer keys without downloading software. Prefer Chinese? Open <a href="/" lang="zh-CN" hreflang="zh-CN">在线钢琴</a>.</p></article><article><h2>Virtual piano with notes</h2><p>Musical notes such as C4 name the pitch; computer-key labels tell you what to press here. K plays middle C (C4). Explore the <a href="/with-notes/">virtual piano with notes</a> for labeled keys.</p></article><article><h2>How to play</h2><p>Click a piano key to enable sound. On a computer, press its matching key label. Switch from Free Play to Learn a Song when you want to follow highlighted notes. For MIDI playback, open <a href="/midi/">Piano MIDI online</a>.</p></article></section>`;
 }
 function studioSteps(locale) {
   const zh = locale === 'zh';
