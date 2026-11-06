@@ -105,6 +105,19 @@ function initializeSongPage() {
     if (typeof window.gtag === 'function') window.gtag('event', 'song_page_view', { song_id: songId });
 }
 
+document.querySelectorAll('[data-related-tutorials] a').forEach(link => {
+    const reportClick = event => {
+        if (event.type === 'auxclick' && event.button !== 1) return;
+        if (event.type === 'click' && event.button !== undefined && event.button !== 0) return;
+        const slug = link.getAttribute('href')?.match(/\/articles\/guides\/([^/?#]+)\/?(?:[?#].*)?$/)?.[1];
+        if (slug && typeof window.gtag === 'function') {
+            try { window.gtag('event', 'related_tutorial_click', { source_song_id: songId, target_slug: slug, language: document.documentElement.lang, transport_type: 'beacon' }); } catch (_) { /* Preserve navigation. */ }
+        }
+    };
+    link.addEventListener('click', reportClick);
+    link.addEventListener('auxclick', reportClick);
+});
+
 bindLetterNotesCopy();
 
 if (document.querySelector('[data-studio]') && !window.pianoPracticeMode) {
