@@ -1,4 +1,4 @@
-"""Six-language piano acceptance against the built site, with real audio files.
+"""Locale piano acceptance against the built site, with real audio files.
 
 Serve dist at :8768. Set PIANO_TEST_URL to test an alternate deployment.
 """
@@ -10,7 +10,7 @@ from playwright.sync_api import sync_playwright
 
 BASE = os.environ.get('PIANO_TEST_URL', 'http://127.0.0.1:8768').rstrip('/')
 LAYOUT_ONLY = os.environ.get('PIANO_LAYOUT_ONLY') == '1'
-OUT = Path('ui-artifacts/six-language-piano-20261029').resolve()
+OUT = Path(os.environ.get('PIANO_TEST_OUT', 'ui-artifacts/six-language-piano-20261029')).resolve()
 OUT.mkdir(parents=True, exist_ok=True)
 COPY = {
     'ru': ['Записать', 'Остановить запись', 'Сыграть ещё раз', 'Верно', 'Мелодия сыграна!'],
@@ -20,6 +20,12 @@ COPY = {
     'it': ['Registra', 'Ferma registrazione', 'Esercitati ancora', 'Corrette', 'Brano completato!'],
     'ko': ['녹음 시작', '녹음 중지', '다시 연습', '정답', '곡 완주!'],
 }
+COPY.update({
+    'tr': ['Kaydet', 'Kaydı durdur', 'Tekrar çalış', 'Doğru', 'Şarkı tamamlandı!'],
+    'vi': ['Ghi âm', 'Dừng ghi âm', 'Luyện tập lại', 'Đúng', 'Đã hoàn thành bài hát!'],
+})
+if os.environ.get('PIANO_TEST_LOCALES'):
+    COPY = {locale: COPY[locale] for locale in os.environ['PIANO_TEST_LOCALES'].split(',')}
 report = {'layouts': [], 'flows': {}, 'errors': []}
 
 def ready(page, route):
@@ -36,7 +42,7 @@ def layout(page, locale, width):
       toolbarOverflow:document.querySelector('.studio-toolbar').scrollWidth > document.querySelector('.studio-toolbar').clientWidth,
       menuEntries:document.querySelectorAll('.studio-lang-option').length,
     })''')
-    assert bounds['h1'] == 1 and bounds['menuEntries'] == 9, bounds
+    assert bounds['h1'] == 1 and bounds['menuEntries'] == (9 if locale in ['ru', 'fr'] else 11), bounds
     assert bounds['keys'] == (25 if width <= 640 else 37), bounds
     assert bounds['scroll'] <= width + 1 and not bounds['recorderOverflow'] and not bounds['toolbarOverflow'], (locale, bounds)
     report['layouts'].append({'locale': locale, **bounds})
@@ -125,13 +131,13 @@ with sync_playwright() as p:
             last_language.scroll_into_view_if_needed()
             assert last_language.is_visible()
             page.keyboard.press('Escape')
-            if not LAYOUT_ONLY and width == 390 and locale in ['ru', 'ja']:
+            if not LAYOUT_ONLY and width == 390 and locale in ['ru', 'ja', 'tr', 'vi']:
                 flow(page, locale, width)
             else:
                 page.locator('[data-studio]').screenshot(path=str(OUT / f'{locale}-{width}-piano.png'))
     for route in ['/', '/en/', '/zh-hant/']:
         ready(page, route)
-        assert page.locator('.studio-lang-option').count() == 9
+        assert page.locator('.studio-lang-option').count() == 11
         assert page.evaluate('document.documentElement.scrollWidth <= innerWidth+1')
     assert not report['errors'], report['errors']
     (OUT / ('layout-report.json' if LAYOUT_ONLY else 'report.json')).write_text(json.dumps(report, ensure_ascii=False, indent=2))
