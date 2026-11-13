@@ -38,11 +38,12 @@ export const tutorialArticles = [
     difficulty: 1,
     minutes: 8,
     publishedAt: '2026-07-18',
-    updatedAt: '2026-07-18',
+    updatedAt: '2026-11-13',
     title: {
       zh: '电脑键盘怎么弹钢琴：零基础在线弹琴完整指南',
       en: 'How to Play Piano with a Computer Keyboard: Complete Beginner Guide'
     },
+    seoTitle: { en: 'Virtual Piano Keyboard Guide: Play with Your Computer Keys' },
     description: {
       zh: '不用下载软件，也不用先会五线谱。了解电脑按键与钢琴音符的对应关系，并用提示练习弹完第一首歌。',
       en: 'Learn how computer keys map to piano notes, how to position your hands, and how to finish a first guided song without installing software.'
@@ -71,7 +72,7 @@ export const tutorialArticles = [
         heading: { zh: '电脑按键与钢琴音符怎么对应', en: 'How computer keys map to piano notes' },
         paragraphs: {
           zh: ['本站把字母键分成连续的音区。A、S、D、F、G、H、J 对应一组连续白键，K、L、分号以及上排字母继续向右延伸。数字键主要负责黑键。', '不要一次背完整张映射表。先记住 A、S、D、F、G 这五个键，能够完成第一段旋律后再扩大范围。'],
-          en: ['Letter keys form continuous note ranges. A, S, D, F, G, H and J play a row of white notes, while K, L, semicolon and upper-row letters continue upward. Number keys mainly play black notes.', 'Do not memorize the whole map at once. Learn A through G first, finish a short phrase, and expand only when a song requires more notes.']
+          en: ['Letter keys form continuous note ranges. A, S, D, F, G, H and J play a row of white notes, while K, L, semicolon and upper-row letters continue upward. Number keys mainly play black notes.', 'Try A, S, D, S, A for C3, D3, E3, D3, C3. Repeat the pattern slowly, then press K to hear middle C (C4). Turn on Key labels if you lose your place. The letter tells you what to press, and the note label tells you what you are playing.']
         },
         example: {
           label: { zh: '第一组白键', en: 'First white-key group' },
