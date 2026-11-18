@@ -108,6 +108,10 @@ try {
   assert.equal(await page.evaluate(()=>window.pianoStudio.piano.audio.context.state),'running');
  });
  await context.close();
+ const { verifyFullKeyboard } = await import('../tests/full-keyboard-browser.mjs');
+ const fullKeyboard = await verifyFullKeyboard(browser, base);
+ report.checks.push(...fullKeyboard.checks);
+ report.errors.push(...fullKeyboard.errors);
 } catch(error) { report.errors.push(error.stack); }
 finally {
  await browser.close();report.passed=report.checks.filter(c=>c.pass).length;report.failed=report.checks.filter(c=>!c.pass).length;

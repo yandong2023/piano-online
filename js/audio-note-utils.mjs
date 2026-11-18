@@ -16,7 +16,16 @@ const SEMITONE_BY_NAME = Object.freeze({
 const NATURAL_NOTES = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 
 export const SAMPLE_NOTES = Object.freeze(
-  [3, 4, 5, 6].flatMap((octave) => NATURAL_NOTES.map((name) => `${name}${octave}`)),
+  [
+    'A0', 'B0',
+    ...[1, 2, 3, 4, 5, 6, 7].flatMap((octave) => NATURAL_NOTES.map((name) => `${name}${octave}`)),
+    'C8',
+  ],
+);
+
+// Keep the initial download budget unchanged. The outer registers load on demand.
+export const WARMUP_SAMPLE_NOTES = Object.freeze(
+  SAMPLE_NOTES.filter(note => noteToMidi(note) >= 48 && noteToMidi(note) <= 79),
 );
 
 export function parseNote(note) {

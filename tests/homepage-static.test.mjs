@@ -14,9 +14,12 @@ for (const locale of ['zh','en']) for (const home of [true,false]) {
     assert.match(html, /class="studio-page(?: virtual-piano-home)?"/);
     assert.match(html, /\/css\/studio\.css/);
     assert.match(html, /\/js\/studio\.js/);
-    for (const id of ['song-select','sustain-toggle','labels-toggle','start-practice','stop-practice','start-rhythm-game','toggle-fullscreen','studio-volume','keyboard-viewport']) assert.ok(html.includes(`id="${id}"`));
+    for (const id of ['song-select','sustain-toggle','labels-toggle','start-practice','stop-practice','start-rhythm-game','toggle-fullscreen','studio-volume','keyboard-viewport','keyboard-octave','keyboard-position']) assert.ok(html.includes(`id="${id}"`));
     assert.ok(html.indexOf('data-studio') < html.indexOf('class="studio-discover"'));
-    assert.doesNotMatch(html, /tutorial-overlay|88键|88 keys|src="piano\.js"/);
+    assert.doesNotMatch(html, /tutorial-overlay|src="piano\.js"/);
+    assert.match(html, /data-keyboard-mode="compact" aria-pressed="true"/);
+    assert.match(html, /data-keyboard-mode="full" aria-pressed="false"/);
+    assert.match(html, /href="\/samples\/CREDITS\.txt"/);
     assert.match(html, /37/);
     const homeUrl = locale === 'zh' ? 'https://pianoonline.cc/' : 'https://pianoonline.cc/en/';
     assert.ok(html.includes(`<link rel="canonical" href="${homeUrl}">`));

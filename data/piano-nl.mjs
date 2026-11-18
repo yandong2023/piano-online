@@ -1,5 +1,8 @@
 // Dutch translations for both the initial instrument and its interactive states.
 export const pianoNl = {
+  'Keyboard size': 'Toetsenbordgrootte', 'Compact': 'Compact', '88 keys': '88 toetsen', 'Computer-key range': 'Bereik van computertoetsen', 'Keyboard position': 'Toetsenbordpositie',
+  'In 88-key mode, move the view with the slider. Select a computer-key range to change which notes your computer keys play.': 'Verplaats in de modus met 88 toetsen het zichtbare bereik met de schuifregelaar. Kies een bereik voor je computertoetsen om te wijzigen welke noten ze spelen.',
+  'Audio credits': 'Bronnen van de geluiden',
   'Interactive piano': 'Interactieve piano', 'Playing mode': 'Speelmodus', 'Free play': 'Vrij spelen', 'Learn a song': 'Leer een liedje', 'Full screen': 'Volledig scherm',
   'Choose a song': 'Kies een liedje', 'Start learning': 'Begin met oefenen', 'Stop practice': 'Stop met oefenen', 'Browse songs': 'Bekijk alle liedjes',
   'Make yourself a little music.': 'Maak wat muziek.', 'Click a key, or press A, S, D on your keyboard.': 'Klik op een toets of druk op A, S of D op je toetsenbord.',

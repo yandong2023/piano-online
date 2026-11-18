@@ -2,7 +2,7 @@ import PianoAudio from './piano-audio.js';
 import { PracticeMode } from './practice-mode.js';
 import { PianoRecorder } from './recorder.js';
 import { createPracticeEntryController } from './practice-entry.mjs';
-import { keyboardNotes, mobileRangeForNote, keyboardMapForRange } from './keyboard-range.mjs';
+import { keyboardNotes, mobileRangeForNote, keyboardMapForRange, fullKeyboardNotes, keyboardMapForFullRange, fullRangeForNote } from './keyboard-range.mjs';
 import { pianoText } from './i18n.js';
 
 console.log('piano.js loaded');
@@ -15,6 +15,10 @@ class Piano {
         this.mobileViewport = window.matchMedia('(max-width: 640px)');
         this.startOctave = 3;
         this.octaves = this.mobileViewport.matches ? 2 : 3;
+        this.keyboardMode = 'compact';
+        try {
+            if (document.querySelector('[data-studio]') && localStorage.getItem('piano-keyboard-mode') === 'full') this.keyboardMode = 'full';
+        } catch { /* Playing also works when storage is unavailable. */ }
         this.keys = {};
         this.sustainPedal = false;
         this.isRecording = false;
@@ -97,11 +101,12 @@ class Piano {
         };
 
         keysContainer.replaceChildren();
-        this.keyMap = keyboardMapForRange(this.baseKeyMap, this.startOctave, this.mobileViewport.matches);
-        const notes = keyboardNotes(this.startOctave, this.octaves);
-        const reverseKeyMap = Object.entries(this.keyMap).reduce((acc, [k, n]) => { acc[n] = k.toUpperCase(); return acc; }, {});
+        const notes = this.keyboardMode === 'full' ? fullKeyboardNotes() : keyboardNotes(this.startOctave, this.octaves);
         const whiteCount = notes.filter(key => key.type === 'white').length;
         keysContainer.style.setProperty('--white-count', whiteCount);
+        keysContainer.closest('.piano-container')?.style.setProperty('--white-count', whiteCount);
+        const instrument = keysContainer.closest('[data-studio]');
+        if (instrument) instrument.dataset.keyboardSize = this.keyboardMode;
         let whites = 0;
 
         notes.forEach(({ note, type }) => {
@@ -118,16 +123,31 @@ class Piano {
                 key.dataset.solfege = solfege;
             }
             
-            // 添加键盘映射标签
-            const mappedKey = reverseKeyMap[note];
-            if (mappedKey) {
-                const label = document.createElement('div');
-                label.className = 'key-label';
-                label.textContent = mappedKey;
-                key.appendChild(label);
-            }
-
             keysContainer.appendChild(key);
+        });
+        this.updateKeyLabels();
+    }
+
+    updateKeyLabels() {
+        this.keyMap = this.keyboardMode === 'full'
+            ? keyboardMapForFullRange(this.baseKeyMap, this.startOctave)
+            : keyboardMapForRange(this.baseKeyMap, this.startOctave, this.mobileViewport.matches);
+        const reverse = Object.entries(this.keyMap).reduce((map, [key, note]) => {
+            map[note] = key.toUpperCase();
+            return map;
+        }, {});
+        // Remapping computer keys must not replace held pointer/MIDI key nodes.
+        document.querySelectorAll('.keys .key').forEach(key => {
+            const letter = reverse[key.dataset.note];
+            let label = key.querySelector('.key-label');
+            if (letter && !label) {
+                label = document.createElement('div');
+                label.className = 'key-label';
+                key.append(label);
+            }
+            if (letter) label.textContent = letter;
+            else label?.remove();
+            key.setAttribute('aria-label', `${key.dataset.note}${letter ? ` · ${letter}` : ''}`);
         });
     }
 
@@ -271,35 +291,118 @@ class Piano {
         this.rangeControls.querySelectorAll('[data-octave]').forEach(button => {
             button.addEventListener('click', () => {
                 const direction = Number(button.dataset.octave);
-                if (this.mobileViewport.matches) this.setRange(this.startOctave + direction);
-                else this.keyboardViewport.scrollBy({ left: direction * Math.min(this.keyboardViewport.clientWidth * .85, 322), behavior: 'auto' });
+                if (this.keyboardMode === 'compact' && this.mobileViewport.matches) this.setRange(this.startOctave + direction);
+                else this.keyboardViewport.scrollBy({ left: direction * Math.min(this.keyboardViewport.clientWidth * .85, 322), behavior: 'instant' });
             });
         });
+        document.querySelectorAll('button[data-keyboard-mode]').forEach(button => {
+            button.addEventListener('click', () => this.setKeyboardMode(button.dataset.keyboardMode));
+        });
+        this.keyboardOctaveControl = document.getElementById('keyboard-octave');
+        this.keyboardOctaveControl?.addEventListener('change', () => {
+            this.setKeyboardOctave(Number(this.keyboardOctaveControl.value));
+            document.querySelector('[data-studio]')?.focus({ preventScroll: true });
+        });
+        this.keyboardPosition = document.getElementById('keyboard-position');
+        this.keyboardPosition?.addEventListener('input', () => {
+            const max = this.keyboardViewport.scrollWidth - this.keyboardViewport.clientWidth;
+            this.keyboardViewport.scrollTo({ left: Number(this.keyboardPosition.value) / 1000 * max, behavior: 'instant' });
+        });
+        this.keyboardViewport.addEventListener('scroll', () => this.updateScrollControls(), { passive: true });
+        if (typeof ResizeObserver !== 'undefined') {
+            this.keyboardResizeObserver = new ResizeObserver(() => this.updateScrollControls());
+            this.keyboardResizeObserver.observe(this.keyboardViewport);
+        }
         this.mobileViewport.addEventListener('change', () => {
             this.octaves = this.mobileViewport.matches ? 2 : 3;
-            this.setRange(3, true);
+            // The full piano keeps its nodes and held voices when the phone rotates.
+            if (this.keyboardMode === 'full') this.updateRangeLabel();
+            else this.setRange(3, true);
         });
         this.updateRangeLabel();
     }
 
     updateRangeLabel() {
-        const range = `C${this.startOctave}–C${this.startOctave + this.octaves}`;
+        const full = this.keyboardMode === 'full';
+        const range = full ? 'A0–C8' : `C${this.startOctave}–C${this.startOctave + this.octaves}`;
+        const count = full ? 88 : this.octaves * 12 + 1;
         if (this.rangeLabel) {
             const language = document.documentElement.lang.toLowerCase();
             const traditional = language === 'zh-hant';
-            this.rangeLabel.textContent = `${this.octaves * 12 + 1} ${traditional ? '鍵' : pianoText('键', 'keys')} · ${range}`;
+            this.rangeLabel.textContent = `${count} ${traditional ? '鍵' : pianoText('键', 'keys')} · ${range}`;
             const hint = document.createElement('span');
             hint.className = 'mobile-only';
             hint.textContent = ` · ${traditional ? '用兩側箭頭切換音區' : pianoText('用两侧箭头切换音区', 'Use arrows to change range')}`;
             this.rangeLabel.append(hint);
         }
         document.querySelector('.keys')?.setAttribute('aria-label', range);
+        document.querySelectorAll('button[data-keyboard-mode]').forEach(button => {
+            button.setAttribute('aria-pressed', String(button.dataset.keyboardMode === this.keyboardMode));
+        });
+        document.querySelectorAll('[data-keyboard-navigation], [data-keyboard-mapping-control]').forEach(control => { control.hidden = !full; });
+        if (this.keyboardOctaveControl) this.keyboardOctaveControl.value = String(this.startOctave);
+        this.updateScrollControls();
+    }
+
+    updateScrollControls() {
+        if (!this.keyboardViewport) return;
+        const { scrollLeft, scrollWidth, clientWidth } = this.keyboardViewport;
+        const max = Math.max(0, scrollWidth - clientWidth);
+        if (this.keyboardPosition) {
+            this.keyboardPosition.value = max ? String(Math.round(scrollLeft / max * 1000)) : '0';
+            this.keyboardPosition.disabled = max === 0;
+            const whites = document.querySelectorAll('.keys .key.white');
+            const width = whites[0]?.getBoundingClientRect().width;
+            if (width) {
+                const first = whites[Math.max(0, Math.min(whites.length - 1, Math.floor(scrollLeft / width)))];
+                const last = whites[Math.max(0, Math.min(whites.length - 1, Math.ceil((scrollLeft + clientWidth) / width) - 1))];
+                this.keyboardPosition.setAttribute('aria-valuetext', `${first.dataset.note}–${last.dataset.note}`);
+            }
+        }
         this.rangeControls?.querySelectorAll('[data-octave]').forEach(button => {
-            button.disabled = this.mobileViewport.matches && (Number(button.dataset.octave) < 0 ? this.startOctave === 1 : this.startOctave === 5);
+            const lower = Number(button.dataset.octave) < 0;
+            button.disabled = this.keyboardMode === 'compact' && this.mobileViewport.matches
+                ? (lower ? this.startOctave === 1 : this.startOctave === 5)
+                : (lower ? scrollLeft <= 1 : scrollLeft >= max - 1);
         });
     }
 
+    setKeyboardMode(mode, { persist = true } = {}) {
+        if (!['compact', 'full'].includes(mode) || mode === this.keyboardMode) return;
+        const current = document.querySelector('.keys .key.current')?.dataset.note;
+        if (this.releaseAll) this.releaseAll();
+        else this.audio.stopAll();
+        this.keyboardMode = mode;
+        this.startOctave = 3;
+        this.octaves = this.mobileViewport.matches ? 2 : 3;
+        try { if (persist) localStorage.setItem('piano-keyboard-mode', mode); } catch {}
+        this.generateKeyboard();
+        this.initializeKeyboard();
+        if (!this.releaseAll) this.bindKeyPointers();
+        this.updateRangeLabel();
+        const target = this.ensureNoteVisible(current || 'C4');
+        if (current) target?.classList.add('current');
+        document.dispatchEvent(new CustomEvent('piano:keyboard-change'));
+    }
+
+    setKeyboardOctave(startOctave, { automatic = false } = {}) {
+        if (this.keyboardMode !== 'full' || !Number.isFinite(startOctave)) return;
+        const next = Math.max(0, Math.min(5, Math.trunc(startOctave)));
+        if (next === this.startOctave) return;
+        this.startOctave = next;
+        this.updateKeyLabels();
+        this.updateRangeLabel();
+        if (!automatic) {
+            this.ensureNoteVisible(next === 0 ? 'A0' : next === 5 ? 'C8' : `C${next + 1}`, { remap: false });
+            document.dispatchEvent(new CustomEvent('piano:keyboard-change'));
+        }
+    }
+
     setRange(startOctave, force = false, automatic = false) {
+        if (this.keyboardMode === 'full') {
+            this.setKeyboardOctave(startOctave, { automatic });
+            return;
+        }
         const next = this.mobileViewport.matches ? Math.max(1, Math.min(5, startOctave)) : 3;
         if (!force && next === this.startOctave) return;
         const current = document.querySelector('.keys .key.current')?.dataset.note;
@@ -314,12 +417,15 @@ class Piano {
         this.keyboardViewport.scrollTo({ left: 0, behavior: 'instant' });
         // A manual range change also keeps an active teaching target visible.
         if (current) this.ensureNoteVisible(current)?.classList.add('current');
+        if (!automatic) document.dispatchEvent(new CustomEvent('piano:keyboard-change'));
     }
 
-    ensureNoteVisible(note) {
+    ensureNoteVisible(note, { remap = true } = {}) {
         // Practice emits a final progress event at notes.length before stopping.
         if (!note) return;
-        if (this.mobileViewport.matches && !this.keys[note]) {
+        if (this.keyboardMode === 'full' && remap) {
+            this.setKeyboardOctave(fullRangeForNote(note, this.startOctave), { automatic: true });
+        } else if (this.keyboardMode === 'compact' && this.mobileViewport.matches && !this.keys[note]) {
             this.setRange(mobileRangeForNote(note, this.startOctave), false, true);
         }
         const key = this.keys[note];
@@ -330,6 +436,7 @@ class Piano {
                 viewport.scrollTo({ left: viewport.scrollLeft + bounds.left - frame.left - (viewport.clientWidth - bounds.width) / 2, behavior: 'instant' });
             }
         }
+        this.updateScrollControls();
         return key;
     }
 
@@ -403,7 +510,8 @@ class Piano {
         const noteStr = midiToNoteName(note);
 
         if (command === 9 && velocity > 0) { // Note on
-            this.pressKey(noteStr);
+            if (this.keyboardMode === 'full') this.ensureNoteVisible(noteStr, { remap: false });
+            this.pressKey(noteStr, performance.now(), velocity / 127);
         } else if (command === 8 || (command === 9 && velocity === 0)) { // Note off
             this.releaseKey(noteStr);
         } else if (command === 11) { // Control change (e.g. sustain pedal)
@@ -421,12 +529,12 @@ class Piano {
         return this.keyMap[key];
     }
 
-    pressKey(note, inputStartedAt = performance.now()) {
+    pressKey(note, inputStartedAt = performance.now(), velocity = 0.9) {
         console.log('Pressing key:', note);
         if (this.keys[note]) {
             this.keys[note].classList.add('active');
         }
-        this.audio.playNote(note, 0.9, inputStartedAt).catch(error => console.error('Piano audio:', error));
+        this.audio.playNote(note, velocity, inputStartedAt).catch(error => console.error('Piano audio:', error));
         
         // 触发音符播放回调
         if (this.onNotePlay) {

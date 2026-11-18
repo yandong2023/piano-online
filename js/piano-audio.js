@@ -4,7 +4,7 @@ import {
   noteToMidi,
   playbackRateForNote,
   sampleUrl,
-  SAMPLE_NOTES,
+  WARMUP_SAMPLE_NOTES,
 } from './audio-note-utils.mjs';
 
 class PianoAudio {
@@ -61,8 +61,7 @@ class PianoAudio {
       this.context.onstatechange = () => this.onStateChange?.(this.context.state);
       this.initialized = true;
       // Downloads improve later notes, but never gate a key's first attack.
-      SAMPLE_NOTES.filter(note => noteToMidi(note) <= noteToMidi('G5'))
-        .forEach(note => this.loadBuffer(note).catch(() => {}));
+      WARMUP_SAMPLE_NOTES.forEach(note => this.loadBuffer(note).catch(() => {}));
       return true;
     } catch (error) {
       console.error('Failed to initialize piano audio:', error);

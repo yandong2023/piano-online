@@ -30,7 +30,7 @@ export function playMidiBuffer(buffer) {
       const note = midiNumberToNote(event.note);
       if (event.type === 'on') {
         active.add(note);
-        document.dispatchEvent(new CustomEvent('studio:note-on', { detail: { note } }));
+        document.dispatchEvent(new CustomEvent('studio:note-on', { detail: { note, velocity: event.velocity / 127 } }));
       } else {
         active.delete(note);
         document.dispatchEvent(new CustomEvent('studio:note-off', { detail: { note } }));

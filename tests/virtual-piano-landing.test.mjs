@@ -7,7 +7,7 @@ const landing = renderStudioPage('en', true);
 
 test('English homepage SEO copy stays consistent in source and published HTML', async () => {
   const title = 'Free Online Piano & Piano Simulator — Virtual Piano';
-  const description = 'Free online piano and piano simulator in your browser. Play with keyboard, mouse or touch. Follow highlighted keys to learn songs — no download, no signup.';
+  const description = 'Free online piano and piano simulator with an optional 88-key keyboard (A0–C8). Play with keyboard, mouse or touch and learn songs. No download or signup.';
   for (const html of [landing, await readFile('en/index.html', 'utf8')]) {
     assert.ok(html.includes(`<title>${title}</title>`));
     assert.ok(html.includes(`<meta name="description" content="${description}">`));
