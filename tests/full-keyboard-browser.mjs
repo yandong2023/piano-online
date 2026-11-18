@@ -19,8 +19,8 @@ export async function verifyFullKeyboard(browser, baseUrl) {
       const detail = await action();
       report.checks.push({ name: `88-key: ${name}`, pass: true, detail });
     } catch (error) {
-      report.checks.push({ name: `88-key: ${name}`, pass: false, error: error.message });
-      throw error;
+      const diagnostics = await metrics().catch(failure => ({ error: failure.message }));
+      report.checks.push({ name: `88-key: ${name}`, pass: false, error: error.message, diagnostics });
     }
   }
   const nextFrame = () => page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
@@ -29,6 +29,39 @@ export async function verifyFullKeyboard(browser, baseUrl) {
     const whites = keys.filter(key => key.classList.contains('white'));
     const blacks = keys.filter(key => key.classList.contains('black'));
     const viewport = document.getElementById('keyboard-viewport');
+    const container = document.querySelector('.piano-container');
+    const keybed = document.querySelector('.keys');
+    const instrument = document.querySelector('[data-studio]');
+    const dimensions = element => {
+      if (!element) return null;
+      const style = getComputedStyle(element);
+      return { width: element.getBoundingClientRect().width, minWidth: style.minWidth,
+        computedWidth: style.width, maxWidth: style.maxWidth, display: style.display,
+        position: style.position, flex: style.flex, whiteCount: style.getPropertyValue('--white-count'),
+        inlineStyle: element.getAttribute('style') };
+    };
+    const rules = [];
+    const collectRules = (list, href, conditions = []) => {
+      for (const rule of list) {
+        if (rule.cssRules) {
+          const condition = rule.conditionText;
+          const active = rule.type === CSSRule.MEDIA_RULE ? matchMedia(condition).matches
+            : rule.type === CSSRule.SUPPORTS_RULE ? CSS.supports(condition) : true;
+          collectRules(rule.cssRules, href, condition ? [...conditions, { condition, active }] : conditions);
+        } else if (rule.selectorText && /piano-container|keyboard-size|\.keys|\.key\.white/.test(rule.selectorText)) {
+          const matches = Object.entries({ container, keybed, white: whites[0] })
+            .filter(([, element]) => element?.matches(rule.selectorText)).map(([name]) => name);
+          if (matches.length) rules.push({ href, selector: rule.selectorText, matches, conditions,
+            declarations: Object.fromEntries(['width', 'min-width', 'max-width', 'display', 'position', 'flex', '--white-count']
+              .filter(name => rule.style.getPropertyValue(name))
+              .map(name => [name, rule.style.getPropertyValue(name) + (rule.style.getPropertyPriority(name) ? ' !important' : '')])) });
+        }
+      }
+    };
+    for (const sheet of document.styleSheets) {
+      try { collectRules(sheet.cssRules, sheet.href); }
+      catch (error) { rules.push({ href: sheet.href, error: error.message }); }
+    }
     return {
       count: keys.length, white: whites.length, black: blacks.length,
       first: keys[0].dataset.note, last: keys.at(-1).dataset.note,
@@ -37,13 +70,21 @@ export async function verifyFullKeyboard(browser, baseUrl) {
       blackRatio: blacks[0].getBoundingClientRect().width / whites[0].getBoundingClientRect().width,
       scroll: viewport.scrollLeft, max: viewport.scrollWidth - viewport.clientWidth,
       overflow: document.documentElement.scrollWidth > innerWidth + 1,
+      styleDiagnostics: {
+        viewport: dimensions(viewport), container: dimensions(container), keybed: dimensions(keybed),
+        white: dimensions(whites[0]), black: dimensions(blacks[0]),
+        rootDataset: { ...instrument?.dataset }, rootClass: instrument?.className,
+        keyboardMode: window.pianoStudio?.piano.keyboardMode,
+        fullSelectorMatches: !!container?.matches(':root body .studio-instrument[data-keyboard-size=full] .piano-container'),
+        calcSupported: CSS.supports('min-width', 'calc(52 * 44px)'), rules,
+      },
     };
   });
   async function fullGeometry() {
     const measured = await metrics();
     assert.deepEqual([measured.count, measured.white, measured.black, measured.unique], [88, 52, 36, 88]);
     assert.deepEqual([measured.first, measured.last], ['A0', 'C8']);
-    assert.ok(measured.minWhite >= 39.9, `White key width: ${measured.minWhite}`);
+    assert.ok(measured.minWhite >= 39.9, `White key width: ${measured.minWhite}; ${JSON.stringify(measured.styleDiagnostics)}`);
     assert.ok(measured.blackRatio >= .5 && measured.blackRatio <= .7, `Black key ratio: ${measured.blackRatio}`);
     assert.ok(!measured.overflow, 'Instrument causes page-wide horizontal overflow');
     assert.equal(await page.locator('[data-keyboard-mode="full"]').getAttribute('aria-pressed'), 'true');
@@ -51,6 +92,19 @@ export async function verifyFullKeyboard(browser, baseUrl) {
     assert.ok(await page.locator('#keyboard-octave').isVisible());
     assert.match(await page.locator('.keys').getAttribute('aria-label'), /A0.*C8/);
     return measured;
+  }
+  // Each feature group establishes its own state so a geometry assertion does
+  // not hide independent input/audio failures in the same CI run.
+  async function prepareFull({ width = 1280, height = 900, bank = 3 } = {}) {
+    for (const key of ['a', 'h', ',', 'k']) await page.keyboard.up(key);
+    await page.setViewportSize({ width, height });
+    await page.evaluate(bank => {
+      const { piano, practice, rhythm } = window.pianoStudio;
+      practice.stopPractice(); practice.closeResultModal();
+      if (rhythm.isPlaying) rhythm.stopGame();
+      piano.releaseAll(); piano.setKeyboardMode('full'); piano.setKeyboardOctave(bank);
+      document.querySelector('[data-play-mode="free"]').click();
+    }, bank);
   }
   async function pan(edge) {
     await page.locator('#keyboard-position').focus();
@@ -87,6 +141,7 @@ export async function verifyFullKeyboard(browser, baseUrl) {
         'Changing size eagerly downloads outer samples');
     });
     await check('desktop geometry, partial lowest octave and mouse endpoints', async () => {
+      await prepareFull();
       const measured = await fullGeometry();
       await page.locator('[data-studio]').screenshot({ path: 'ui-artifacts/full-keyboard-desktop.png' });
       assert.ok(await page.evaluate(() => {
@@ -99,6 +154,7 @@ export async function verifyFullKeyboard(browser, baseUrl) {
       return measured;
     });
     await check('computer banks reach both ends and held keyup preserves the original pitch', async () => {
+      await prepareFull();
       for (const [bank, key, note] of [['0', 'h', 'A0'], ['5', ',', 'C8'], ['3', 'a', 'C3']]) {
         await page.locator('#keyboard-octave').focus();
         await page.locator('#keyboard-octave').selectOption(bank);
@@ -121,7 +177,9 @@ export async function verifyFullKeyboard(browser, baseUrl) {
       await page.keyboard.up('a');
       await page.locator('[data-keyboard-mode="full"]').click();
     });
-    await check('MIDI velocity and cross-range hardware/file chords', () => page.evaluate(() => {
+    await check('MIDI velocity and cross-range hardware/file chords', async () => {
+      await prepareFull();
+      return page.evaluate(() => {
       const piano = window.pianoStudio.piano, audio = piano.audio;
       const play = audio.playNote.bind(audio), calls = [];
       audio.playNote = (...args) => { calls.push({ note: args[0], velocity: args[1] }); return play(...args); };
@@ -140,8 +198,10 @@ export async function verifyFullKeyboard(browser, baseUrl) {
       if (!audio.pressedNotes.has('A0') || !audio.pressedNotes.has('C8') || piano.keys.A0 !== original) throw Error('MIDI-file cross-range chord lost a voice');
       for (const note of ['A0', 'C8']) document.dispatchEvent(new CustomEvent('studio:note-off', { detail: { note } }));
       return { calls, scope: 'synthetic MIDI messages and file playback events' };
-    }));
+      });
+    });
     await check('all 88 warm pitches produce real Web Audio signal with no fallback', async () => {
+      await prepareFull();
       return page.evaluate(async () => {
         const { piano } = window.pianoStudio, audio = piano.audio;
         const { SAMPLE_NOTES } = await import('/js/audio-note-utils.mjs');
@@ -176,6 +236,7 @@ export async function verifyFullKeyboard(browser, baseUrl) {
       });
     });
     await check('recorder UI captures full-range output and exports a WAV', async () => {
+      await prepareFull();
       await page.locator('[data-record-toggle]').click();
       await page.waitForFunction(() => window.pianoStudio.recorder.state === 'recording');
       await page.evaluate(() => {
@@ -202,6 +263,7 @@ export async function verifyFullKeyboard(browser, baseUrl) {
       return recording;
     });
     await check('existing guided song finishes with current mapped hints', async () => {
+      await prepareFull();
       await page.locator('[data-play-mode="guided"]').click();
       await page.locator('#song-select').selectOption('fur-elise');
       await page.locator('#keyboard-octave').selectOption('0');
@@ -227,6 +289,7 @@ export async function verifyFullKeyboard(browser, baseUrl) {
       return result;
     });
     await check('rhythm mode restores its playable octave and stops when size changes', async () => {
+      await prepareFull();
       await page.locator('#keyboard-octave').selectOption('5');
       await page.locator('[data-play-mode="guided"]').click();
       await page.locator('#song-select').selectOption('twinkle');
@@ -246,11 +309,13 @@ export async function verifyFullKeyboard(browser, baseUrl) {
       return result;
     });
     await check('full-mode preference survives reload', async () => {
+      await prepareFull();
       await page.reload({ waitUntil: 'domcontentloaded' });
       await page.waitForFunction(() => !!window.pianoStudio);
       return fullGeometry();
     });
     await check('mobile breakpoint preserves held voices and usable key widths', async () => {
+      await prepareFull();
       // Unlock this reloaded page with a native gesture before MIDI messages.
       await page.locator('.key[data-note="C4"]').click({ position: { x: 20, y: 150 } });
       await page.evaluate(() => {
@@ -266,6 +331,7 @@ export async function verifyFullKeyboard(browser, baseUrl) {
       return measured;
     });
     await check('mobile endpoint touch, arrows and native two-finger chord', async () => {
+      await prepareFull({ width: 390, height: 844 });
       await endpoints('tap');
       await pan('low');
       await page.locator('[data-octave="1"]').click();
@@ -289,6 +355,7 @@ export async function verifyFullKeyboard(browser, baseUrl) {
       await cdp.detach();
     });
     await check('landscape and fullscreen retain all 88 keys', async () => {
+      await prepareFull();
       await page.setViewportSize({ width: 844, height: 390 });
       await nextFrame();
       await fullGeometry();
