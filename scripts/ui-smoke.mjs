@@ -160,6 +160,20 @@ try {
     await touchPage.screenshot({path:`${output}/guided-390.png`,fullPage:true});
   });
   await mobile.close();
+  // Small visual pass for the optional full piano; detailed audio and input
+  // cases run once in ui-audio.mjs via verifyFullKeyboard.
+  for (const [name, width] of [['desktop', 1440], ['mobile', 390]]) {
+    const fullContext = await context({ viewport: { width, height: 1000 }, hasTouch: width < 600, isMobile: width < 600 });
+    const fullPage = await fullContext.newPage();
+    await check(`88-key ${name} layout and review screenshot`, async () => {
+      await ready(fullPage, '/en/');
+      await fullPage.locator('[data-keyboard-mode="full"]').click();
+      assert.equal(await fullPage.locator('.keys .key').count(), 88);
+      assert.ok(await fullPage.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1));
+      await fullPage.locator('[data-studio]').screenshot({ path: `${output}/full-keyboard-${name}.png` });
+    });
+    await fullContext.close();
+  }
 } catch(error) {
   report.errors.push({message:error.stack});
 } finally {

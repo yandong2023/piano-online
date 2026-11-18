@@ -12,7 +12,7 @@ export const pianoHomeCopy = {
     starterIntro: 'Kies hieronder een melodie om op deze pagina begeleid te oefenen. Dit zijn vereenvoudigde melodieën voor beginners, geen volledige arrangementen voor twee handen.',
     guideTitle: 'Hoe speel je online piano?',
     sections: [
-      ['Speel met toetsenbord, muis of touchscreen', 'Klik of tik op een pianotoets, of druk op de aangegeven computertoets. De grote letters zijn computertoetsen; labels zoals C4 zijn nootnamen. K speelt de centrale C (C4), W speelt G4. De piano heeft 37 toetsen van C3 tot C6.'],
+      ['Speel met toetsenbord, muis of touchscreen', 'Klik of tik op een pianotoets, of druk op de aangegeven computertoets. De grote letters zijn computertoetsen; labels zoals C4 zijn nootnamen. K speelt de centrale C (C4), W speelt G4. De compacte weergave toont 37 toetsen op de computer en 25 op mobiel. Kies 88 toetsen voor het volledige bereik A0–C8. Je kunt dan het bereik van de computertoetsen wijzigen.'],
       ['Oefen met oplichtende toetsen', 'Kies Leer een liedje, selecteer een melodie en begin met oefenen. Speel de gouden toets; na de juiste noot verschijnt de volgende. Op mobiel verander je het zichtbare bereik met de pijlen.'],
       ['Neem je spel op', 'Druk op Opnemen, speel een stukje en stop de opname. Je kunt deze terugluisteren en downloaden als WAV of in het oorspronkelijke browserformaat. Alleen de piano wordt opgenomen, zonder microfoon.'],
     ],
@@ -22,7 +22,7 @@ export const pianoHomeCopy = {
       ['Kan ik op mijn telefoon spelen?', 'Ja. Tik op de toetsen op het scherm en gebruik de pijlen om het bereik te veranderen. In de liggende stand heb je meer ruimte.'],
       ['Waarom hoor ik geen geluid?', 'Tik eerst op een pianotoets om geluid in de browser te activeren. Controleer daarna het volume, de stille modus, de Bluetooth-uitvoer en het volume op de pagina.'],
       ['Hoe bewaar ik mijn opname?', 'Download de opname voordat je de pagina sluit of vernieuwt. Een opname duurt maximaal vijf minuten en stopt als je naar een ander tabblad of een andere app gaat. Een nieuwe opname vervangt de vorige.'],
-      ['Vervangt deze virtuele piano een echte piano?', 'De simulator helpt je noten en eenvoudige melodieën te oefenen. Een computertoetsenbord of touchscreen geeft niet het aanslaggevoel, de pedalen en de volledige 88 toetsen van een echte piano weer.'],
+      ['Vervangt deze virtuele piano een echte piano?', 'Je kunt alle 88 toetsen van A0 tot C8 spelen, of de compacte weergave kiezen. De simulator helpt je noten en eenvoudige melodieën te oefenen. Een computertoetsenbord of touchscreen geeft niet het gewogen aanslaggevoel van een echte piano weer.'],
     ],
     libraryNote: 'Ontdek meer melodieën en lessen via de links hieronder. De liedjespagina’s en deze hulpmiddelen zijn in het Engels.',
     learningLinks: [
@@ -43,7 +43,7 @@ export const pianoHomeCopy = {
     starterIntro: 'İyi ki doğdun, Neşeye Övgü veya Twinkle Twinkle Little Star ile başla. Aşağıdaki düğmeler bu sayfada rehberli çalışmayı başlatır. Bunlar başlangıç için sadeleştirilmiş melodilerdir; tam iki el düzenlemeleri değildir.',
     guideTitle: 'Online piyano nasıl çalınır?',
     sections: [
-      ['Klavye, fare veya telefonla çal', 'Bir piyano tuşuna tıkla, dokun veya üstündeki bilgisayar tuşuna bas. Büyük harfler bilgisayar tuşlarını, C4 gibi küçük etiketler nota adlarını gösterir. K orta Do (C4), W ise Sol (G4) çalar. Masaüstünde C3–C6 arasında 37 tuş vardır. Sesi uzatmak için boşluk tuşunu basılı tut.'],
+      ['Klavye, fare veya telefonla çal', 'Bir piyano tuşuna tıkla, dokun veya üstündeki bilgisayar tuşuna bas. Büyük harfler bilgisayar tuşlarını, C4 gibi küçük etiketler nota adlarını gösterir. K orta Do (C4), W ise Sol (G4) çalar. Kompakt görünüm bilgisayarda 37, telefonda 25 tuş gösterir. A0–C8 aralığının tamamı için 88 tuş modunu seç; bu modda bilgisayar tuşlarının ses aralığını değiştirebilirsin. Sesi uzatmak için boşluk tuşunu basılı tut.'],
       ['Işıklı tuşlarla adım adım öğren', 'Şarkı öğren moduna geç, bir melodi seç ve Öğrenmeye başla düğmesine bas. Altın renkli tuşu çal; doğru notaya bastığında sıradaki nota gösterilir. Telefonda ses aralığını oklarla değiştir. Rehberli mod sıradaki tuşu görünür alana getirir.'],
       ['Çaldıklarını kaydet ve dinle', 'Kaydet düğmesine bas, kısa bir bölüm çal ve kaydı durdur. Sonucu dinleyebilir, WAV veya daha küçük olan özgün tarayıcı biçiminde indirebilirsin. Yalnızca piyano sesi kaydedilir, mikrofon kullanılmaz.'],
     ],
@@ -53,7 +53,7 @@ export const pianoHomeCopy = {
       ['Telefonda piyano çalabilir miyim?', 'Evet. Ekrandaki tuşlara dokun ve ses aralığını oklarla değiştir. Telefonu yatay tutmak daha fazla çalma alanı sağlar.'],
       ['Piyanodan neden ses gelmiyor?', 'Tarayıcı sesini etkinleştirmek için önce bir tuşa dokun. Ardından cihazın ses düzeyini, sessiz modu, Bluetooth çıkışını ve sayfadaki ses ayarını kontrol et.'],
       ['Kaydımı nasıl saklarım?', 'Sayfayı kapatmadan veya yenilemeden önce kaydı indir. Her kayıt en fazla 5 dakikadır; başka sekmeye veya uygulamaya geçince durur. Yeni kayıt öncekinin yerini alır.'],
-      ['Sanal piyano gerçek piyanonun yerini tutar mı?', 'Bu araç nota yerlerini ve basit melodileri çalışmak içindir. Ekran ve bilgisayar klavyesi, gerçek 88 tuşlu piyanonun dokunuşunu, tuşa basma kuvvetini ve pedallarını tam olarak yansıtmaz.'],
+      ['Sanal piyano gerçek piyanonun yerini tutar mı?', 'A0–C8 aralığındaki 88 tuşun tamamını veya kompakt görünümü seçebilirsin. Bu araç nota yerlerini ve basit melodileri çalışmak içindir. Ekran ve bilgisayar klavyesi gerçek piyanonun ağırlıklı tuş hissini yansıtmaz.'],
     ],
     libraryNote: 'Daha fazla melodi ve adım adım ders için aşağıdaki bağlantıları kullan. Şarkı sayfaları ve bu araçların açıklamaları İngilizcedir.',
     learningLinks: [
@@ -75,7 +75,7 @@ export const pianoHomeCopy = {
     starterIntro: 'Thử Chúc mừng sinh nhật, Khúc ca niềm vui hoặc Twinkle Twinkle Little Star. Các nút dưới đây mở phần luyện tập ngay trên trang này. Đây là những giai điệu rút gọn cho người mới, không phải bản phối đầy đủ cho hai tay.',
     guideTitle: 'Cách chơi đàn piano online',
     sections: [
-      ['Chơi bằng bàn phím, chuột hoặc cảm ứng', 'Nhấp hoặc chạm vào phím đàn, hay nhấn phím máy tính được ghi trên đó. Chữ lớn là phím máy tính; nhãn nhỏ như C4 là tên nốt nhạc. K chơi Đô giữa (C4), W chơi Sol (G4). Trên máy tính có 37 phím từ C3 đến C6. Giữ phím cách để ngân âm.'],
+      ['Chơi bằng bàn phím, chuột hoặc cảm ứng', 'Nhấp hoặc chạm vào phím đàn, hay nhấn phím máy tính được ghi trên đó. Chữ lớn là phím máy tính; nhãn nhỏ như C4 là tên nốt nhạc. K chơi Đô giữa (C4), W chơi Sol (G4). Chế độ thu gọn hiển thị 37 phím trên máy tính và 25 phím trên điện thoại. Chọn chế độ 88 phím để chơi toàn bộ âm vực A0–C8; trong chế độ này, bạn có thể đổi âm vực cho bàn phím máy tính. Giữ phím cách để ngân âm.'],
       ['Học từng nốt theo phím sáng', 'Chuyển sang Học một bài hát, chọn giai điệu rồi nhấn Bắt đầu học. Chơi phím màu vàng; bài hát chỉ chuyển tiếp khi bạn nhấn đúng nốt. Trên điện thoại, dùng mũi tên để đổi âm vực. Chế độ hướng dẫn tự đưa phím tiếp theo vào vùng nhìn thấy.'],
       ['Ghi âm và nghe lại tiếng đàn', 'Nhấn Ghi âm, chơi một đoạn rồi dừng ghi âm. Nghe lại và tải tệp WAV hoặc định dạng gốc của trình duyệt với dung lượng nhỏ hơn. Chỉ tiếng đàn được ghi lại, không sử dụng micrô.'],
     ],
@@ -85,7 +85,7 @@ export const pianoHomeCopy = {
       ['Có thể chơi trên điện thoại không?', 'Có. Chạm vào phím đàn trên màn hình và dùng mũi tên để đổi âm vực. Xoay ngang điện thoại để có thêm không gian chơi.'],
       ['Tại sao đàn không phát ra tiếng?', 'Chạm vào một phím để cho phép trình duyệt phát âm thanh. Kiểm tra âm lượng thiết bị, chế độ im lặng, đầu ra Bluetooth và thanh âm lượng trên trang.'],
       ['Làm sao để lưu bản ghi âm?', 'Tải bản ghi xuống trước khi đóng hoặc tải lại trang. Mỗi lần ghi tối đa 5 phút và sẽ dừng khi bạn chuyển sang tab hoặc ứng dụng khác. Bản ghi mới thay thế bản trước.'],
-      ['Đàn piano ảo có thay thế đàn thật không?', 'Công cụ này giúp làm quen vị trí nốt và luyện giai điệu đơn giản. Bàn phím máy tính và màn hình cảm ứng không tái hiện đầy đủ cảm giác phím, độ nhạy lực nhấn, bàn đạp và 88 phím của đàn piano thật.'],
+      ['Đàn piano ảo có thay thế đàn thật không?', 'Bạn có thể chọn toàn bộ 88 phím từ A0 đến C8 hoặc chế độ thu gọn. Công cụ giúp làm quen vị trí nốt và luyện giai điệu đơn giản. Bàn phím máy tính và màn hình cảm ứng không tái hiện cảm giác phím nặng của đàn piano thật.'],
     ],
     libraryNote: 'Khám phá thêm giai điệu và hướng dẫn từng bước qua các liên kết bên dưới. Các trang bài hát và phần hướng dẫn của những công cụ này hiện bằng tiếng Anh.',
     learningLinks: [
@@ -107,7 +107,7 @@ export const pianoHomeCopy = {
     starterIntro: 'Не знаете, с чего начать? Выберите знакомую мелодию и нажимайте подсвеченные клавиши. Можно повторять короткие фразы в своём темпе. Здесь упрощённые мелодии для первых шагов, а не полные аранжировки для двух рук.',
     guideTitle: 'Как играть на виртуальном пианино',
     sections: [
-      ['Фортепиано онлайн с клавиатуры компьютера', 'Щёлкните по клавише мышью или нажмите указанную на ней клавишу компьютера. Крупные латинские буквы — это подсказки для ввода, а C4 и G4 — названия нот. K играет центральную до (C4), W — соль (G4). Для некоторых нот нужны цифры и знаки. На компьютере доступны 37 клавиш от C3 до C6; удерживайте пробел, чтобы продлить звучание.'],
+      ['Фортепиано онлайн с клавиатуры компьютера', 'Щёлкните по клавише мышью или нажмите указанную на ней клавишу компьютера. Крупные латинские буквы — это подсказки для ввода, а C4 и G4 — названия нот. K играет центральную до (C4), W — соль (G4). Для некоторых нот нужны цифры и знаки. Компактный режим показывает 37 клавиш на компьютере и 25 на телефоне. Выберите режим 88 клавиш для всего диапазона A0–C8; в нём можно менять диапазон клавиш компьютера. Удерживайте пробел, чтобы продлить звучание.'],
       ['Следуйте подсветке, даже если не читаете ноты', 'Переключитесь на обучение и выберите мелодию. Нажимайте подсвеченную клавишу: следующая нота появится после правильного нажатия. На телефоне двигайте диапазон стрелками; во время обучения нужная клавиша выводится на экран.'],
       ['Запишите и послушайте свою игру', 'Нажмите «Записать», сыграйте фрагмент и остановите запись. Прослушайте результат и скачайте WAV для проигрывателя или исходный формат браузера для файла поменьше. Записывается только виртуальное пианино, без микрофона.']
     ],
@@ -117,7 +117,7 @@ export const pianoHomeCopy = {
       ['Как играть на телефоне?', 'Касайтесь клавиш на экране. Стрелки под клавиатурой меняют диапазон; в горизонтальном положении помещается больше клавиш.'],
       ['Что делать, если нет звука?', 'Нажмите на клавишу, чтобы включить звук в браузере. Проверьте громкость устройства и страницы, беззвучный режим и Bluetooth-наушники.'],
       ['Где сохраняется запись?', 'Запись временно хранится на этой странице. Скачайте её перед закрытием или обновлением. Одна запись длится до 5 минут; переход в другую вкладку или приложение останавливает запись. Новая запись заменяет предыдущую.'],
-      ['Симулятор пианино заменяет настоящий инструмент с 88 клавишами?', 'Нет. Этот симулятор пианино даёт 37 клавиш от C3 до C6 для знакомства с нотами, подбора мелодий и первых упражнений. Клавиатура компьютера и экран не передают механику, чувствительность к силе нажатия и работу педалей настоящего 88-клавишного фортепиано.']
+      ['Симулятор пианино заменяет настоящий инструмент с 88 клавишами?', 'Можно выбрать полный диапазон из 88 клавиш A0–C8 или компактный режим. Симулятор помогает знакомиться с нотами и разучивать простые мелодии. Клавиатура компьютера и экран не передают ощущение взвешенных клавиш настоящего фортепиано.']
     ],
     libraryNote: 'Хотите разучить больше мелодий или разобраться с клавишами? Полный каталог и пошаговые уроки пока доступны на английском.',
     learningLinks: [
@@ -137,7 +137,7 @@ export const pianoHomeCopy = {
     starterIntro: 'Vous ne savez pas quoi jouer ? Choisissez un air connu et suivez les touches éclairées, phrase par phrase. Ces mélodies simplifiées permettent de débuter sans lire de partition ; ce ne sont pas des arrangements complets à deux mains.',
     guideTitle: 'Comment utiliser ce piano en ligne au clavier',
     sections: [
-      ['Quelles touches du clavier pour jouer du piano ?', 'Cliquez sur une touche du piano ou appuyez sur la touche indiquée à l’écran. K joue le do central (C4) et W le sol (G4). Les petites indications C4, D4 ou G4 sont les noms des notes ; les grandes lettres, chiffres et symboles correspondent aux touches de l’ordinateur. Vous disposez de 37 touches, de C3 à C6. Maintenez la barre d’espace pour prolonger les sons.'],
+      ['Quelles touches du clavier pour jouer du piano ?', 'Cliquez sur une touche du piano ou appuyez sur la touche indiquée à l’écran. K joue le do central (C4) et W le sol (G4). Les petites indications C4, D4 ou G4 sont les noms des notes ; les grandes lettres, chiffres et symboles correspondent aux touches de l’ordinateur. Le mode compact affiche 37 touches sur ordinateur et 25 sur mobile. Choisissez le mode 88 touches pour le registre complet A0–C8 ; vous pouvez alors changer le registre des touches de l’ordinateur. Maintenez la barre d’espace pour prolonger les sons.'],
       ['Un piano virtuel pour apprendre à votre rythme', 'Passez au mode d’apprentissage, choisissez un morceau et jouez la touche dorée. La mélodie attend la bonne note. Sur téléphone, utilisez les flèches pour changer de registre ; le mode guidé affiche automatiquement la prochaine touche.'],
       ['Enregistrez votre interprétation', 'Lancez l’enregistrement, jouez quelques mesures puis arrêtez la prise. Écoutez-la et téléchargez un WAV compatible avec les lecteurs et logiciels de montage, ou le format du navigateur, plus léger. Seul le son du piano est enregistré, sans utiliser le micro.']
     ],
@@ -147,7 +147,7 @@ export const pianoHomeCopy = {
       ['Puis-je jouer sur mon téléphone ?', 'Oui. Touchez les touches à l’écran et changez de registre avec les flèches. Le mode paysage offre davantage de place.'],
       ['Pourquoi le piano ne produit-il aucun son ?', 'Jouez d’abord une note pour activer l’audio du navigateur. Vérifiez ensuite le volume de l’appareil, le volume du piano, le mode silencieux et la sortie Bluetooth.'],
       ['Comment conserver mon enregistrement ?', 'Téléchargez-le avant de fermer ou recharger la page : il n’est conservé que temporairement sur cette page. Une prise dure au maximum 5 minutes et s’arrête si vous changez d’onglet ou d’application. Une nouvelle prise remplace la précédente.'],
-      ['Ce piano virtuel remplace-t-il un vrai piano ?', 'Non. Ce piano virtuel propose 37 touches de C3 à C6 pour repérer les notes, chercher une mélodie et faire ses premiers exercices. Le clavier de l’ordinateur et l’écran tactile ne reproduisent ni le toucher sensible à la force de frappe, ni les pédales, ni les 88 touches d’un vrai piano.']
+      ['Ce piano virtuel remplace-t-il un vrai piano ?', 'Vous pouvez choisir les 88 touches de A0 à C8 ou le mode compact. Ce piano virtuel aide à repérer les notes et à pratiquer des mélodies simples. Le clavier de l’ordinateur et l’écran tactile ne reproduisent pas le toucher lesté d’un vrai piano.']
     ],
     libraryNote: 'Envie de jouer d’autres morceaux ou de mieux comprendre les touches ? Le catalogue complet et les guides pas à pas sont disponibles en anglais.',
     learningLinks: [
@@ -167,7 +167,7 @@ export const pianoHomeCopy = {
     starterIntro: 'Elige una canción y sigue las teclas iluminadas. Son melodías simplificadas para practicar, no arreglos completos para las dos manos.',
     guideTitle: 'Cómo tocar piano online con tu teclado',
     sections: [
-      ['Piano virtual para PC y móvil', 'Haz clic en una tecla o pulsa la letra que aparece sobre ella. K toca el do central (C4) y W toca G4. C4 y G4 son nombres de notas; las letras grandes indican qué tecla del ordenador debes pulsar. En ordenador tienes 37 teclas, de C3 a C6.'],
+      ['Piano virtual para PC y móvil', 'Haz clic en una tecla o pulsa la letra que aparece sobre ella. K toca el do central (C4) y W toca G4. C4 y G4 son nombres de notas; las letras grandes indican qué tecla del ordenador debes pulsar. El modo compacto muestra 37 teclas en ordenador y 25 en móvil. Elige 88 teclas para el registro completo A0–C8; en ese modo puedes cambiar el registro de las teclas del ordenador.'],
       ['Aprende a tu ritmo con las teclas iluminadas', 'Elige el modo de aprendizaje y una canción. Toca la tecla dorada: la melodía espera hasta que pulses la nota correcta. En el móvil puedes cambiar el registro con las flechas; el modo guiado muestra automáticamente la siguiente tecla.'],
       ['Graba, escucha y descarga tu interpretación', 'Pulsa Grabar, toca un fragmento y detén la grabación. Escucha el resultado y descarga un archivo WAV para reproductores y editores, o el formato original del navegador si prefieres un archivo más pequeño. Solo se graba el piano, sin micrófono.']
     ],
@@ -177,7 +177,7 @@ export const pianoHomeCopy = {
       ['¿Funciona en el móvil?', 'Sí. Toca las teclas de la pantalla y usa las flechas para cambiar el registro. La orientación horizontal deja más espacio.'],
       ['¿Por qué no suena el piano?', 'Primero pulsa una tecla para activar el audio del navegador. Revisa el volumen del dispositivo y del piano, el modo silencio y la salida de audio Bluetooth.'],
       ['¿Dónde se guarda mi grabación?', 'Solo se conserva temporalmente en esta página. Descárgala antes de cerrar o recargar. Cada toma dura hasta 5 minutos y se detiene al cambiar de pestaña o aplicación. Una nueva grabación sustituye a la anterior.'],
-      ['¿Este piano online virtual sustituye a un piano real?', 'No. Sirve para conocer las notas y practicar melodías sencillas. No sustituye el tacto, los pedales ni las 88 teclas de un piano real.']
+      ['¿Este piano online virtual sustituye a un piano real?', 'Puedes elegir las 88 teclas de A0 a C8 o el modo compacto. Sirve para conocer las notas y practicar melodías sencillas. Un teclado de ordenador o una pantalla táctil no reproduce el tacto contrapesado de un piano real.']
     ],
     libraryNote: 'El catálogo completo y las lecciones todavía están en inglés. Estos enlaces abren las páginas en inglés.',
   },
@@ -192,7 +192,7 @@ export const pianoHomeCopy = {
     starterIntro: '曲を選んで光る鍵盤を追いかけましょう。練習しやすい簡略化したメロディーで、両手用の完全な編曲ではありません。',
     guideTitle: 'ピアノをWebで弾く・練習する・録音する',
     sections: [
-      ['ブラウザのピアノをキーボードで演奏', '鍵盤をクリックするか、鍵盤に表示されたキーを押します。K は中央のド（C4）、W は G4 です。C4 などは音名、大きな文字はパソコンで押すキーを表します。パソコンでは C3〜C6 の37鍵を使えます。'],
+      ['ブラウザのピアノをキーボードで演奏', '鍵盤をクリックするか、鍵盤に表示されたキーを押します。K は中央のド（C4）、W は G4 です。C4 などは音名、大きな文字はパソコンで押すキーを表します。コンパクト表示はパソコンで37鍵、スマホで25鍵です。88鍵モードを選ぶと A0〜C8 の全音域を使え、パソコンキーで弾く音域も変更できます。'],
       ['自分のペースでオンラインピアノを練習', '「曲を練習」で曲を選び、金色の鍵盤を弾いてください。正しい音を押すまで曲が待ってくれます。スマホでは下の矢印で音域を切り替えられ、ガイド中は次の鍵盤が自動で見える位置に移ります。'],
       ['演奏を録音して、あとから聴く', '録音を始めて短いフレーズを弾き、停止して聴き返してみましょう。WAV は多くのプレーヤーや編集ソフトで使えます。容量を小さくしたいときはブラウザの元形式でも保存できます。マイクは使いません。']
     ],
@@ -202,7 +202,7 @@ export const pianoHomeCopy = {
       ['スマホでも弾けますか？', 'はい。画面の鍵盤をタップしてください。矢印で音域を変更でき、横向きにすると鍵盤が見やすくなります。'],
       ['ブラウザでピアノの音が出ないときは？', '最初に鍵盤を押してブラウザの音声を有効にします。端末とページの音量、消音設定、Bluetoothの出力先も確認してください。'],
       ['録音はどこに保存されますか？', 'このページ内に一時的に保存されます。閉じたり再読み込みしたりする前にダウンロードしてください。録音は1回5分までで、別のタブやアプリに移ると止まります。録り直すと前の録音は置き換わります。'],
-      ['本物の88鍵ピアノの代わりになりますか？', '音名を覚えたり、簡単なメロディーを練習したりするためのバーチャルピアノです。本物の鍵盤のタッチやペダル、88鍵の練習を置き換えるものではありません。']
+      ['本物の88鍵ピアノの代わりになりますか？', 'A0〜C8 の88鍵とコンパクト表示を選べます。音名を覚えたり、簡単なメロディーを練習したりできますが、パソコンのキーやタッチ画面では本物のピアノの鍵盤の重さや手応えは再現できません。']
     ],
     libraryNote: '曲一覧の詳細ページとレッスンは現在英語です。以下のリンクは英語のページに移動します。',
   },
@@ -217,7 +217,7 @@ export const pianoHomeCopy = {
     starterIntro: 'Scegli un brano e segui i tasti illuminati. Sono melodie semplificate per esercitarsi, non arrangiamenti completi per due mani.',
     guideTitle: 'Una tastiera di pianoforte online nel browser',
     sections: [
-      ['Come suonare il piano virtuale', 'Fai clic su un tasto oppure premi la lettera indicata. K suona il do centrale (C4), W suona G4. C4 e G4 sono nomi delle note; le lettere grandi indicano i tasti del computer. Sul computer hai 37 tasti, da C3 a C6.'],
+      ['Come suonare il piano virtuale', 'Fai clic su un tasto oppure premi la lettera indicata. K suona il do centrale (C4), W suona G4. C4 e G4 sono nomi delle note; le lettere grandi indicano i tasti del computer. La modalità compatta mostra 37 tasti sul computer e 25 sul telefono. Scegli 88 tasti per il registro completo A0–C8; in questa modalità puoi cambiare il registro dei tasti del computer.'],
       ['Esercitati con il pianoforte virtuale al tuo ritmo', 'Passa alla modalità di apprendimento, scegli un brano e suona il tasto dorato. La melodia aspetta la nota corretta. Sul telefono usa le frecce per cambiare registro; durante l’esercizio il prossimo tasto viene mostrato automaticamente.'],
       ['Registra e riascolta la tua esecuzione', 'Avvia la registrazione, suona un breve passaggio e fermala. Riascolta il risultato e scarica un WAV per i lettori audio e i programmi di montaggio, oppure il formato originale del browser per un file più leggero. Il microfono non viene usato.']
     ],
@@ -227,7 +227,7 @@ export const pianoHomeCopy = {
       ['Posso suonare dal telefono?', 'Sì. Tocca i tasti sullo schermo e usa le frecce per cambiare registro. In orizzontale c’è più spazio per suonare.'],
       ['Perché non sento alcun suono?', 'Premi prima un tasto per attivare l’audio del browser. Controlla il volume del dispositivo e del piano, la modalità silenziosa e l’uscita Bluetooth.'],
       ['Come conservo la registrazione?', 'Scaricala prima di chiudere o ricaricare la pagina: è conservata solo temporaneamente qui. Ogni registrazione dura al massimo 5 minuti e si ferma passando a un’altra scheda o app. Una nuova registrazione sostituisce la precedente.'],
-      ['Il piano virtuale sostituisce un pianoforte vero?', 'No. Aiuta a conoscere le note e a praticare semplici melodie. Non sostituisce il tocco, i pedali e gli 88 tasti di un pianoforte reale.']
+      ['Il piano virtuale sostituisce un pianoforte vero?', 'Puoi scegliere tutti gli 88 tasti da A0 a C8 oppure la modalità compatta. Aiuta a conoscere le note e a praticare semplici melodie. La tastiera del computer e il touchscreen non riproducono il tocco pesato di un pianoforte reale.']
     ],
     libraryNote: 'Il catalogo completo e le lezioni sono ancora in inglese. Questi collegamenti aprono le pagine in inglese.',
   },
@@ -242,7 +242,7 @@ export const pianoHomeCopy = {
     starterIntro: '곡을 선택하고 빛나는 건반을 따라 연주하세요. 입문 연습용으로 단순화한 멜로디이며, 완성된 양손 편곡은 아닙니다.',
     guideTitle: '웹피아노 연주부터 연습과 녹음까지',
     sections: [
-      ['키보드로 연주하는 피아노 사이트', '건반을 클릭하거나 표시된 컴퓨터 키를 누르세요. K는 가운데 도(C4), W는 G4입니다. C4와 G4는 음이름이고 큰 글자는 실제 누를 컴퓨터 키입니다. 컴퓨터에서는 C3부터 C6까지 37개 건반을 사용할 수 있습니다.'],
+      ['키보드로 연주하는 피아노 사이트', '건반을 클릭하거나 표시된 컴퓨터 키를 누르세요. K는 가운데 도(C4), W는 G4입니다. C4와 G4는 음이름이고 큰 글자는 실제 누를 컴퓨터 키입니다. 간단한 건반 모드는 컴퓨터에서 37개, 휴대폰에서 25개 건반을 표시합니다. A0~C8 전체 음역을 연주하려면 88건반 모드를 선택하세요. 이 모드에서는 컴퓨터 키보드의 음역도 바꿀 수 있습니다.'],
       ['가상피아노로 내 속도에 맞춰 연습하기', '곡 연습 모드에서 곡을 고르고 금색 건반을 누르세요. 올바른 음을 누를 때까지 곡이 기다려 줍니다. 휴대폰에서는 화살표로 음역을 바꿀 수 있으며 연습 중에는 다음 건반이 자동으로 보입니다.'],
       ['내 연주를 녹음하고 다시 듣기', '녹음을 시작하고 짧은 구간을 연주한 뒤 중지하세요. 연주를 다시 듣고 호환성이 좋은 WAV나 크기가 작은 브라우저 원본 형식으로 다운로드할 수 있습니다. 마이크 없이 피아노 소리만 녹음합니다.']
     ],
@@ -252,7 +252,7 @@ export const pianoHomeCopy = {
       ['휴대폰에서도 연주할 수 있나요?', '네. 화면 건반을 터치하고 화살표로 음역을 바꾸세요. 화면을 가로로 돌리면 더 넓게 연주할 수 있습니다.'],
       ['피아노 소리가 나지 않으면 어떻게 하나요?', '먼저 건반을 눌러 브라우저 오디오를 켜세요. 기기와 페이지 음량, 무음 모드, 블루투스 출력 장치도 확인해 주세요.'],
       ['녹음은 어디에 저장되나요?', '현재 페이지에만 임시로 저장됩니다. 닫거나 새로고침하기 전에 다운로드하세요. 한 번에 최대 5분이며 다른 탭이나 앱으로 이동하면 녹음이 중지됩니다. 새 녹음은 이전 녹음을 대체합니다.'],
-      ['실제 88건반 피아노를 대신할 수 있나요?', '음이름을 익히고 간단한 멜로디를 연습하는 도구입니다. 실제 피아노의 터치와 페달, 88개 건반을 활용한 연습을 대신하지는 않습니다.']
+      ['실제 88건반 피아노를 대신할 수 있나요?', 'A0~C8의 88개 건반 전체 또는 간단한 건반 모드를 선택할 수 있습니다. 음이름과 간단한 멜로디를 연습하는 데 도움이 되지만, 컴퓨터 키보드와 터치 화면은 실제 피아노의 건반 무게와 손끝 감각을 재현하지 못합니다.']
     ],
     libraryNote: '전체 곡 상세 페이지와 레슨은 현재 영어로 제공됩니다. 아래 링크를 누르면 영어 페이지로 이동합니다.',
   },

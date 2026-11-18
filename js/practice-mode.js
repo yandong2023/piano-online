@@ -192,11 +192,12 @@ class PracticeMode {
         if (!this.isPlaying || !this.currentSong) return;
 
         const currentNote = this.currentSong.notes[this.currentNoteIndex];
+        // Ensure the target's bank is selected before displaying its shortcut.
+        this.highlightKey(currentNote);
         const keyboardKey = this.getKeyboardKeyForNote(currentNote);
 
         if (this.keyHintKey) this.keyHintKey.textContent = keyboardKey;
         if (this.keyHintNote) this.keyHintNote.textContent = currentNote;
-        this.highlightKey(currentNote);
     }
 
     getKeyboardKeyForNote(note) {

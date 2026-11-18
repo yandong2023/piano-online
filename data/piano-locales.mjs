@@ -8,6 +8,13 @@ export const pianoLocaleNames = {
 // Columns follow NEW_PIANO_LOCALES. The same dictionary renders the initial
 // HTML and subsequent interactive states, including recording and results.
 export const pianoUi = {
+  'Keyboard size': ['Размер клавиатуры', 'Taille du clavier', 'Tamaño del teclado', '鍵盤の範囲', 'Dimensione della tastiera', '건반 범위', 'Klavye boyutu', 'Kích thước bàn phím'],
+  'Compact': ['Компактная', 'Compact', 'Compacto', 'コンパクト', 'Compatta', '간단한 건반', 'Kompakt', 'Thu gọn'],
+  '88 keys': ['88 клавиш', '88 touches', '88 teclas', '88鍵', '88 tasti', '88개 건반', '88 tuş', '88 phím'],
+  'Computer-key range': ['Диапазон клавиш компьютера', 'Registre du clavier d’ordinateur', 'Registro del teclado del ordenador', 'パソコンキーの音域', 'Registro dei tasti del computer', '컴퓨터 키보드 음역', 'Bilgisayar klavyesinin ses aralığı', 'Âm vực bàn phím máy tính'],
+  'Keyboard position': ['Положение клавиатуры', 'Position du clavier', 'Posición del teclado', '表示する鍵盤の位置', 'Posizione della tastiera', '건반 표시 위치', 'Klavye konumu', 'Vị trí bàn phím'],
+  'In 88-key mode, move the view with the slider. Select a computer-key range to change which notes your computer keys play.': ['В режиме 88 клавиш перемещайте видимую область ползунком. Выберите диапазон клавиш компьютера, чтобы изменить ноты, назначенные этим клавишам.', 'En mode 88 touches, déplacez la vue avec le curseur. Choisissez le registre du clavier d’ordinateur pour modifier les notes jouées par ses touches.', 'En el modo de 88 teclas, mueve la vista con el deslizador. Elige un registro para cambiar las notas que tocan las teclas del ordenador.', '88鍵モードではスライダーで表示位置を動かせます。パソコンキーの音域を選ぶと、キーで弾く音が変わります。', 'Nella modalità a 88 tasti, sposta la vista con il cursore. Scegli il registro dei tasti del computer per cambiare le note che suonano.', '88건반 모드에서는 슬라이더로 표시 위치를 이동하세요. 컴퓨터 키보드 음역을 선택하면 각 키로 연주하는 음이 바뀝니다.', '88 tuş modunda görünümü kaydırıcıyla hareket ettir. Bilgisayar tuşlarının çaldığı notaları değiştirmek için bir ses aralığı seç.', 'Ở chế độ 88 phím, dùng thanh trượt để di chuyển vùng hiển thị. Chọn âm vực bàn phím máy tính để đổi các nốt mà phím máy tính chơi.'],
+  'Audio credits': ['Источники звуков', 'Crédits audio', 'Créditos de audio', '音源のクレジット', 'Crediti audio', '음원 출처', 'Ses kaynakları', 'Nguồn âm thanh'],
   'Interactive piano': ['Интерактивное пианино', 'Piano interactif', 'Piano interactivo', '弾けるピアノ', 'Pianoforte interattivo', '연주하는 피아노', "Etkileşimli piyano", "Đàn piano tương tác"],
   'Playing mode': ['Режим игры', 'Mode de jeu', 'Modo de interpretación', '演奏モード', 'Modalità di esecuzione', '연주 모드', "Çalma modu", "Chế độ chơi"],
   'Free play': ['Свободная игра', 'Jeu libre', 'Tocar libremente', '自由に弾く', 'Suona liberamente', '자유 연주', "Serbest çal", "Chơi tự do"],

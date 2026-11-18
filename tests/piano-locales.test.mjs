@@ -67,6 +67,21 @@ for (const locale of NEW_PIANO_LOCALES) {
       assert.equal(t('practice.stop'), translatePiano(locale, '', 'Stop Practice'));
     } finally { globalThis.document = original; }
   });
+
+  test(`${locale} explains the full range and localizes its controls`, () => {
+    const html = renderStudioPage(locale);
+    for (const label of ['Keyboard size', 'Compact', '88 keys', 'Computer-key range', 'Keyboard position', 'Audio credits']) {
+      assert.ok(html.includes(esc(translatePiano(locale, '', label))), `${locale}: ${label}`);
+    }
+    const guide = pianoHomeCopy[locale].sections.map(([, body]) => body).join(' ');
+    assert.match(guide, /37/);
+    assert.match(guide, /25/);
+    assert.match(guide, /88/);
+    assert.match(guide, /A0.*C8/);
+    assert.ok(pianoHomeCopy[locale].faq.some(([, answer]) => /88/.test(answer) && /A0.*C8/.test(answer)));
+    assert.match(html, /data-keyboard-mapping-control hidden/);
+    assert.match(html, /data-keyboard-navigation hidden/);
+  });
 }
 
 test('all language homes have reciprocal alternates and working native language menus', async () => {

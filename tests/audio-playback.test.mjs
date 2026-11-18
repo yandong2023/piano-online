@@ -35,16 +35,35 @@ test('cold quick tap starts sound without awaiting an mp3 request',async()=>{
  assert.equal(a.context.starts.length,1);
  assert.equal(a.pressedNotes.size,0);
 });
-test('all 37 pitches have immediate fallback on a cold or unavailable network',async()=>{
+test('all 88 pitches have immediate fallback on a cold or unavailable network',async()=>{
  const a=audio();await a.init();
  const names=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
- for(let midi=48;midi<=84;midi++){
+ for(let midi=21;midi<=108;midi++){
   const note=names[midi%12]+(Math.floor(midi/12)-1);
   assert.notEqual(await settlesWithoutNetwork(a.playNote(note)),'blocked-on-network',note);
   assert.equal(a.context.starts.at(-1).source.frequency.value,440*2**((midi-69)/12));
   a.stopNote(note);
  }
- assert.equal(a.context.starts.length,37);
+ assert.equal(a.context.starts.length,88);
+});
+
+test('outer-register samples load on demand and can sound together at their original pitch',async()=>{
+ const a=audio();const requests=[];
+ globalThis.fetch=async url=>{requests.push(url);return {ok:true,arrayBuffer:async()=>new ArrayBuffer(8)};};
+ await a.init();await Promise.all(a.loadingBuffers.values());
+ assert.equal(requests.length,19);
+ assert.equal(a.buffers.has('A0'),false);assert.equal(a.buffers.has('C8'),false);
+ await a.playNote('A0');await a.playNote('C8');
+ await Promise.all(a.loadingBuffers.values());
+ assert.equal(requests.filter(url=>url==='/samples/piano-A0.mp3').length,1);
+ assert.equal(requests.filter(url=>url==='/samples/piano-C8.mp3').length,1);
+ a.stopNote('A0');a.stopNote('C8');
+ await a.playNote('A0');await a.playNote('C8');
+ for(const start of a.context.starts.slice(-2)){
+  assert.equal(start.kind,'sample');assert.equal(start.source.playbackRate.value,1);
+ }
+ assert.ok(a.pressedNotes.has('A0')&&a.pressedNotes.has('C8'));
+ assert.equal(requests.length,21);
 });
 test('cached nearby sample uses the right pitch without awaiting the exact sample',async()=>{
  const a=audio();await a.init();a.buffers.set('C4',{duration:3});

@@ -81,7 +81,11 @@ class StudioPiano extends Piano {
       const pianoKey = event.target instanceof Element && event.target.closest('.key');
       const note = pianoKey && ['Enter', 'Space'].includes(event.code)
         ? pianoKey.dataset.note : (!isFormControl(event.target) || pianoKey) && keyboardNote(event, this.keyMap);
-      if (note) { event.preventDefault(); this.keyboardHeld.set(identity, note); hold(note, inputStartedAt); }
+      if (note) {
+        event.preventDefault(); this.keyboardHeld.set(identity, note);
+        if (this.keyboardMode === 'full') this.ensureNoteVisible(note, { remap: false });
+        hold(note, inputStartedAt);
+      }
       else if (event.code === 'Space' && !isFormControl(event.target) && !event.target.closest?.('button,a,summary')) {
         event.preventDefault(); this.spaceSustain = true; this.applySustain();
       }
@@ -96,10 +100,10 @@ class StudioPiano extends Piano {
     document.addEventListener('visibilitychange', () => { if (document.hidden) this.releaseAll(); });
   }
 
-  pressKey(note, inputStartedAt = performance.now()) {
+  pressKey(note, inputStartedAt = performance.now(), velocity = 0.9) {
     this.keys[note]?.classList.add('active');
     this.keys[note]?.setAttribute('aria-pressed', 'true');
-    this.audio.playNote(note, 0.9, inputStartedAt).catch(showError);
+    this.audio.playNote(note, velocity, inputStartedAt).catch(showError);
     this.onNotePlay?.(note);
   }
   releaseKey(note) {
@@ -207,15 +211,21 @@ async function initialize() {
     $('studio-message').textContent = songSelect.selectedOptions[0]?.textContent;
     $('studio-submessage').textContent = text('跟着金色琴键弹，按对再继续。', 'Play the gold key. The song waits for you.');
     $('studio-upcoming').hidden = false;
+    // Moving the teaching target may update the computer-key bank first.
+    keepNoteVisible(practice.currentSong.notes[practice.currentNoteIndex]);
     $('studio-upcoming').replaceChildren(...practice.currentSong.notes.slice(practice.currentNoteIndex, practice.currentNoteIndex + 9).map(note => {
       const el=document.createElement('span'); el.textContent=piano.mobileViewport.matches ? note : practice.getKeyboardKeyForNote(note) || note; el.title=note; return el;
     }));
     $('studio-progressbar').value = practice.currentNoteIndex / practice.currentSong.notes.length * 100;
-    keepNoteVisible(practice.currentSong.notes[practice.currentNoteIndex]);
   }
   document.addEventListener('piano:practice-start', () => { if (rhythm.isPlaying) rhythm.stopGame(); refreshPractice(); });
   document.addEventListener('piano:practice-progress', refreshPractice);
   document.addEventListener('piano:practice-stop', updateIdle);
+  document.addEventListener('piano:keyboard-change', () => {
+    if (rhythm.isPlaying) rhythm.stopGame();
+    practice.updateKeyHint();
+    refreshPractice();
+  });
   const handlePracticeNote = piano.onNotePlay;
   piano.onNotePlay = (note) => { $('studio-note').textContent=note; handlePracticeNote?.(note); };
   songSelect.addEventListener('change', () => {
@@ -224,7 +234,14 @@ async function initialize() {
     $('start-rhythm-game').disabled = !rhythm.songData[songSelect.value];
     updateIdle();
   });
-  $('start-rhythm-game').addEventListener('click', () => { practice.stopPractice(); setMode('guided'); },{capture:true});
+  $('start-rhythm-game').addEventListener('click', () => {
+    practice.stopPractice();
+    // The existing falling-note game uses the C3–B3 computer shortcuts.
+    piano.setKeyboardMode('compact', { persist: false });
+    piano.setRange(3, true);
+    piano.keyboardViewport.scrollTo({ left: 0, behavior: 'instant' });
+    setMode('guided');
+  },{capture:true});
   document.querySelectorAll('[data-quick-song]').forEach(button => {
     button.disabled = false;
     button.addEventListener('click', () => {
@@ -297,8 +314,8 @@ async function initialize() {
   document.addEventListener('studio:note-on', (event) => {
     const note = event.detail?.note;
     if (typeof note !== 'string' || !note) return;
-    piano.ensureNoteVisible(note);
-    piano.pressKey(note);
+    piano.ensureNoteVisible(note, { remap: false });
+    piano.pressKey(note, performance.now(), event.detail?.velocity ?? 0.9);
   });
   document.addEventListener('studio:note-off', (event) => {
     const note = event.detail?.note;

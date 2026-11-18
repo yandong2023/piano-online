@@ -11,7 +11,8 @@ concurrency:
   cancel-in-progress: true
 jobs:
   browser-review:
-    runs-on: ubuntu-latest
+    # Keep the runner compatible with the pinned Playwright browser version.
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4

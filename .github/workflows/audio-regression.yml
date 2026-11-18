@@ -12,7 +12,8 @@ concurrency:
   cancel-in-progress: true
 jobs:
   audio:
-    runs-on: ubuntu-latest
+    # Playwright 1.56.1 supports Ubuntu 24.04; latest can advance independently.
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -64,7 +65,7 @@ jobs:
                   print('Deployment not yet ready:', error)
                   time.sleep(10)
           PY
-      - name: Test all 37 notes through real audio output
+      - name: Test compact and full 88-key piano through real audio output
         env:
           PLAYWRIGHT_MODULE: /tmp/piano-audio-browser/node_modules/playwright/index.mjs
           PIANO_TEST_URL: ${{ github.event_name == 'push' && 'https://pianoonline.cc' || 'http://127.0.0.1:4173' }}
